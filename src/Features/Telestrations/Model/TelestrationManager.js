@@ -129,7 +129,8 @@ export default class TelestrationManager {
         this.textBoxes = [];
 
         this.selectedShapes = [];
-        // this.selectRect = null;
+
+        this.addedShapes = [];
 
         this.lastFrame = 0;
         this.initializeHelperImages();
@@ -1165,6 +1166,7 @@ export default class TelestrationManager {
             );
             kf.startOpenTimer(this.config.FADE_IN_TIME);
             this.cursors.push(kf);
+            this.addedShapes.push(kf);
 
             this.actionManager.pushAction(ActionTypeEnum.PLACE_CURSOR);
             sendUserEvent(
