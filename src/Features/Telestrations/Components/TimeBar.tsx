@@ -54,6 +54,7 @@ const Thumb = (props: any) => {
 
     const style = {
         ...props.style,
+        zIndex: '1',
         marginLeft: '0px',
         marginRight: '0px',
         display: 'flex',
