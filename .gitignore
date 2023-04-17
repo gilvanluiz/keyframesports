@@ -1,0 +1,6 @@
+node_modules/
+build/
+.env.prod
+.env.dev
+.env.staging
+.tern-port

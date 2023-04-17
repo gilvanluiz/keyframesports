@@ -1,0 +1,48 @@
+{
+    "extends": [
+        "tslint:recommended",
+        "tslint-eslint-rules",
+        "tslint-config-prettier"
+    ],
+    "linterOptions": {
+        "exclude": [
+            "config/**/*.js",
+            "node_modules/**/*.ts",
+            "coverage/lcov-report/*.js",
+            "src/script/*.js",
+            "src/registerServiceWorker.ts",
+            "src/Features/Telestrations/Model/*.js",
+            "src/Features/TelestrationsVideoLibrary/Model/*.js"
+        ]
+    },
+    "rules": {
+        "class-name": false,
+        "no-console": false,
+        "variable-name": false,
+        "quotemark": [true, "single"],
+        "no-trailing-whitespace": false,
+        "max-line-length": false,
+        "ordered-imports": false,
+        "object-literal-sort-keys": false,
+        "object-literal-key-quotes": false,
+        "object-curly-spacing": true,
+        "array-bracket-spacing": [true, "never"],
+        "arrow-parens": true,
+        "trailing-comma": [
+            false,
+            {
+                "singleline": "never",
+                "multiline": {
+                    "objects": "always",
+                    "arrays": "always",
+                    "functions": "always",
+                    "typeLiterals": "ignore"
+                }
+            }
+        ]
+    },
+    "tslint.enable": true,
+    "tslint.run": true,
+    "tslint.alwaysShowStatus": true,
+    "tslint.autoFixOnSave": true
+}

@@ -1,0 +1,20 @@
+:root {
+    --white: rgb(255, 255, 255);
+    --mui-grey: rgba(255, 255, 255, 0.12);
+    --primary-main: rgb(236, 77, 69);
+    --primary-dark: rgb(26, 25, 26);
+    --secondary-main: rgb(116, 243, 79);
+}
+
+.sketch-picker {
+    background: var(--primary-dark) !important;
+    width: 42px !important;
+}
+
+.sketch-picker > .flexbox-fix:last-child {
+    border-top: 1px solid var(--mui-grey) !important;
+}
+
+.sketch-picker > div:not(:last-child) {
+    display: none !important;
+}
