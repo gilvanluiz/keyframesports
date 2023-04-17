@@ -80,10 +80,10 @@ export const playControls = ({
     });
 
     const [popover, setPopover]: [any, any] = useState(null);
-    const [shapeArray, setSapeArray]: [any, any] = useState([]);
-
-    // const [circleArray, setCircleArray]: [Array<{}>, any] = useState([]);
-
+    // const [pauseVideoDuration, setPauseVideoDuration]: [number, any] = useState(
+    // 0
+    // );
+    // const [videoDuration, setVideoDuration]: [number, any] = useState(0);
     const handlePopoverClose = () => {
         setPopover(null);
     };
@@ -190,9 +190,7 @@ export const playControls = ({
     };
     const rowRef = useRef<HTMLDivElement>(null);
     useEffect(controlsListener, [volumeState]);
-    useEffect(() => {
-        setSapeArray(state.telestrationManager.cursors);
-    }, [state]);
+
     // const clickHandle = () => {
     //     const { telestrationManager: tMgr } = state;
     //     if (
@@ -213,6 +211,25 @@ export const playControls = ({
     //         return undefined;
     //     }
     // }, []);
+
+    // const videoLoaded = () => {
+    //     const { current: video } = videoRef;
+    //     if (video) {
+    //         const onLoaded = () => {
+    //             const { duration } = video;
+    //             setVideoDuration(duration);
+    //         };
+    //         video.addEventListener('loadeddata', onLoaded);
+    //         return () => video.removeEventListener('loadeddata', onLoaded);
+    //     }
+    //     return undefined;
+    // };
+
+    // useEffect(videoLoaded, []);
+
+    useEffect(() => {
+        console.log('total duration:', state.totalVideoDuration);
+    }, [state.totalVideoDuration]);
 
     return (
         <div
@@ -238,7 +255,11 @@ export const playControls = ({
                     videoRef={videoRef}
                     updatePreview={updatePreview}
                 />
-                <TimeBar videoRef={videoRef} updatePreview={updatePreview} />
+                <TimeBar
+                    videoRef={videoRef}
+                    telestrationDuration={state.totalVideoDuration}
+                    updatePreview={updatePreview}
+                />
                 <div
                     style={{
                         overflowX: 'auto',
@@ -252,14 +273,15 @@ export const playControls = ({
                     }}
                     ref={rowRef}
                 >
-                    {shapeArray.map((circle: any, index: number) => (
-                        <ShapeRow
-                            key={index}
-                            title={`Circle ${index + 1}`}
-                            videoRef={videoRef}
-                            color={circle.color}
-                        />
-                    ))}
+                    {state.telestrationManager.addedShapes.map(
+                        (shape: any, index: number) => (
+                            <ShapeRow
+                                key={index + 1}
+                                videoRef={videoRef}
+                                shapeDetail={shape}
+                            />
+                        )
+                    )}
                 </div>
             </div>
             <Popover

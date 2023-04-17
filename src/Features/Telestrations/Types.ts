@@ -117,6 +117,8 @@ export interface ITelestrationState {
     telestrationManager: TelestrationManager;
     videoLoadError: string;
     videoLoading: boolean;
+    videoPauseArray: IVideoPause[];
+    totalVideoDuration: number;
 }
 
 // ACTIONS
@@ -240,9 +242,17 @@ export interface ISetVideoLoadedAction {
     type: 'telestrations/SET_VIDEO_LOADED';
 }
 
-export interface IClickVideoBox {
+export interface IClickVideoBoxAction {
     type: 'telestrations/CLICK_VIDEO_BOX';
     event: any;
+}
+
+export interface IVideoPlayAction {
+    type: 'telestrations/VIDEO_PLAY';
+}
+
+export interface IVideoStopAction {
+    type: 'telestrations/VIDEO_STOP';
 }
 
 export type ISetDragStateAction =
@@ -271,11 +281,18 @@ export type IAction =
     | ISaveTextBox
     | ISetVideoLoadErrorAction
     | ISetVideoLoadedAction
-    | IClickVideoBox;
+    | IClickVideoBoxAction
+    | IVideoPlayAction
+    | IVideoStopAction;
 
 export type IShape = 'none' | 'circle' | 'arrow';
 
 export interface ITelestrationStateMgr {
     state: ITelestrationState;
     dispatchAction: (action: IAction) => any;
+}
+
+export interface IVideoPause {
+    startTime: number;
+    endTime: number;
 }

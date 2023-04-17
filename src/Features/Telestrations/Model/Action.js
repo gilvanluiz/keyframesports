@@ -46,6 +46,9 @@ export class ActionManager {
                         let kf = this.manager.cursors.pop();
                         this.manager.clearTelestration(kf);
                     }
+                    if (this.manager.addedShapes.length > 0) {
+                        let kf = this.manager.addedShapes.pop();
+                    }
                     break;
                 case ActionTypeEnum.PLACE_ARROW:
                     if (this.manager.arrows.length > 0) {

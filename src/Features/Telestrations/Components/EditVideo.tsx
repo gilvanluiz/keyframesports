@@ -7,7 +7,7 @@ import {
     Theme as ITheme,
 } from '@material-ui/core';
 import { compose } from 'fp-ts/lib/function';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import {
     canvasClickHandler,
     canvasMouseDownUpHandler,
@@ -20,9 +20,11 @@ import {
     setVideoLoadError,
     setVideoLoaded,
     clickVideoBox,
+    VideoPlayAction,
+    VideoStopAction,
 } from '../State';
 import { ILocalStateMgr, withLocalState } from '../../../App/LocalState';
-import { ITelestrationStateMgr, EditMode } from '../Types';
+import { ITelestrationStateMgr } from '../Types';
 import { maxRect } from '../Utils/Geometry';
 import { RecordingCanvas } from './RecordCanvas';
 import { PureVideo } from './PureVideo';
@@ -80,7 +82,7 @@ const editVideo = ({
     videoTitle,
     localStateMgr,
 }: IProps) => {
-    const [previousMode, setPreviousMode] = useState<EditMode>('default');
+    // const [previousMode, setPreviousMode] = useState<EditMode>('default');
     const { state, dispatchAction } = telestrationStateMgr;
 
     const { state: localState } = localStateMgr;
@@ -150,8 +152,8 @@ const editVideo = ({
 
         if (current) {
             const setDefaultMode = () => {
-                setPreviousMode(state.editMode);
-                dispatchAction(setModeAction('default'));
+                // setPreviousMode(state.editMode);
+                dispatchAction(VideoPlayAction());
             };
             current.addEventListener('play', setDefaultMode);
             return () => current.removeEventListener('play', setDefaultMode);
@@ -165,7 +167,7 @@ const editVideo = ({
 
         if (current) {
             const previousModeListener = () =>
-                dispatchAction(setModeAction(previousMode));
+                dispatchAction(VideoStopAction());
             current.addEventListener('pause', previousModeListener);
             return () =>
                 current.removeEventListener('pause', previousModeListener);

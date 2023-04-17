@@ -33,7 +33,9 @@ const styles = (theme: ITheme) => ({
     },
 });
 
-const shapeRow = ({ key, title, videoRef, color, classes }: any) => {
+const shapeRow = ({ key, videoRef, shapeDetail, classes }: any) => {
+    const { color } = shapeDetail.object;
+    const title = `Circle ${key}`;
     const timeBarRef: any = useRef(null);
 
     const [state, setState]: [any, any] = useState({

@@ -25,6 +25,7 @@ import {
 } from 'src/App/UserEvents';
 import { sendUserEvent } from 'src/App/UserEvents/UserEventManager';
 import { Rectangle } from './DrawnObjects/Rectangle';
+import { DrawnObjectDetail } from './DrawnObjectDetail';
 
 const videoId = window.location.pathname.split('/').pop();
 
@@ -704,6 +705,7 @@ export default class TelestrationManager {
     };
 
     clearTelestrations = function () {
+        this.clearAddedShapes();
         this.clearCursors();
         this.clearArrows();
         this.clearPolygons();
@@ -722,7 +724,9 @@ export default class TelestrationManager {
         this.cursors = [];
         this.linkedCursors = [];
     };
-
+    clearAddedShapes = function () {
+        this.addedShapes = [];
+    };
     clearArrows = function () {
         this.arrows.map((arr) => this.clearTelestration(arr));
         this.freehandArrows.map((farr) => this.clearTelestration(farr));
@@ -1153,7 +1157,7 @@ export default class TelestrationManager {
         this.draw();
     };
 
-    captureKeyFrame = function () {
+    captureKeyFrame = function (currentTime) {
         if (this.positionOverCanvas(this.mousePosition)) {
             let kf = new Cursor(
                 this,
@@ -1166,7 +1170,8 @@ export default class TelestrationManager {
             );
             kf.startOpenTimer(this.config.FADE_IN_TIME);
             this.cursors.push(kf);
-            this.addedShapes.push(kf);
+            const objectDetail = new DrawnObjectDetail(kf, currentTime);
+            this.addedShapes.push(objectDetail);
 
             this.actionManager.pushAction(ActionTypeEnum.PLACE_CURSOR);
             sendUserEvent(
@@ -1725,11 +1730,11 @@ export default class TelestrationManager {
     };
 
     // events
-    onclick = function (event) {
+    onclick = function (event, currentTime = 0) {
         this.captureCanvasMousePosition(event);
         switch (this.currentFunction) {
             case this.FUNCTION_ENUM.LIVE_MODE_PLACE_CURSOR:
-                this.captureKeyFrame();
+                this.captureKeyFrame(currentTime);
                 break;
             case this.FUNCTION_ENUM.CAPTURE_KEYFRAMES:
                 this.captureKeyFrame();

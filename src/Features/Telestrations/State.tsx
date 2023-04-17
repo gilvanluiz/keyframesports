@@ -17,7 +17,7 @@ import { startRecorder, stopRecorder } from './Utils/Recording';
 import TelestrationManager from './Model/TelestrationManager';
 import ArrowImg from './Assets/svg/keyframe_arrows_v2.svg';
 import CircleImg from './Assets/svg/keyframe_cursor_v3.svg';
-
+import { IVideoPause } from './Types';
 const TelestrationContext = React.createContext({});
 
 const modeToSvg = {
@@ -49,8 +49,9 @@ const CHANGE_TEXT_COLOR = 'telestrations/CHANGE_TEXT_COLOR';
 const CHANGE_TEXT_BACKGROUND_COLOR =
     'telestrations/CHANGE_TEXT_BACKGROUND_COLOR';
 const SAVE_TEXT_BOX = 'telestrations/SAVE_TEXT_BOX';
-
 const CLICK_VIDEO_BOX = 'telestrations/CLICK_VIDEO_BOX';
+const VIDEO_PLAY = 'telestrations/VIDEO_PLAY';
+const VIDEO_STOP = 'telestrations/VIDEO_STOP';
 
 // ACTION CREATORS
 
@@ -152,16 +153,96 @@ export const clickVideoBox = (e: any) => ({
     type: CLICK_VIDEO_BOX as 'telestrations/CLICK_VIDEO_BOX',
     event: e,
 });
+
+export const VideoPlayAction = () => ({
+    type: VIDEO_PLAY as 'telestrations/VIDEO_PLAY',
+});
+
+export const VideoStopAction = () => ({
+    type: VIDEO_STOP as 'telestrations/VIDEO_STOP',
+});
+
 // REDUCER
 
 type ITelestrationStateFn = (x: any) => ITelestrationState;
 
 type ReducerResult = ITelestrationState | ITelestrationStateFn;
+const calculateTotalTime = (state: ITelestrationState) => {
+    // start -> cacullate total video duration and all video paused time
 
+    state.totalVideoDuration = 0;
+    if (videoRef.current) {
+        state.totalVideoDuration += videoRef.current.duration;
+    }
+    if (state.telestrationManager.addedShapes.length > 0) {
+        const { videoPauseArray } = state;
+        let pauseD = 0;
+        state.videoPauseArray = [];
+
+        state.telestrationManager.addedShapes.forEach((addedShape: any) => {
+            const { videoPauseDuration } = addedShape;
+            const overState = {
+                startOvered: -1,
+                endOvered: -1,
+            };
+            videoPauseArray.forEach(
+                (videoPause: IVideoPause, index: number) => {
+                    if (
+                        videoPauseDuration.startTime >= videoPause.startTime &&
+                        videoPauseDuration.startTime <= videoPause.endTime
+                    ) {
+                        overState.startOvered = index;
+                    }
+                    if (
+                        videoPauseDuration.endTime >= videoPause.startTime &&
+                        videoPauseDuration.endTime <= videoPause.endTime
+                    ) {
+                        overState.endOvered = index;
+                    }
+                }
+            );
+
+            if (overState.startOvered !== -1 && overState.endOvered !== -1) {
+                // full overed
+            } else if (
+                overState.startOvered !== -1 &&
+                overState.endOvered === -1
+            ) {
+                // only start overed
+
+                pauseD +=
+                    videoPauseDuration.endTime -
+                    videoPauseArray[overState.startOvered].endTime;
+                videoPauseArray[overState.startOvered].endTime =
+                    videoPauseDuration.endTime;
+            } else if (
+                overState.startOvered !== -1 &&
+                overState.endOvered === -1
+            ) {
+                // only end overed
+                pauseD +=
+                    videoPauseArray[overState.startOvered].startTime -
+                    videoPauseDuration.startTime;
+
+                videoPauseArray[overState.startOvered].startTime =
+                    videoPauseDuration.startTime;
+            } else {
+                // no overed
+                pauseD +=
+                    videoPauseDuration.endTime - videoPauseDuration.startTime;
+
+                videoPauseArray.push(videoPauseDuration);
+            }
+        });
+        state.totalVideoDuration += pauseD;
+    }
+    // end -> cacullate total video duration and all video pausedtime
+};
 const telestrationReducer = (
     state: ITelestrationState,
     action: IAction
 ): ReducerResult => {
+    console.log(action);
     switch (action.type) {
         case SET_VIDEO_LOAD_ERROR: {
             const { message } = action;
@@ -183,8 +264,10 @@ const telestrationReducer = (
                 case 'default': {
                     state.telestrationManager.clearTelestrations();
                     state.telestrationManager.setLiveModeFunction();
+                    calculateTotalTime(state);
                     return {
-                        ...newState,
+                        ...state,
+                        editMode,
                         overlays: [],
                     };
                 }
@@ -193,6 +276,7 @@ const telestrationReducer = (
                     const overlayLens = Lens.fromProp<ITelestrationState>()(
                         'overlays'
                     );
+                    calculateTotalTime(state);
                     return overlayLens.modify((a) => dropEnd(1, a))(state);
                 }
                 case 'record': {
@@ -363,12 +447,33 @@ const telestrationReducer = (
             }
         }
         case SET_VIDEO_LOADED: {
+            if (videoRef.current) {
+                state.totalVideoDuration = videoRef.current.duration;
+            }
             return Lens.fromProp<ITelestrationState>()('videoLoading').set(
                 false
             )(state);
         }
         case CLICK_VIDEO_BOX: {
-            state.telestrationManager.onclick(action.event);
+            state.telestrationManager.onclick(
+                action.event,
+                videoRef.current?.currentTime
+            );
+            calculateTotalTime(state);
+            const newState = {
+                ...state,
+            };
+            return newState;
+        }
+        case VIDEO_PLAY: {
+            state.telestrationManager.setLiveModeFunction();
+            const newState = {
+                ...state,
+            };
+            return newState;
+        }
+        case VIDEO_STOP: {
+            state.telestrationManager.setLiveModeFunction();
             const newState = {
                 ...state,
             };
@@ -414,6 +519,8 @@ const initialTelestrationState = {
     telestrationManager: new TelestrationManager(),
     videoLoadError: 'no-errors',
     videoLoading: true,
+    videoPauseArray: [],
+    totalVideoDuration: 0,
 };
 
 export const TelestrationStateProvider = ({ children }: any) => {

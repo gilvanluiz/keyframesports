@@ -234,7 +234,11 @@ const telestrationControls = ({
     const toIconButton = (x: IIconButton) => {
         const onClick = () => {
             if (x.mode) {
-                if (x.mode === state.editMode && x.mode !== 'record') {
+                if (
+                    x.mode === state.editMode &&
+                    x.mode !== 'record' &&
+                    x.mode !== 'default'
+                ) {
                     changeMode('save_effect', true)();
                 } else {
                     changeMode(x.mode, true)();

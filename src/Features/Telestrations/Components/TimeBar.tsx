@@ -104,7 +104,6 @@ const secondDiv = (t: any) => {
             style={{
                 position: 'absolute',
                 left: `${left}px`,
-
                 display: 'flex',
                 flexDirection: 'column',
                 top: '-15px',
@@ -116,7 +115,13 @@ const secondDiv = (t: any) => {
         </div>
     );
 };
-const timeBar = ({ videoRef, updatePreview, classes }: any) => {
+
+const timeBar = ({
+    videoRef,
+    telestrationDuration,
+    updatePreview,
+    classes,
+}: any) => {
     const [progressState, setProgressState]: [any, any] = useState(0);
     const [timeArray, setTimeArray]: [[], any] = useState([]);
     const timeRef = useRef<HTMLDivElement>(null);
@@ -135,33 +140,33 @@ const timeBar = ({ videoRef, updatePreview, classes }: any) => {
         return undefined;
     };
 
-    const videoLoaded = () => {
-        const { current: video } = videoRef;
+    // const videoLoaded = () => {
+    //     const { current: video } = videoRef;
 
-        if (video) {
-            const onLoaded = () => {
-                const { duration } = video;
+    //     if (video) {
+    //         const onLoaded = () => {
+    //             const { duration } = video;
 
-                if (timeRef.current) {
-                    const totalwidth = timeRef.current.offsetWidth;
+    //             if (timeRef.current) {
+    //                 const totalwidth = timeRef.current.offsetWidth;
 
-                    const secondWidth = (totalwidth * 0.88 - 1) / duration;
-                    const secondArray = [];
-                    for (let i = 0; i < Math.floor(duration) + 1; i++) {
-                        secondArray.push({
-                            key: i,
-                            left: i * secondWidth,
-                            string: convertTime(i),
-                        });
-                    }
-                    setTimeArray(secondArray);
-                }
-            };
-            video.addEventListener('loadeddata', onLoaded);
-            return () => video.removeEventListener('loadeddata', onLoaded);
-        }
-        return undefined;
-    };
+    //                 const secondWidth = totalwidth / duration;
+    //                 const secondArray = [];
+    //                 for (let i = 0; i < Math.floor(duration) + 1; i++) {
+    //                     secondArray.push({
+    //                         key: i,
+    //                         left: i * secondWidth,
+    //                         string: convertTime(i),
+    //                     });
+    //                 }
+    //                 setTimeArray(secondArray);
+    //             }
+    //         };
+    //         video.addEventListener('loadeddata', onLoaded);
+    //         return () => video.removeEventListener('loadeddata', onLoaded);
+    //     }
+    //     return undefined;
+    // };
 
     const onChange = (event: any, value: number) => {
         const { current: video } = videoRef;
@@ -189,7 +194,26 @@ const timeBar = ({ videoRef, updatePreview, classes }: any) => {
     };
 
     useEffect(updatePercentFinished, []);
-    useEffect(videoLoaded, []);
+    // useEffect(videoLoaded, []);
+
+    useEffect(() => {
+        if (timeRef.current) {
+            const totalwidth = timeRef.current.offsetWidth;
+
+            const secondWidth = totalwidth / telestrationDuration;
+            const secondArray = [];
+
+            for (let i = 0; i < Math.floor(telestrationDuration) + 1; i++) {
+                secondArray.push({
+                    key: i,
+                    left: i * secondWidth,
+                    string: convertTime(i),
+                });
+            }
+            setTimeArray(secondArray);
+        }
+    }, [telestrationDuration]);
+
     return (
         <div
             className={classes.container}
@@ -210,6 +234,7 @@ const timeBar = ({ videoRef, updatePreview, classes }: any) => {
                 onChangeCommitted={onChangeCommitted}
                 onChange={onChange}
                 step={0.1}
+                ref={timeRef}
             ></TimeSlider>
             <div
                 style={{
@@ -221,7 +246,7 @@ const timeBar = ({ videoRef, updatePreview, classes }: any) => {
                     fontSize: '12px',
                     pointerEvents: 'none',
                 }}
-                ref={timeRef}
+                // ref={timeRef}
             >
                 {timeArray && timeArray.map(secondDiv)}
             </div>
