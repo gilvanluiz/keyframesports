@@ -124,7 +124,13 @@ const timeBar = ({
 }: any) => {
     const [progressState, setProgressState]: [any, any] = useState(0);
     const [timeArray, setTimeArray]: [[], any] = useState([]);
+    const [timebarWidth, setTimebarWidth]: [number, any] = useState(0);
+
     const timeRef = useRef<HTMLDivElement>(null);
+    useEffect(() => {
+        setTimebarWidth(timeRef.current?.offsetWidth);
+        console.log(timebarWidth);
+    }, []);
 
     const updatePercentFinished = () => {
         const { current: video } = videoRef;
@@ -139,34 +145,6 @@ const timeBar = ({
         }
         return undefined;
     };
-
-    // const videoLoaded = () => {
-    //     const { current: video } = videoRef;
-
-    //     if (video) {
-    //         const onLoaded = () => {
-    //             const { duration } = video;
-
-    //             if (timeRef.current) {
-    //                 const totalwidth = timeRef.current.offsetWidth;
-
-    //                 const secondWidth = totalwidth / duration;
-    //                 const secondArray = [];
-    //                 for (let i = 0; i < Math.floor(duration) + 1; i++) {
-    //                     secondArray.push({
-    //                         key: i,
-    //                         left: i * secondWidth,
-    //                         string: convertTime(i),
-    //                     });
-    //                 }
-    //                 setTimeArray(secondArray);
-    //             }
-    //         };
-    //         video.addEventListener('loadeddata', onLoaded);
-    //         return () => video.removeEventListener('loadeddata', onLoaded);
-    //     }
-    //     return undefined;
-    // };
 
     const onChange = (event: any, value: number) => {
         const { current: video } = videoRef;
@@ -194,7 +172,6 @@ const timeBar = ({
     };
 
     useEffect(updatePercentFinished, []);
-    // useEffect(videoLoaded, []);
 
     useEffect(() => {
         if (timeRef.current) {
