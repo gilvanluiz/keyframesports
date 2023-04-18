@@ -52,6 +52,8 @@ const SAVE_TEXT_BOX = 'telestrations/SAVE_TEXT_BOX';
 const CLICK_VIDEO_BOX = 'telestrations/CLICK_VIDEO_BOX';
 const VIDEO_PLAY = 'telestrations/VIDEO_PLAY';
 const VIDEO_STOP = 'telestrations/VIDEO_STOP';
+const RELATIVE_CURRENT_TIME_CHANGE =
+    'telestrations/RELATIVE_CURRENT_TIME_CHANGE';
 
 // ACTION CREATORS
 
@@ -162,6 +164,11 @@ export const VideoStopAction = () => ({
     type: VIDEO_STOP as 'telestrations/VIDEO_STOP',
 });
 
+export const RelativeCurrentTimeChangeAction = (t: number) => ({
+    type: RELATIVE_CURRENT_TIME_CHANGE as 'telestrations/RELATIVE_CURRENT_TIME_CHANGE',
+    time: t,
+});
+
 // REDUCER
 
 type ITelestrationStateFn = (x: any) => ITelestrationState;
@@ -175,17 +182,20 @@ const calculateTotalTime = (state: ITelestrationState) => {
     if (videoRef.current) {
         state.totalVideoDuration += videoRef.current.duration;
     }
+
     if (state.telestrationManager.addedShapes.length > 0) {
         let pauseD = 0;
         state.videoPauseArray = [];
 
         state.telestrationManager.addedShapes.forEach((addedShape: any) => {
             const { videoPauseDuration } = addedShape;
+
             const overState = {
                 startOvered: -1,
                 endOvered: -1,
                 covered: [] as any,
             };
+
             state.videoPauseArray.forEach(
                 (videoPause: IVideoPause, index: number) => {
                     if (
@@ -209,11 +219,14 @@ const calculateTotalTime = (state: ITelestrationState) => {
                     }
                 }
             );
+
             if (overState.covered.length > 0) {
+                console.log('covered object:>>>', overState.covered);
                 overState.covered.forEach((c: number, i: number) => {
                     state.videoPauseArray.splice(c - i, 1);
                 });
             }
+
             if (overState.startOvered !== -1 && overState.endOvered !== -1) {
                 // full overed
                 console.log('full overed');
@@ -266,6 +279,7 @@ const calculateTotalTime = (state: ITelestrationState) => {
     }
     // end -> cacullate total video duration and all video pausedtime
 };
+
 const telestrationReducer = (
     state: ITelestrationState,
     action: IAction
@@ -483,18 +497,19 @@ const telestrationReducer = (
             )(state);
         }
         case CLICK_VIDEO_BOX: {
-            calculateTotalTime(state);
-
             state.telestrationManager.onclick(
                 action.event,
-                videoRef.current?.currentTime
+                state.relativeCurrentVideoTime
             );
+
+            calculateTotalTime(state);
 
             console.log(
                 'addedshapesarray>>>>>>>',
                 state.telestrationManager.addedShapes
             );
             console.log('pausetimearray>>>>>', state.videoPauseArray);
+
             const newState = {
                 ...state,
             };
@@ -511,6 +526,14 @@ const telestrationReducer = (
             state.telestrationManager.setLiveModeFunction();
             const newState = {
                 ...state,
+            };
+            return newState;
+        }
+        case RELATIVE_CURRENT_TIME_CHANGE: {
+            console.log('relative video time changed:>>>', action.time);
+            const newState = {
+                ...state,
+                relativeCurrentVideoTime: action.time,
             };
             return newState;
         }
