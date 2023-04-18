@@ -33,10 +33,23 @@ const styles = (theme: ITheme) => ({
     },
 });
 
-const shapeRow = ({ key, videoRef, shapeDetail, classes }: any) => {
+const shapeRow = ({
+    key,
+    title,
+    shapeDetail,
+    totalVideoDuration,
+    classes,
+}: any) => {
     const { color } = shapeDetail.object;
-    const title = `Circle ${key}`;
+
+    const { videoPauseDuration } = shapeDetail;
+
     const timeBarRef: any = useRef(null);
+    const [secondWidth, setSecondWidth]: [number, any] = useState(100);
+
+    useEffect(() => {
+        setSecondWidth(timeBarRef.current.offsetWidth / totalVideoDuration);
+    }, [totalVideoDuration]);
 
     const [state, setState]: [any, any] = useState({
         margin: {
@@ -123,8 +136,11 @@ const shapeRow = ({ key, videoRef, shapeDetail, classes }: any) => {
         display: 'flex',
     };
     const stopTimeStyle = {
-        marginLeft: '60px',
-        width: '300px',
+        marginLeft: `${videoPauseDuration.startTime * secondWidth}px`,
+        width: `${
+            (videoPauseDuration.endTime - videoPauseDuration.startTime) *
+            secondWidth
+        }px`,
         background:
             'linear-gradient(90deg, rgba(158,158,158,1) 50%, rgba(123,123,123,1) 50%)',
         backgroundSize: '10px',

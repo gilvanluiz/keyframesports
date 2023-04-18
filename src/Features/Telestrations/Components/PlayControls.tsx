@@ -212,25 +212,6 @@ export const playControls = ({
     //     }
     // }, []);
 
-    // const videoLoaded = () => {
-    //     const { current: video } = videoRef;
-    //     if (video) {
-    //         const onLoaded = () => {
-    //             const { duration } = video;
-    //             setVideoDuration(duration);
-    //         };
-    //         video.addEventListener('loadeddata', onLoaded);
-    //         return () => video.removeEventListener('loadeddata', onLoaded);
-    //     }
-    //     return undefined;
-    // };
-
-    // useEffect(videoLoaded, []);
-
-    useEffect(() => {
-        console.log('total duration:', state.totalVideoDuration);
-    }, [state.totalVideoDuration]);
-
     return (
         <div
             className={classes.container}
@@ -276,9 +257,10 @@ export const playControls = ({
                     {state.telestrationManager.addedShapes.map(
                         (shape: any, index: number) => (
                             <ShapeRow
-                                key={index + 1}
-                                videoRef={videoRef}
+                                key={index}
+                                title={`Circle ${index + 1}`}
                                 shapeDetail={shape}
+                                totalVideoDuration={state.totalVideoDuration}
                             />
                         )
                     )}

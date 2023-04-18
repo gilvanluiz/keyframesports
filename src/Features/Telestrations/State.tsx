@@ -167,6 +167,7 @@ export const VideoStopAction = () => ({
 type ITelestrationStateFn = (x: any) => ITelestrationState;
 
 type ReducerResult = ITelestrationState | ITelestrationStateFn;
+
 const calculateTotalTime = (state: ITelestrationState) => {
     // start -> cacullate total video duration and all video paused time
 
@@ -175,7 +176,6 @@ const calculateTotalTime = (state: ITelestrationState) => {
         state.totalVideoDuration += videoRef.current.duration;
     }
     if (state.telestrationManager.addedShapes.length > 0) {
-        const { videoPauseArray } = state;
         let pauseD = 0;
         state.videoPauseArray = [];
 
@@ -184,8 +184,9 @@ const calculateTotalTime = (state: ITelestrationState) => {
             const overState = {
                 startOvered: -1,
                 endOvered: -1,
+                covered: [] as any,
             };
-            videoPauseArray.forEach(
+            state.videoPauseArray.forEach(
                 (videoPause: IVideoPause, index: number) => {
                     if (
                         videoPauseDuration.startTime >= videoPause.startTime &&
@@ -199,39 +200,66 @@ const calculateTotalTime = (state: ITelestrationState) => {
                     ) {
                         overState.endOvered = index;
                     }
+
+                    if (
+                        videoPauseDuration.startTime < videoPause.startTime &&
+                        videoPauseDuration.endTime > videoPause.endTime
+                    ) {
+                        overState.covered.push(index);
+                    }
                 }
             );
-
+            if (overState.covered.length > 0) {
+                overState.covered.forEach((c: number, i: number) => {
+                    state.videoPauseArray.splice(c - i, 1);
+                });
+            }
             if (overState.startOvered !== -1 && overState.endOvered !== -1) {
                 // full overed
+                console.log('full overed');
+                if (overState.startOvered !== overState.endOvered) {
+                    pauseD +=
+                        state.videoPauseArray[overState.endOvered].startTime -
+                        state.videoPauseArray[overState.startOvered].endTime;
+
+                    state.videoPauseArray[overState.startOvered].endTime =
+                        state.videoPauseArray[overState.endOvered].endTime;
+
+                    state.videoPauseArray.splice(overState.endOvered, 1);
+                }
             } else if (
                 overState.startOvered !== -1 &&
                 overState.endOvered === -1
             ) {
                 // only start overed
-
+                console.log('only start overed');
                 pauseD +=
                     videoPauseDuration.endTime -
-                    videoPauseArray[overState.startOvered].endTime;
-                videoPauseArray[overState.startOvered].endTime =
+                    state.videoPauseArray[overState.startOvered].endTime;
+                state.videoPauseArray[overState.startOvered].endTime =
                     videoPauseDuration.endTime;
             } else if (
                 overState.startOvered !== -1 &&
                 overState.endOvered === -1
             ) {
                 // only end overed
+                console.log('only end overed');
                 pauseD +=
-                    videoPauseArray[overState.startOvered].startTime -
+                    state.videoPauseArray[overState.startOvered].startTime -
                     videoPauseDuration.startTime;
 
-                videoPauseArray[overState.startOvered].startTime =
+                state.videoPauseArray[overState.startOvered].startTime =
                     videoPauseDuration.startTime;
             } else {
                 // no overed
+                console.log('no overed');
                 pauseD +=
                     videoPauseDuration.endTime - videoPauseDuration.startTime;
 
-                videoPauseArray.push(videoPauseDuration);
+                state.videoPauseArray.push({ ...videoPauseDuration });
+                state.videoPauseArray.sort((x, y) => {
+                    return x.startTime - y.startTime;
+                });
             }
         });
         state.totalVideoDuration += pauseD;
@@ -455,11 +483,18 @@ const telestrationReducer = (
             )(state);
         }
         case CLICK_VIDEO_BOX: {
+            calculateTotalTime(state);
+
             state.telestrationManager.onclick(
                 action.event,
                 videoRef.current?.currentTime
             );
-            calculateTotalTime(state);
+
+            console.log(
+                'addedshapesarray>>>>>>>',
+                state.telestrationManager.addedShapes
+            );
+            console.log('pausetimearray>>>>>', state.videoPauseArray);
             const newState = {
                 ...state,
             };
@@ -521,6 +556,7 @@ const initialTelestrationState = {
     videoLoading: true,
     videoPauseArray: [],
     totalVideoDuration: 0,
+    relativeCurrentVideoTime: 0,
 };
 
 export const TelestrationStateProvider = ({ children }: any) => {
