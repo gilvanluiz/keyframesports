@@ -89,6 +89,7 @@ const styles = (theme: ITheme) => ({
         },
     },
 });
+
 const convertTime = (second: number) => {
     if (!second) {
         return '0';
@@ -121,16 +122,29 @@ const timeBar = ({
     telestrationDuration,
     updatePreview,
     classes,
+    relativeCurrentVideoTime,
+    updateRelativeVideoTime,
 }: any) => {
     const [progressState, setProgressState]: [any, any] = useState(0);
-    const [timeArray, setTimeArray]: [[], any] = useState([]);
     const [timebarWidth, setTimebarWidth]: [number, any] = useState(0);
+    const [timeArray, setTimeArray]: [[], any] = useState([]);
 
     const timeRef = useRef<HTMLDivElement>(null);
     useEffect(() => {
-        setTimebarWidth(timeRef.current?.offsetWidth);
-        console.log(timebarWidth);
+        const resizeHandler = () => {
+            setTimebarWidth(timeRef.current?.offsetWidth);
+            console.log(timebarWidth);
+        };
+        window.addEventListener('resize', resizeHandler);
+        return () => window.removeEventListener('resize', resizeHandler);
     }, []);
+    const getRelativeTime = () => {
+        return (telestrationDuration * progressState) / 100;
+    };
+
+    const getPercentage = () => {
+        return (relativeCurrentVideoTime / telestrationDuration) * 100;
+    };
 
     const updatePercentFinished = () => {
         const { current: video } = videoRef;
@@ -169,11 +183,13 @@ const timeBar = ({
             setProgressState(value);
             updatePreview(time);
         }
+        updateRelativeVideoTime(getRelativeTime());
     };
 
     useEffect(updatePercentFinished, []);
 
     useEffect(() => {
+        console.log('changed the telestrationduration');
         if (timeRef.current) {
             const totalwidth = timeRef.current.offsetWidth;
 
@@ -189,6 +205,8 @@ const timeBar = ({
             }
             setTimeArray(secondArray);
         }
+
+        setProgressState(getPercentage);
     }, [telestrationDuration]);
 
     return (
@@ -220,7 +238,7 @@ const timeBar = ({
                     width: '88%',
                     left: '12%',
                     backgroundColor: 'red',
-                    fontSize: '12px',
+                    fontSize: '8px',
                     pointerEvents: 'none',
                 }}
                 // ref={timeRef}

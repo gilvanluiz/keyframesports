@@ -5,7 +5,10 @@ import { withStyles, Theme } from '@material-ui/core/styles';
 import { compose } from 'fp-ts/lib/function';
 // import { SoundBar } from './SoundBar';
 import { ProgressBar } from './ProgressBar';
-import { withTelestrationState } from '../State';
+import {
+    RelativeCurrentTimeChangeAction,
+    withTelestrationState,
+} from '../State';
 import { ITelestrationStateMgr } from '../Types';
 import { TimeBar } from './TimeBar';
 import { ShapeRow } from './ShapeRow';
@@ -71,19 +74,20 @@ export const playControls = ({
     classes,
     videoRef,
     videoTitle,
-    state,
+    // state,
     telestrationStateMgr,
 }: IPlayControlProps) => {
     const [volumeState, setVolumeState]: [any, any] = useState({
         previous: 1,
         current: 1,
     });
-
+    const { state, dispatchAction } = telestrationStateMgr;
     const [popover, setPopover]: [any, any] = useState(null);
     // const [pauseVideoDuration, setPauseVideoDuration]: [number, any] = useState(
     // 0
     // );
     // const [videoDuration, setVideoDuration]: [number, any] = useState(0);
+
     const handlePopoverClose = () => {
         setPopover(null);
     };
@@ -101,7 +105,9 @@ export const playControls = ({
             video.volume = currentVolume;
         }
     };
-
+    const updateRelativeVideoTime = (time: number) => {
+        dispatchAction(RelativeCurrentTimeChangeAction(time));
+    };
     const keyDownHandler = useCallback(
         (event: any) => {
             const { code } = event;
@@ -240,6 +246,8 @@ export const playControls = ({
                     videoRef={videoRef}
                     telestrationDuration={state.totalVideoDuration}
                     updatePreview={updatePreview}
+                    relativeCurrentVideoTime={state.relativeCurrentVideoTime}
+                    updateRelativeVideoTime={updateRelativeVideoTime}
                 />
                 <div
                     style={{
