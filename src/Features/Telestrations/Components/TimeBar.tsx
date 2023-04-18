@@ -240,6 +240,7 @@ const timeBar = ({
                     backgroundColor: 'red',
                     fontSize: '8px',
                     pointerEvents: 'none',
+                    top: '30px',
                 }}
                 // ref={timeRef}
             >
