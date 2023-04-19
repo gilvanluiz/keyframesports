@@ -17,7 +17,8 @@ import {
     // VolumeUp as VolumnUpIcon,
     ZoomIn,
 } from '@material-ui/icons';
-import { useState } from 'react';
+
+import { useEffect, useState } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 
 const VideoSlider = withStyles({
@@ -166,24 +167,11 @@ const progressBar = ({
     relativeCurrentVideoTime,
     totalVideoDuration,
     videoPauseArray,
+    totalTimeTrackStoped,
+    VideoPlayCallback,
 }: any) => {
     const [progressState, setProgressState]: [any, any] = useState(0);
     // const [volumnState, setVolumeState]: [any, any] = useState('volumoff');
-
-    // const updatePercentFinished = () => {
-    //     const { current: video } = videoRef;
-    //     if (video) {
-    //         const onTick = () => {
-    //             const { duration, currentTime } = video;
-
-    //             const percentFinished = (currentTime / duration) * 100;
-    //             return setProgressState(percentFinished);
-    //         };
-    //         video.addEventListener('timeupdate', onTick);
-    //         return () => video.removeEventListener('timeupdate', onTick);
-    //     }
-    //     return undefined;
-    // };
 
     const onChange = (event: any, value: number) => {
         const { current: video } = videoRef;
@@ -213,13 +201,16 @@ const progressBar = ({
 
     const play = () => {
         const { current: video } = videoRef;
-
         if (video) {
-            return video.paused ? video.play() : video.pause();
+            VideoPlayCallback(!totalTimeTrackStoped);
+            // return video.paused ? video.play() : video.pause();
         }
     };
 
-    // useEffect(updatePercentFinished, []);
+    useEffect(() => {
+        setProgressState((relativeCurrentVideoTime / totalVideoDuration) * 100);
+    }, [relativeCurrentVideoTime]);
+
     return (
         <div
             className={classes.container}

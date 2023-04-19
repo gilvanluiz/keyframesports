@@ -134,6 +134,7 @@ const timeBar = ({
     const [timeArray, setTimeArray]: [[], any] = useState([]);
 
     const timeRef = useRef<HTMLDivElement>(null);
+
     useEffect(() => {
         const resizeHandler = () => {
             setTimebarWidth(timeRef.current?.offsetWidth);
@@ -142,20 +143,6 @@ const timeBar = ({
         window.addEventListener('resize', resizeHandler);
         return () => window.removeEventListener('resize', resizeHandler);
     }, []);
-
-    const updatePercentFinished = () => {
-        const { current: video } = videoRef;
-        if (video) {
-            const onTick = () => {
-                const { duration, currentTime } = video;
-                const percentFinished = (currentTime / duration) * 100;
-                return setProgressState(percentFinished);
-            };
-            video.addEventListener('timeupdate', onTick);
-            return () => video.removeEventListener('timeupdate', onTick);
-        }
-        return undefined;
-    };
 
     const onChange = (event: any, value: number) => {
         const { current: video } = videoRef;
@@ -185,7 +172,9 @@ const timeBar = ({
         );
     };
 
-    useEffect(updatePercentFinished, []);
+    useEffect(() => {
+        setProgressState((relativeCurrentVideoTime / totalVideoDuration) * 100);
+    }, [relativeCurrentVideoTime]);
 
     useEffect(() => {
         console.log('changed the totalVideoDuration');
@@ -224,7 +213,7 @@ const timeBar = ({
             }}
         >
             <div style={{ width: '12%', paddingLeft: '10px' }}>
-                <VideoTime videoRef={videoRef} />
+                <VideoTime videoRef={videoRef} relativeCurrentVideoTime />
             </div>
 
             <TimeSlider

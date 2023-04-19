@@ -7,6 +7,8 @@ import { compose } from 'fp-ts/lib/function';
 import { ProgressBar } from './ProgressBar';
 import {
     RelativeCurrentTimeChangeAction,
+    VideoPlayAction,
+    VideoStopAction,
     withTelestrationState,
 } from '../State';
 import { ITelestrationStateMgr } from '../Types';
@@ -82,6 +84,14 @@ export const playControls = ({
         current: 1,
     });
     const { state, dispatchAction } = telestrationStateMgr;
+
+    const {
+        relativeCurrentVideoTime,
+        totalVideoDuration,
+        videoPauseArray,
+        totalTimeTrackStoped,
+    } = state;
+
     const [popover, setPopover]: [any, any] = useState(null);
     // const [pauseVideoDuration, setPauseVideoDuration]: [number, any] = useState(
     // 0
@@ -217,7 +227,12 @@ export const playControls = ({
     //         return undefined;
     //     }
     // }, []);
-
+    const videoPlayCallback = (stop: boolean) => {
+        if (stop) {
+            dispatchAction(VideoStopAction());
+        }
+        dispatchAction(VideoPlayAction());
+    };
     return (
         <div
             className={classes.container}
@@ -241,15 +256,17 @@ export const playControls = ({
                 <ProgressBar
                     videoRef={videoRef}
                     updatePreview={updatePreview}
-                    relativeCurrentVideoTime={state.relativeCurrentVideoTime}
-                    totalVideoDuration={state.totalVideoDuration}
-                    videoPauseArray={state.videoPauseArray}
+                    relativeCurrentVideoTime={relativeCurrentVideoTime}
+                    totalVideoDuration={totalVideoDuration}
+                    videoPauseArray={videoPauseArray}
+                    totalTimeTrackStoped={totalTimeTrackStoped}
+                    VideoPlayCallback={videoPlayCallback}
                 />
                 <TimeBar
                     videoRef={videoRef}
-                    totalVideoDuration={state.totalVideoDuration}
+                    totalVideoDuration={totalVideoDuration}
                     updatePreview={updatePreview}
-                    relativeCurrentVideoTime={state.relativeCurrentVideoTime}
+                    relativeCurrentVideoTime={relativeCurrentVideoTime}
                     updateRelativeVideoTime={updateRelativeVideoTime}
                 />
                 <div

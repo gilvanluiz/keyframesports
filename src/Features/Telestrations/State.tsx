@@ -526,6 +526,7 @@ const telestrationReducer = (
             state.telestrationManager.setLiveModeFunction();
             const newState = {
                 ...state,
+                totalTimeTrackStoped: false,
             };
             return newState;
         }
@@ -533,6 +534,7 @@ const telestrationReducer = (
             state.telestrationManager.setLiveModeFunction();
             const newState = {
                 ...state,
+                totalTimeTrackStoped: true,
             };
             return newState;
         }
@@ -556,7 +558,7 @@ const telestrationReducer = (
 
             const newState = {
                 ...state,
-                // relativeCurrentVideoTime,
+                relativeCurrentVideoTime,
             };
 
             return newState;
