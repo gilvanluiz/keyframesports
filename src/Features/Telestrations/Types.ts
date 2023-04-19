@@ -120,6 +120,7 @@ export interface ITelestrationState {
     videoPauseArray: IVideoPause[];
     totalVideoDuration: number;
     relativeCurrentVideoTime: number;
+    totalTimeTrackStoped: boolean;
 }
 
 // ACTIONS
@@ -260,6 +261,10 @@ export interface IRelativeCurrentTimeChangeAction {
     type: 'telestrations/RELATIVE_CURRENT_TIME_CHANGE';
     time: number;
 }
+export interface IVideoTickAction {
+    type: 'telestrations/VIDEI_TIME_ACTION';
+    time: number;
+}
 
 export type ISetDragStateAction =
     | ISetDragStateStartAction
@@ -290,8 +295,8 @@ export type IAction =
     | IClickVideoBoxAction
     | IVideoPlayAction
     | IVideoStopAction
-    | IRelativeCurrentTimeChangeAction;
-
+    | IRelativeCurrentTimeChangeAction
+    | IVideoTickAction;
 export type IShape = 'none' | 'circle' | 'arrow';
 
 export interface ITelestrationStateMgr {

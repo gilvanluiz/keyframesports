@@ -18,6 +18,7 @@ import TelestrationManager from './Model/TelestrationManager';
 import ArrowImg from './Assets/svg/keyframe_arrows_v2.svg';
 import CircleImg from './Assets/svg/keyframe_cursor_v3.svg';
 import { IVideoPause } from './Types';
+import { getRelativeTime } from './Utils/CalculateTime';
 const TelestrationContext = React.createContext({});
 
 const modeToSvg = {
@@ -55,6 +56,7 @@ const VIDEO_STOP = 'telestrations/VIDEO_STOP';
 const RELATIVE_CURRENT_TIME_CHANGE =
     'telestrations/RELATIVE_CURRENT_TIME_CHANGE';
 
+const VIDEI_TIME_ACTION = 'telestrations/VIDEI_TIME_ACTION';
 // ACTION CREATORS
 
 export const setModeAction = (
@@ -166,6 +168,11 @@ export const VideoStopAction = () => ({
 
 export const RelativeCurrentTimeChangeAction = (t: number) => ({
     type: RELATIVE_CURRENT_TIME_CHANGE as 'telestrations/RELATIVE_CURRENT_TIME_CHANGE',
+    time: t,
+});
+
+export const VideoTickAction = (t: number) => ({
+    type: VIDEI_TIME_ACTION as 'telestrations/VIDEI_TIME_ACTION',
     time: t,
 });
 
@@ -537,6 +544,23 @@ const telestrationReducer = (
             };
             return newState;
         }
+        case VIDEI_TIME_ACTION: {
+            console.log('absolute vdieotime update>>>>>>>', action.time);
+            const { videoPauseArray } = state;
+
+            const relativeCurrentVideoTime = getRelativeTime(
+                action.time,
+                videoPauseArray
+            );
+            console.log(relativeCurrentVideoTime);
+
+            const newState = {
+                ...state,
+                // relativeCurrentVideoTime,
+            };
+
+            return newState;
+        }
         default: {
             throw Error(`Action not found`);
         }
@@ -580,6 +604,7 @@ const initialTelestrationState = {
     videoPauseArray: [],
     totalVideoDuration: 0,
     relativeCurrentVideoTime: 0,
+    totalTimeTrackStoped: true,
 };
 
 export const TelestrationStateProvider = ({ children }: any) => {

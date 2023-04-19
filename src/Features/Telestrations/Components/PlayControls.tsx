@@ -241,10 +241,13 @@ export const playControls = ({
                 <ProgressBar
                     videoRef={videoRef}
                     updatePreview={updatePreview}
+                    relativeCurrentVideoTime={state.relativeCurrentVideoTime}
+                    totalVideoDuration={state.totalVideoDuration}
+                    videoPauseArray={state.videoPauseArray}
                 />
                 <TimeBar
                     videoRef={videoRef}
-                    telestrationDuration={state.totalVideoDuration}
+                    totalVideoDuration={state.totalVideoDuration}
                     updatePreview={updatePreview}
                     relativeCurrentVideoTime={state.relativeCurrentVideoTime}
                     updateRelativeVideoTime={updateRelativeVideoTime}

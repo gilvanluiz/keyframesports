@@ -22,6 +22,7 @@ import {
     clickVideoBox,
     VideoPlayAction,
     VideoStopAction,
+    VideoTickAction,
 } from '../State';
 import { ILocalStateMgr, withLocalState } from '../../../App/LocalState';
 import { ITelestrationStateMgr } from '../Types';
@@ -242,6 +243,9 @@ const editVideo = ({
     };
     const { videoSize } = state;
 
+    const videoTickListener = (time: number) => {
+        dispatchAction(VideoTickAction(time));
+    };
     return (
         <Box
             className={classes.container}
@@ -272,6 +276,7 @@ const editVideo = ({
                         dispatchAction(setVideoLoadError(message))
                     }
                     handleVideoLoad={handleVideoLoad}
+                    videoTickListener={videoTickListener}
                 />
                 <RecordingCanvas
                     animationCanvasRef={animationCanvasRef}
