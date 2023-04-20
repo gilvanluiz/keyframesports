@@ -7,13 +7,15 @@ import {
     Divider,
 } from '@material-ui/core';
 
-// import { compose } from 'fp-ts/lib/function';
-// import {
-//     // RelativeCurrentTimeChangeAction,
-//     // VideoPlayAction,
-//     // VideoStopAction,
-//     withTelestrationState,
-// } from '../State';
+import { compose } from 'fp-ts/lib/function';
+import {
+    VideoPlayAction,
+    VideoStopAction,
+    // RelativeCurrentTimeChangeAction,
+    // VideoPlayAction,
+    // VideoStopAction,
+    withTelestrationState,
+} from '../State';
 
 import {
     PlayArrow as PlayArrowIcon,
@@ -29,6 +31,7 @@ import {
 
 import { useEffect, useState } from 'react';
 import { withStyles } from '@material-ui/core/styles';
+import { ITelestrationStateMgr } from '../Types';
 
 const VideoSlider = withStyles({
     root: {
@@ -169,21 +172,26 @@ const styles = (theme: ITheme) => ({
     },
 });
 
-// interface IProgressBarProps {
-//     videoRef : React.RefObject<HTMLVideoElement>,
-//     classes : any,
-// }
+interface IProgressBarProps {
+    videoRef: React.RefObject<HTMLVideoElement>;
+    classes: any;
+    telestrationStateMgr: ITelestrationStateMgr;
+}
 
 const progressBar = ({
     videoRef,
-    updatePreview,
     classes,
-    relativeCurrentVideoTime,
-    totalVideoDuration,
-    videoPauseArray,
-    totalTimeTrackStoped,
-    VideoPlayCallback,
-}: any) => {
+    telestrationStateMgr,
+}: IProgressBarProps) => {
+    const { state, dispatchAction } = telestrationStateMgr;
+
+    const {
+        relativeCurrentVideoTime,
+        totalVideoDuration,
+        // videoPauseArray,
+        // totalTimeTrackStoped,
+    } = state;
+
     const [progressState, setProgressState]: [any, any] = useState(0);
     // const [volumnState, setVolumeState]: [any, any] = useState('volumoff');
 
@@ -213,10 +221,32 @@ const progressBar = ({
         }
     };
 
+    const updatePreview = async (time: number) => {
+        const { current: video } = videoRef;
+
+        if (video && video.paused) {
+            const currentVolume = video.volume;
+            // Turn off volume for update preview without sound.
+            video.volume = 0;
+            await video.play();
+            await video.pause();
+            video.currentTime = time;
+            video.volume = currentVolume;
+        }
+    };
+
     const play = () => {
         const { current: video } = videoRef;
         if (video) {
-            VideoPlayCallback(!totalTimeTrackStoped);
+            dispatchAction(VideoPlayAction());
+            // return video.paused ? video.play() : video.pause();
+        }
+    };
+
+    const stop = () => {
+        const { current: video } = videoRef;
+        if (video) {
+            dispatchAction(VideoStopAction());
             // return video.paused ? video.play() : video.pause();
         }
     };
@@ -239,7 +269,7 @@ const progressBar = ({
                 {videoRef.current?.paused ? (
                     <PlayArrowIcon fontSize='inherit' onClick={play} />
                 ) : (
-                    <PauseIcon fontSize='inherit' onClick={play} />
+                    <PauseIcon fontSize='inherit' onClick={stop} />
                 )}
                 <RewindIcon fontSize='inherit' />
                 <ForwardIcon fontSize='inherit' />
@@ -295,4 +325,7 @@ const progressBar = ({
     );
 };
 
-export const ProgressBar = withStyles(styles)(progressBar);
+export const ProgressBar = compose(
+    withTelestrationState,
+    withStyles(styles)
+)(progressBar);
