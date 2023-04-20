@@ -547,14 +547,14 @@ const telestrationReducer = (
             return newState;
         }
         case VIDEI_TIME_ACTION: {
-            console.log('absolute vdieotime update>>>>>>>', action.time);
+            // console.log('absolute vdieotime update>>>>>>>', action.time);
             const { videoPauseArray } = state;
 
             const relativeCurrentVideoTime = getRelativeTime(
                 action.time,
                 videoPauseArray
             );
-            console.log(relativeCurrentVideoTime);
+            // console.log(relativeCurrentVideoTime);
 
             const newState = {
                 ...state,

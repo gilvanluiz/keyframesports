@@ -6,6 +6,15 @@ import {
     Theme as ITheme,
     Divider,
 } from '@material-ui/core';
+
+// import { compose } from 'fp-ts/lib/function';
+// import {
+//     // RelativeCurrentTimeChangeAction,
+//     // VideoPlayAction,
+//     // VideoStopAction,
+//     withTelestrationState,
+// } from '../State';
+
 import {
     PlayArrow as PlayArrowIcon,
     Pause as PauseIcon,
@@ -159,6 +168,11 @@ const styles = (theme: ITheme) => ({
         },
     },
 });
+
+// interface IProgressBarProps {
+//     videoRef : React.RefObject<HTMLVideoElement>,
+//     classes : any,
+// }
 
 const progressBar = ({
     videoRef,

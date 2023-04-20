@@ -20,8 +20,8 @@ import {
     setVideoLoadError,
     setVideoLoaded,
     clickVideoBox,
-    VideoPlayAction,
-    VideoStopAction,
+    // VideoPlayAction,
+    // VideoStopAction,
     VideoTickAction,
 } from '../State';
 import { ILocalStateMgr, withLocalState } from '../../../App/LocalState';
@@ -31,8 +31,8 @@ import { RecordingCanvas } from './RecordCanvas';
 import { PureVideo } from './PureVideo';
 import { PlayControls } from './PlayControls';
 import { TelestrationControls } from './TelestrationControls';
-import { telestrationMounted } from 'src/App/UserEvents';
-import { sendUserEvent } from 'src/App/UserEvents/UserEventManager';
+// import { telestrationMounted } from 'src/App/UserEvents';
+// import { sendUserEvent } from 'src/App/UserEvents/UserEventManager';
 
 const styles = (theme: ITheme) => ({
     container: {
@@ -85,7 +85,10 @@ const editVideo = ({
 }: IProps) => {
     // const [previousMode, setPreviousMode] = useState<EditMode>('default');
     const { state, dispatchAction } = telestrationStateMgr;
-
+    const {
+        // relativeCurrentVideoTime,
+        totalTimeTrackStoped,
+    } = state;
     const { state: localState } = localStateMgr;
 
     const {
@@ -154,7 +157,7 @@ const editVideo = ({
         if (current) {
             const setDefaultMode = () => {
                 // setPreviousMode(state.editMode);
-                dispatchAction(VideoPlayAction());
+                // dispatchAction(VideoPlayAction());
             };
             current.addEventListener('play', setDefaultMode);
             return () => current.removeEventListener('play', setDefaultMode);
@@ -167,8 +170,10 @@ const editVideo = ({
         const { current } = videoRef;
 
         if (current) {
-            const previousModeListener = () =>
-                dispatchAction(VideoStopAction());
+            const previousModeListener = () => {
+                // dispatchAction(VideoStopAction());
+            };
+
             current.addEventListener('pause', previousModeListener);
             return () =>
                 current.removeEventListener('pause', previousModeListener);
@@ -177,28 +182,28 @@ const editVideo = ({
         return undefined;
     };
 
-    const clearTelestrationOnExit = () => {
-        dispatchAction(setModeAction('default'));
-        // necessary for playing video on iPad
-        if (videoRef.current) {
-            const playPromise = videoRef.current.play();
-            if (playPromise !== undefined) {
-                playPromise.then((_) => {
-                    if (videoRef.current) {
-                        videoRef.current.pause();
-                        videoRef.current.muted = false;
-                    }
-                });
-            }
-        }
-        sendUserEvent(telestrationMounted, window.location.href, videoID);
-    };
+    // const clearTelestrationOnExit = () => {
+    //     dispatchAction(setModeAction('default'));
+    //     // necessary for playing video on iPad
+    //     if (videoRef.current) {
+    //         const playPromise = videoRef.current.play();
+    //         if (playPromise !== undefined) {
+    //             playPromise.then((_) => {
+    //                 if (videoRef.current) {
+    //                     videoRef.current.pause();
+    //                     videoRef.current.muted = false;
+    //                 }
+    //             });
+    //         }
+    //     }
+    //     sendUserEvent(telestrationMounted, window.location.href, videoID);
+    // };
 
     // Set canvas size
     useEffect(draw);
     useEffect(setVideoPlayListener);
     useEffect(setVideoPauseListener);
-    useEffect(clearTelestrationOnExit, []);
+    // useEffect(clearTelestrationOnExit, []);
 
     const modeToClasses = {
         circle: classes.mouseCircle,
@@ -246,6 +251,14 @@ const editVideo = ({
     const videoTickListener = (time: number) => {
         dispatchAction(VideoTickAction(time));
     };
+
+    useEffect(() => {
+        const { current: video } = videoRef;
+        if (video) {
+            totalTimeTrackStoped ? video.pause() : video.play();
+        }
+    }, [totalTimeTrackStoped]);
+
     return (
         <Box
             className={classes.container}

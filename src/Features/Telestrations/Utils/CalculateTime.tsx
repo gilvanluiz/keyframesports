@@ -4,7 +4,6 @@ export const getRelativeTime = (
     currentVideoTime: number,
     videoPauseArray: IVideoPause[]
 ) => {
-    console.log(videoPauseArray);
     let before = 0;
     let vT = 0;
     let i = 0;
