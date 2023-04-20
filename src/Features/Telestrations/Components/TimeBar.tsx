@@ -13,6 +13,12 @@ import {
     getRelativeTimeFromPercentage,
     getPercentageFromRelativeTime,
 } from '../Utils/CalculateTime';
+import {
+    RelativeCurrentTimeChangeAction,
+    withTelestrationState,
+} from '../State';
+import { compose } from 'fp-ts/lib/function';
+import { ITelestrationStateMgr } from '../Types';
 
 const TimeSlider = withStyles({
     root: {
@@ -121,14 +127,15 @@ const secondDiv = (t: any) => {
     );
 };
 
-const timeBar = ({
-    videoRef,
-    totalVideoDuration,
-    updatePreview,
-    classes,
-    relativeCurrentVideoTime,
-    updateRelativeVideoTime,
-}: any) => {
+interface ITimeBarProps {
+    telestrationStateMgr: ITelestrationStateMgr;
+    classes: any;
+}
+const timeBar = ({ classes, telestrationStateMgr }: ITimeBarProps) => {
+    const { state, dispatchAction } = telestrationStateMgr;
+
+    const { totalVideoDuration, relativeCurrentVideoTime, recording } = state;
+    const { videoRef } = recording;
     const [progressState, setProgressState]: [any, any] = useState(0);
     const [timebarWidth, setTimebarWidth]: [number, any] = useState(0);
     const [timeArray, setTimeArray]: [[], any] = useState([]);
@@ -172,6 +179,23 @@ const timeBar = ({
         );
     };
 
+    const updatePreview = async (time: number) => {
+        const { current: video } = videoRef;
+
+        if (video && video.paused) {
+            const currentVolume = video.volume;
+            // Turn off volume for update preview without sound.
+            video.volume = 0;
+            await video.play();
+            await video.pause();
+            video.currentTime = time;
+            video.volume = currentVolume;
+        }
+    };
+
+    const updateRelativeVideoTime = (time: number) => {
+        dispatchAction(RelativeCurrentTimeChangeAction(time));
+    };
     useEffect(() => {
         setProgressState((relativeCurrentVideoTime / totalVideoDuration) * 100);
     }, [relativeCurrentVideoTime]);
@@ -243,4 +267,7 @@ const timeBar = ({
     );
 };
 
-export const TimeBar = withStyles(styles)(timeBar);
+export const TimeBar = compose(
+    withTelestrationState,
+    withStyles(styles)
+)(timeBar);

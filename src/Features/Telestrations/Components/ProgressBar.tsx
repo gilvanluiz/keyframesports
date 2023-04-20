@@ -173,16 +173,11 @@ const styles = (theme: ITheme) => ({
 });
 
 interface IProgressBarProps {
-    videoRef: React.RefObject<HTMLVideoElement>;
     classes: any;
     telestrationStateMgr: ITelestrationStateMgr;
 }
 
-const progressBar = ({
-    videoRef,
-    classes,
-    telestrationStateMgr,
-}: IProgressBarProps) => {
+const progressBar = ({ classes, telestrationStateMgr }: IProgressBarProps) => {
     const { state, dispatchAction } = telestrationStateMgr;
 
     const {
@@ -190,7 +185,10 @@ const progressBar = ({
         totalVideoDuration,
         // videoPauseArray,
         // totalTimeTrackStoped,
+        recording,
     } = state;
+
+    const { videoRef } = recording;
 
     const [progressState, setProgressState]: [any, any] = useState(0);
     // const [volumnState, setVolumeState]: [any, any] = useState('volumoff');

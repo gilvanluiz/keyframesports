@@ -5,12 +5,7 @@ import { withStyles, Theme } from '@material-ui/core/styles';
 import { compose } from 'fp-ts/lib/function';
 // import { SoundBar } from './SoundBar';
 import { ProgressBar } from './ProgressBar';
-import {
-    RelativeCurrentTimeChangeAction,
-    VideoPlayAction,
-    VideoStopAction,
-    withTelestrationState,
-} from '../State';
+import { withTelestrationState } from '../State';
 import { ITelestrationStateMgr } from '../Types';
 import { TimeBar } from './TimeBar';
 import { ShapeRow } from './ShapeRow';
@@ -66,31 +61,23 @@ const styles = (theme: Theme) => ({
 
 interface IPlayControlProps {
     classes: any;
-    videoRef: React.RefObject<HTMLVideoElement>;
     videoTitle: string;
-    state: any;
+
     telestrationStateMgr: ITelestrationStateMgr;
 }
 
 export const playControls = ({
     classes,
-    videoRef,
     videoTitle,
-    // state,
     telestrationStateMgr,
 }: IPlayControlProps) => {
     const [volumeState, setVolumeState]: [any, any] = useState({
         previous: 1,
         current: 1,
     });
-    const { state, dispatchAction } = telestrationStateMgr;
-
-    const {
-        relativeCurrentVideoTime,
-        totalVideoDuration,
-        videoPauseArray,
-        totalTimeTrackStoped,
-    } = state;
+    const { state } = telestrationStateMgr;
+    const { recording } = state;
+    const { videoRef } = recording;
 
     const [popover, setPopover]: [any, any] = useState(null);
     // const [pauseVideoDuration, setPauseVideoDuration]: [number, any] = useState(
@@ -115,9 +102,7 @@ export const playControls = ({
             video.volume = currentVolume;
         }
     };
-    const updateRelativeVideoTime = (time: number) => {
-        dispatchAction(RelativeCurrentTimeChangeAction(time));
-    };
+
     const keyDownHandler = useCallback(
         (event: any) => {
             const { code } = event;
@@ -204,6 +189,7 @@ export const playControls = ({
 
         return () => document.removeEventListener('keydown', keyDownHandler);
     };
+
     const rowRef = useRef<HTMLDivElement>(null);
     useEffect(controlsListener, [volumeState]);
 
@@ -227,12 +213,7 @@ export const playControls = ({
     //         return undefined;
     //     }
     // }, []);
-    const videoPlayCallback = (stop: boolean) => {
-        if (stop) {
-            dispatchAction(VideoStopAction());
-        }
-        dispatchAction(VideoPlayAction());
-    };
+
     return (
         <div
             className={classes.container}
@@ -253,22 +234,9 @@ export const playControls = ({
                     // padding: '0px 70px 25px 0px',
                 }}
             >
-                <ProgressBar
-                    videoRef={videoRef}
-                    updatePreview={updatePreview}
-                    relativeCurrentVideoTime={relativeCurrentVideoTime}
-                    totalVideoDuration={totalVideoDuration}
-                    videoPauseArray={videoPauseArray}
-                    totalTimeTrackStoped={totalTimeTrackStoped}
-                    VideoPlayCallback={videoPlayCallback}
-                />
-                <TimeBar
-                    videoRef={videoRef}
-                    totalVideoDuration={totalVideoDuration}
-                    updatePreview={updatePreview}
-                    relativeCurrentVideoTime={relativeCurrentVideoTime}
-                    updateRelativeVideoTime={updateRelativeVideoTime}
-                />
+                <ProgressBar />
+                <TimeBar />
+
                 <div
                     style={{
                         overflowX: 'auto',
