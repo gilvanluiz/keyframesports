@@ -1,125 +1,217 @@
 import * as React from 'react';
+import { compose } from 'fp-ts/lib/function';
 import { Theme as ITheme } from '@material-ui/core';
-import { useEffect, useState, useRef } from 'react';
+import { useRef } from 'react';
 import { withStyles } from '@material-ui/core/styles';
+import { ITelestrationStateMgr } from '../Types';
+import {
+    ChangeObjectDurationAction,
+    IChangeObjectVideoStopDurationAction,
+    withTelestrationState,
+} from '../State';
+import { Slider } from '@material-ui/core';
+import {
+    getPercentageFromTeleTime,
+    getTeleTimeFromPercentage,
+} from '../Utils/CalculateTime';
 
 const styles = (theme: ITheme) => ({
     container: {
         display: 'flex',
     },
-    controlButtons: {
-        minWidth: '70px',
-        maxWidth: '70px',
-        textAlign: 'center' as 'center',
-    },
-    timeBar: {
+    shapeBar: {
         width: '87.8%',
         height: '25px',
         background: '#C4C4C4',
         left: '0.2%',
     },
-    resizble: {
-        height: '25px',
-        justifyContent: 'space-between',
-    },
-    resizer: {
-        backgroundColor: 'white',
-        border: 'solid 1px black',
-        borderRadius: '10px',
-        cursor: 'col-resize',
-        width: '10px',
-        height: '10px',
-        alignSelf: 'center',
-    },
-});
 
+    // resizble: {
+    //     height: '25px',
+    //     justifyContent: 'space-between',
+    // },
+    // resizer: {
+    //     backgroundColor: 'white',
+    //     border: 'solid 1px black',
+    //     borderRadius: '10px',
+    //     cursor: 'col-resize',
+    //     width: '10px',
+    //     height: '10px',
+    //     alignSelf: 'center',
+    // },
+});
+const PauseSlider = withStyles({
+    root: {
+        height: '25px',
+        padding: '0px',
+        position: 'absolute',
+    },
+    track: {
+        height: '25px',
+        background:
+            'linear-gradient(90deg, rgba(158,158,158,1) 50%, rgba(123,123,123,1) 50%)',
+        backgroundSize: '10px',
+        backgroundRepeatX: 'repeat',
+    },
+    rail: {
+        opacity: 0,
+        height: '25px',
+    },
+})(Slider);
+
+const ShapeSlider = withStyles({
+    root: {
+        height: '25px',
+        padding: '0px',
+        position: 'absolute',
+        pointerEvents: 'none',
+    },
+    track: {
+        height: '25px',
+        background: 'red',
+        pointerEvents: 'all',
+    },
+    rail: {
+        opacity: 0,
+        height: '25px',
+    },
+})(Slider);
+
+const Thumb = (props: any) => {
+    const style = {
+        ...props.style,
+        marginLeft: '0px',
+        marginRight: '0px',
+        display: 'flex',
+        flexDirection: 'column',
+        width: 'auto',
+        height: 'auto',
+        top: '50%',
+        transform: 'translateX(-50%)',
+        // boxShadow: '#ebebeb 0 2px 2px',
+        pointerEvents: 'all',
+        '&:focus, &:hover, &$active': {
+            boxShadow: '#ccc 0 2px 3px 1px',
+        },
+    };
+
+    return (
+        <div {...props} style={style}>
+            <div
+                style={{
+                    backgroundColor: '#fff',
+                    minWidth: '10px',
+                    minHeight: '10px',
+                    borderRadius: '10px',
+                }}
+            />
+        </div>
+    );
+};
+
+interface IShapeRowProps {
+    key: number;
+    title: string;
+    shapeDetail: any;
+    telestrationStateMgr: ITelestrationStateMgr;
+    classes: any;
+}
 const shapeRow = ({
     key,
     title,
     shapeDetail,
-    totalVideoDuration,
+    telestrationStateMgr,
     classes,
-}: any) => {
+}: IShapeRowProps) => {
+    const { state, dispatchAction } = telestrationStateMgr;
+
+    const { totalTelestrationDuration } = state;
+    const { videoPauseDuration, objectDuration } = shapeDetail;
     const { color } = shapeDetail.object;
+    console.log(videoPauseDuration, totalTelestrationDuration);
+    const pauseArray = [
+        getPercentageFromTeleTime(
+            videoPauseDuration.startTime,
+            totalTelestrationDuration
+        ),
+        getPercentageFromTeleTime(
+            videoPauseDuration.endTime,
+            totalTelestrationDuration
+        ),
+    ];
 
-    const { videoPauseDuration } = shapeDetail;
+    const stopArray = [
+        getPercentageFromTeleTime(
+            objectDuration.startTime,
+            totalTelestrationDuration
+        ),
+        getPercentageFromTeleTime(
+            objectDuration.endTime,
+            totalTelestrationDuration
+        ),
+    ];
 
-    const timeBarRef: any = useRef(null);
-    const [secondWidth, setSecondWidth]: [number, any] = useState(100);
+    const secondPercentage = 100 / totalTelestrationDuration;
+    // const { videoPauseDuration } = shapeDetail;
 
-    useEffect(() => {
-        setSecondWidth(timeBarRef.current.offsetWidth / totalVideoDuration);
-    }, [totalVideoDuration]);
+    const shapeBarRef: any = useRef(null);
 
-    const [state, setState]: [any, any] = useState({
-        margin: {
-            left: 50,
-            right: 50,
-        },
-    });
+    // const [secondWidth, setSecondWidth]: [number, any] = useState(100);
 
-    const handleMousedown = (e: any, side: any) => {
-        setState({ ...state, isResizing: true, side, lastDownX: e.clientX });
-    };
+    // useEffect(() => {
+    //     setSecondWidth(shapeBarRef.current.offsetWidth / totalTelestrationDuration);
+    // }, [totalTelestrationDuration]);
 
-    const handleMousemove = (e: any) => {
-        if (!state.isResizing) {
-            return;
+    // const [pauseArray, setPauseArray] = useState([20, 50]);
+    // const [shapeArray, setShapeArray] = useState([30, 40]);
+
+    const handlePauseChange = (
+        event: React.ChangeEvent<{}>,
+        newArray: number[]
+    ) => {
+        if (
+            newArray[0] < stopArray[0] - secondPercentage / 2 &&
+            newArray[1] > stopArray[1] + secondPercentage / 2
+        ) {
+            const timeArray = [
+                getTeleTimeFromPercentage(
+                    newArray[0],
+                    totalTelestrationDuration
+                ),
+                getTeleTimeFromPercentage(
+                    newArray[1],
+                    totalTelestrationDuration
+                ),
+            ];
+            dispatchAction(
+                IChangeObjectVideoStopDurationAction(shapeDetail, timeArray)
+            );
         }
+    };
 
-        const margin = {
-            right: state.margin.right,
-            left: state.margin.left,
-        };
-
-        if (state.side === 'left') {
-            margin.left =
-                e.clientX < state.lastDownX
-                    ? margin.left - (state.lastDownX - e.clientX)
-                    : e.clientX > state.lastDownX
-                    ? margin.left + (e.clientX - state.lastDownX)
-                    : margin.left;
-
-            if (
-                margin.left < 0 ||
-                margin.left > timeBarRef.current.offsetWidth - margin.right - 50
-            ) {
-                return;
-            }
-        } else if (state.side === 'right') {
-            margin.right =
-                e.clientX > state.lastDownX
-                    ? margin.right + (state.lastDownX - e.clientX)
-                    : e.clientX < state.lastDownX
-                    ? margin.right - (e.clientX - state.lastDownX)
-                    : margin.right;
-            if (
-                margin.right < 0 ||
-                margin.right > timeBarRef.current.offsetWidth - margin.left - 50
-            ) {
-                return;
-            }
+    const handleShapeChange = (
+        event: React.ChangeEvent<{}>,
+        newArray: number[]
+    ) => {
+        if (
+            newArray[0] > pauseArray[0] + secondPercentage / 2 &&
+            newArray[1] < pauseArray[1] - secondPercentage / 2 &&
+            newArray[1] - newArray[0] > secondPercentage
+        ) {
+            const timeArray = [
+                getTeleTimeFromPercentage(
+                    newArray[0],
+                    totalTelestrationDuration
+                ),
+                getTeleTimeFromPercentage(
+                    newArray[1],
+                    totalTelestrationDuration
+                ),
+            ];
+            dispatchAction(ChangeObjectDurationAction(shapeDetail, timeArray));
         }
-
-        setState({ ...state, margin, lastDownX: e.clientX });
     };
 
-    const handleMouseup = (e: any) => {
-        setState({ ...state, isResizing: false });
-    };
-
-    useEffect(() => {
-        const mousemove = (e: any) => handleMousemove(e);
-        const mouseup = (e: any) => handleMouseup(e);
-
-        document.addEventListener('mousemove', mousemove);
-        document.addEventListener('mouseup', mouseup);
-
-        return () => {
-            document.removeEventListener('mousemove', mousemove);
-            document.removeEventListener('mouseup', mouseup);
-        };
-    }, [state]);
     const rowTitleStyle = {
         width: '12%',
         height: '25px',
@@ -129,23 +221,7 @@ const shapeRow = ({
         alignItems: 'center',
         gap: '5px',
     };
-    const resizbleStyle = {
-        marginLeft: `${state.margin.left}px`,
-        marginRight: `${state.margin.right}px`,
-        backgroundColor: color,
-        display: 'flex',
-    };
-    const stopTimeStyle = {
-        marginLeft: `${videoPauseDuration.startTime * secondWidth}px`,
-        width: `${
-            (videoPauseDuration.endTime - videoPauseDuration.startTime) *
-            secondWidth
-        }px`,
-        background:
-            'linear-gradient(90deg, rgba(158,158,158,1) 50%, rgba(123,123,123,1) 50%)',
-        backgroundSize: '10px',
-        backgroundRepeatX: 'repeat',
-    };
+
     return (
         <div className={classes.container}>
             <div style={rowTitleStyle}>
@@ -158,34 +234,33 @@ const shapeRow = ({
                 ></div>
                 {title}
             </div>
+
             <div
-                ref={timeBarRef}
-                className={classes.timeBar}
+                ref={shapeBarRef}
+                className={classes.shapeBar}
                 style={{ position: 'relative' }}
             >
-                <div style={stopTimeStyle}>
-                    <div className={classes.resizble} style={resizbleStyle}>
-                        <div
-                            onMouseDown={(e) => handleMousedown(e, 'left')}
-                            className={classes.resizer}
-                            style={{
-                                left: '0px',
-                                transform: 'translateX(-50%)',
-                            }}
-                        />
-                        <div
-                            onMouseDown={(e) => handleMousedown(e, 'right')}
-                            className={classes.resizer}
-                            style={{
-                                right: '0px',
-                                transform: 'translateX(50%)',
-                            }}
-                        />
-                    </div>
-                </div>
+                <PauseSlider
+                    value={pauseArray}
+                    onChange={handlePauseChange}
+                    valueLabelDisplay='auto'
+                    ThumbComponent={Thumb}
+                    aria-labelledby='range-slider'
+                ></PauseSlider>
+
+                <ShapeSlider
+                    value={stopArray}
+                    onChange={handleShapeChange}
+                    valueLabelDisplay='auto'
+                    ThumbComponent={Thumb}
+                    aria-labelledby='range-slider'
+                />
             </div>
         </div>
     );
 };
 
-export const ShapeRow = withStyles(styles)(shapeRow);
+export const ShapeRow = compose(
+    withTelestrationState,
+    withStyles(styles)
+)(shapeRow);

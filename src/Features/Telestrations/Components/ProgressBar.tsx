@@ -181,8 +181,8 @@ const progressBar = ({ classes, telestrationStateMgr }: IProgressBarProps) => {
     const { state, dispatchAction } = telestrationStateMgr;
 
     const {
-        relativeCurrentVideoTime,
-        totalVideoDuration,
+        telestrationTime,
+        totalTelestrationDuration,
         // videoPauseArray,
         // totalTimeTrackStoped,
         recording,
@@ -250,8 +250,8 @@ const progressBar = ({ classes, telestrationStateMgr }: IProgressBarProps) => {
     };
 
     useEffect(() => {
-        setProgressState((relativeCurrentVideoTime / totalVideoDuration) * 100);
-    }, [relativeCurrentVideoTime]);
+        setProgressState((telestrationTime / totalTelestrationDuration) * 100);
+    }, [telestrationTime]);
 
     return (
         <div
@@ -313,7 +313,7 @@ const progressBar = ({ classes, telestrationStateMgr }: IProgressBarProps) => {
                         left: '10px',
                     }}
                 >
-                    {convertTime(totalVideoDuration)}
+                    {convertTime(totalTelestrationDuration)}
                 </div>
 
                 <ZoomSlider value={10} ThumbComponent={ThumbZoom} step={0.1} />

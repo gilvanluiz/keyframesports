@@ -2,7 +2,7 @@ import * as React from 'react';
 // import { useEffect, useState } from 'react';
 import { formatTime } from '../../../Utilities/Time';
 
-const VideoTime = ({ videoRef, relativeCurrentVideoTime }: any) => {
+const VideoTime = ({ videoRef, telestrationTime }: any) => {
     // const [videoTime, setVideoTime]: [any, any] = useState('0:0');
 
     // const updateTime = () => {
@@ -20,9 +20,7 @@ const VideoTime = ({ videoRef, relativeCurrentVideoTime }: any) => {
     // useEffect(updateTime, []);
 
     return (
-        <div style={{ fontWeight: 'bold' }}>
-            {formatTime(relativeCurrentVideoTime)}
-        </div>
+        <div style={{ fontWeight: 'bold' }}>{formatTime(telestrationTime)}</div>
     );
 };
 

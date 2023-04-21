@@ -86,7 +86,7 @@ const editVideo = ({
     // const [previousMode, setPreviousMode] = useState<EditMode>('default');
     const { state, dispatchAction } = telestrationStateMgr;
     const {
-        // relativeCurrentVideoTime,
+        // telestrationTime,
         totalTimeTrackStoped,
     } = state;
     const { state: localState } = localStateMgr;

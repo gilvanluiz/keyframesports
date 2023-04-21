@@ -8,8 +8,7 @@ import { ProgressBar } from './ProgressBar';
 import { withTelestrationState } from '../State';
 import { ITelestrationStateMgr } from '../Types';
 import { TimeBar } from './TimeBar';
-import { ShapeRow } from './ShapeRow';
-import { useRef } from 'react';
+import { ShapeRows } from './ShapeRows';
 
 const styles = (theme: Theme) => ({
     container: {
@@ -190,7 +189,6 @@ export const playControls = ({
         return () => document.removeEventListener('keydown', keyDownHandler);
     };
 
-    const rowRef = useRef<HTMLDivElement>(null);
     useEffect(controlsListener, [volumeState]);
 
     // const clickHandle = () => {
@@ -237,30 +235,7 @@ export const playControls = ({
                 <ProgressBar />
                 <TimeBar />
 
-                <div
-                    style={{
-                        overflowX: 'auto',
-                        height: '130px',
-                        scrollbarColor: '#aaaaaa',
-                        scrollbarWidth: '6px',
-                        scrollBehavior: 'auto',
-                        gap: '2px',
-                        display: 'flex',
-                        flexDirection: 'column',
-                    }}
-                    ref={rowRef}
-                >
-                    {state.telestrationManager.addedShapes.map(
-                        (shape: any, index: number) => (
-                            <ShapeRow
-                                key={index}
-                                title={`Circle ${index + 1}`}
-                                shapeDetail={shape}
-                                totalVideoDuration={state.totalVideoDuration}
-                            />
-                        )
-                    )}
-                </div>
+                <ShapeRows />
             </div>
             <Popover
                 id='mouse-over-popover'

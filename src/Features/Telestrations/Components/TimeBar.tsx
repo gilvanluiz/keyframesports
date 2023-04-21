@@ -11,7 +11,7 @@ import { withStyles } from '@material-ui/core/styles';
 import VideoTime from './VideoTime';
 import {
     getRelativeTimeFromPercentage,
-    getPercentageFromRelativeTime,
+    getPercentageFromTeleTime,
 } from '../Utils/CalculateTime';
 import {
     RelativeCurrentTimeChangeAction,
@@ -134,7 +134,7 @@ interface ITimeBarProps {
 const timeBar = ({ classes, telestrationStateMgr }: ITimeBarProps) => {
     const { state, dispatchAction } = telestrationStateMgr;
 
-    const { totalVideoDuration, relativeCurrentVideoTime, recording } = state;
+    const { totalTelestrationDuration, telestrationTime, recording } = state;
     const { videoRef } = recording;
     const [progressState, setProgressState]: [any, any] = useState(0);
     const [timebarWidth, setTimebarWidth]: [number, any] = useState(0);
@@ -175,7 +175,10 @@ const timeBar = ({ classes, telestrationStateMgr }: ITimeBarProps) => {
             updatePreview(time);
         }
         updateRelativeVideoTime(
-            getRelativeTimeFromPercentage(progressState, totalVideoDuration)
+            getRelativeTimeFromPercentage(
+                progressState,
+                totalTelestrationDuration
+            )
         );
     };
 
@@ -197,18 +200,22 @@ const timeBar = ({ classes, telestrationStateMgr }: ITimeBarProps) => {
         dispatchAction(RelativeCurrentTimeChangeAction(time));
     };
     useEffect(() => {
-        setProgressState((relativeCurrentVideoTime / totalVideoDuration) * 100);
-    }, [relativeCurrentVideoTime]);
+        setProgressState((telestrationTime / totalTelestrationDuration) * 100);
+    }, [telestrationTime]);
 
     useEffect(() => {
-        console.log('changed the totalVideoDuration');
+        console.log('changed the totalTelestrationDuration');
         if (timeRef.current) {
             const totalwidth = timeRef.current.offsetWidth;
 
-            const secondWidth = totalwidth / totalVideoDuration;
+            const secondWidth = totalwidth / totalTelestrationDuration;
             const secondArray = [];
 
-            for (let i = 0; i < Math.floor(totalVideoDuration) + 1; i++) {
+            for (
+                let i = 0;
+                i < Math.floor(totalTelestrationDuration) + 1;
+                i++
+            ) {
                 secondArray.push({
                     key: i,
                     left: i * secondWidth,
@@ -219,12 +226,12 @@ const timeBar = ({ classes, telestrationStateMgr }: ITimeBarProps) => {
         }
 
         setProgressState(
-            getPercentageFromRelativeTime(
-                relativeCurrentVideoTime,
-                totalVideoDuration
+            getPercentageFromTeleTime(
+                telestrationTime,
+                totalTelestrationDuration
             )
         );
-    }, [totalVideoDuration]);
+    }, [totalTelestrationDuration]);
 
     return (
         <div
@@ -237,7 +244,7 @@ const timeBar = ({ classes, telestrationStateMgr }: ITimeBarProps) => {
             }}
         >
             <div style={{ width: '12%', paddingLeft: '10px' }}>
-                <VideoTime videoRef={videoRef} relativeCurrentVideoTime />
+                <VideoTime videoRef={videoRef} telestrationTime />
             </div>
 
             <TimeSlider

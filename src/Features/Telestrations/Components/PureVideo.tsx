@@ -20,13 +20,13 @@ export class PureVideo extends React.Component<
         return false;
     }
     public onTick(e: Event): void {
-        const { videoRef, videoTickListener } = this.props;
-        const { current: video } = videoRef;
-        if (video) {
-            videoTickListener(video.currentTime);
-        } else {
-            console.error('video ref loose');
-        }
+        // const { videoRef, videoTickListener } = this.props;
+        // const { current: video } = videoRef;
+        // if (video) {
+        //     videoTickListener(video.currentTime);
+        // } else {
+        //     console.error('video ref loose');
+        // }
         // const { duration, currentTime } = video;
         // const percentFinished = (currentTime / duration) * 100;
         // return setProgressState(percentFinished);

@@ -118,8 +118,8 @@ export interface ITelestrationState {
     videoLoadError: string;
     videoLoading: boolean;
     videoPauseArray: IVideoPause[];
-    totalVideoDuration: number;
-    relativeCurrentVideoTime: number;
+    totalTelestrationDuration: number;
+    telestrationTime: number;
     totalTimeTrackStoped: boolean;
 }
 
@@ -266,6 +266,18 @@ export interface IVideoTickAction {
     time: number;
 }
 
+export interface IChangeObjectDurationAction {
+    type: 'telestrations/CHANGE_OBJECT_DURATION_ACTION';
+    object: any;
+    timeArray: number[];
+}
+
+export interface IChangeObjectVideoStopDurationAction {
+    type: 'telestrations/CHANGE_OBJECT_VIDEO_STOP_DURATION_ACTION';
+    object: any;
+    timeArray: number[];
+}
+
 export type ISetDragStateAction =
     | ISetDragStateStartAction
     | ISetDragStateEndAction;
@@ -296,7 +308,10 @@ export type IAction =
     | IVideoPlayAction
     | IVideoStopAction
     | IRelativeCurrentTimeChangeAction
-    | IVideoTickAction;
+    | IVideoTickAction
+    | IChangeObjectDurationAction
+    | IChangeObjectVideoStopDurationAction;
+
 export type IShape = 'none' | 'circle' | 'arrow';
 
 export interface ITelestrationStateMgr {
