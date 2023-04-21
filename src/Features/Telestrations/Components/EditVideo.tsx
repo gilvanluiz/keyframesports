@@ -20,9 +20,9 @@ import {
     setVideoLoadError,
     setVideoLoaded,
     clickVideoBox,
+    VideoTickAction,
     // VideoPlayAction,
     // VideoStopAction,
-    VideoTickAction,
 } from '../State';
 import { ILocalStateMgr, withLocalState } from '../../../App/LocalState';
 import { ITelestrationStateMgr } from '../Types';
@@ -87,7 +87,7 @@ const editVideo = ({
     const { state, dispatchAction } = telestrationStateMgr;
     const {
         // telestrationTime,
-        totalTimeTrackStoped,
+        telestrationTimeTrackStoped,
     } = state;
     const { state: localState } = localStateMgr;
 
@@ -255,9 +255,9 @@ const editVideo = ({
     useEffect(() => {
         const { current: video } = videoRef;
         if (video) {
-            totalTimeTrackStoped ? video.pause() : video.play();
+            telestrationTimeTrackStoped ? video.pause() : video.play();
         }
-    }, [totalTimeTrackStoped]);
+    }, [telestrationTimeTrackStoped]);
 
     return (
         <Box

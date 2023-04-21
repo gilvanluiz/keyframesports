@@ -120,7 +120,7 @@ export interface ITelestrationState {
     videoPauseArray: IVideoPause[];
     totalTelestrationDuration: number;
     telestrationTime: number;
-    totalTimeTrackStoped: boolean;
+    telestrationTimeTrackStoped: boolean;
 }
 
 // ACTIONS
@@ -249,12 +249,12 @@ export interface IClickVideoBoxAction {
     event: any;
 }
 
-export interface IVideoPlayAction {
-    type: 'telestrations/VIDEO_PLAY';
+export interface ITelestrationPlayAction {
+    type: 'telestrations/TELESTRATION_PLAY';
 }
 
-export interface IVideoStopAction {
-    type: 'telestrations/VIDEO_STOP';
+export interface ITelestrationStopAction {
+    type: 'telestrations/TELESTRATION_STOP';
 }
 
 export interface IRelativeCurrentTimeChangeAction {
@@ -305,8 +305,8 @@ export type IAction =
     | ISetVideoLoadErrorAction
     | ISetVideoLoadedAction
     | IClickVideoBoxAction
-    | IVideoPlayAction
-    | IVideoStopAction
+    | ITelestrationPlayAction
+    | ITelestrationStopAction
     | IRelativeCurrentTimeChangeAction
     | IVideoTickAction
     | IChangeObjectDurationAction

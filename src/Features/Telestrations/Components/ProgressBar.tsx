@@ -184,7 +184,7 @@ const progressBar = ({ classes, telestrationStateMgr }: IProgressBarProps) => {
         telestrationTime,
         totalTelestrationDuration,
         // videoPauseArray,
-        // totalTimeTrackStoped,
+        telestrationTimeTrackStoped,
         recording,
     } = state;
 
@@ -264,7 +264,7 @@ const progressBar = ({ classes, telestrationStateMgr }: IProgressBarProps) => {
             }}
         >
             <div className={classes.controluttons} style={{ display: 'flex' }}>
-                {videoRef.current?.paused ? (
+                {telestrationTimeTrackStoped ? (
                     <PlayArrowIcon fontSize='inherit' onClick={play} />
                 ) : (
                     <PauseIcon fontSize='inherit' onClick={stop} />

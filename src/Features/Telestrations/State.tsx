@@ -52,8 +52,8 @@ const CHANGE_TEXT_BACKGROUND_COLOR =
     'telestrations/CHANGE_TEXT_BACKGROUND_COLOR';
 const SAVE_TEXT_BOX = 'telestrations/SAVE_TEXT_BOX';
 const CLICK_VIDEO_BOX = 'telestrations/CLICK_VIDEO_BOX';
-const VIDEO_PLAY = 'telestrations/VIDEO_PLAY';
-const VIDEO_STOP = 'telestrations/VIDEO_STOP';
+const TELESTRATION_PLAY = 'telestrations/TELESTRATION_PLAY';
+const TELESTRATION_STOP = 'telestrations/TELESTRATION_STOP';
 const RELATIVE_CURRENT_TIME_CHANGE =
     'telestrations/RELATIVE_CURRENT_TIME_CHANGE';
 
@@ -166,11 +166,11 @@ export const clickVideoBox = (e: any) => ({
 });
 
 export const VideoPlayAction = () => ({
-    type: VIDEO_PLAY as 'telestrations/VIDEO_PLAY',
+    type: TELESTRATION_PLAY as 'telestrations/TELESTRATION_PLAY',
 });
 
 export const VideoStopAction = () => ({
-    type: VIDEO_STOP as 'telestrations/VIDEO_STOP',
+    type: TELESTRATION_STOP as 'telestrations/TELESTRATION_STOP',
 });
 
 export const RelativeCurrentTimeChangeAction = (time: number) => ({
@@ -442,19 +442,19 @@ const telestrationReducer = (
             };
             return newState;
         }
-        case VIDEO_PLAY: {
+        case TELESTRATION_PLAY: {
             state.telestrationManager.setLiveModeFunction();
             const newState = {
                 ...state,
-                totalTimeTrackStoped: false,
+                telestrationTimeTrackStoped: false,
             };
             return newState;
         }
-        case VIDEO_STOP: {
+        case TELESTRATION_STOP: {
             state.telestrationManager.setLiveModeFunction();
             const newState = {
                 ...state,
-                totalTimeTrackStoped: true,
+                telestrationTimeTrackStoped: true,
             };
             return newState;
         }
@@ -547,7 +547,7 @@ const initialTelestrationState = {
     videoPauseArray: [],
     totalTelestrationDuration: 0,
     telestrationTime: 0,
-    totalTimeTrackStoped: true,
+    telestrationTimeTrackStoped: true,
 };
 
 export const TelestrationStateProvider = ({ children }: any) => {
