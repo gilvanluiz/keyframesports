@@ -9,11 +9,11 @@ import {
 
 import { compose } from 'fp-ts/lib/function';
 import {
-    VideoPlayAction,
-    VideoStopAction,
+    TelestrationPlayAction,
+    TelestrationStopAction,
     // RelativeCurrentTimeChangeAction,
-    // VideoPlayAction,
-    // VideoStopAction,
+    // TelestrationPlayAction,
+    // TelestrationStopAction,
     withTelestrationState,
 } from '../State';
 
@@ -236,7 +236,7 @@ const progressBar = ({ classes, telestrationStateMgr }: IProgressBarProps) => {
     const play = () => {
         const { current: video } = videoRef;
         if (video) {
-            dispatchAction(VideoPlayAction());
+            dispatchAction(TelestrationPlayAction());
             // return video.paused ? video.play() : video.pause();
         }
     };
@@ -244,7 +244,7 @@ const progressBar = ({ classes, telestrationStateMgr }: IProgressBarProps) => {
     const stop = () => {
         const { current: video } = videoRef;
         if (video) {
-            dispatchAction(VideoStopAction());
+            dispatchAction(TelestrationStopAction());
             // return video.paused ? video.play() : video.pause();
         }
     };
@@ -281,7 +281,7 @@ const progressBar = ({ classes, telestrationStateMgr }: IProgressBarProps) => {
                 ThumbComponent={Thumb}
                 onChangeCommitted={onChangeCommitted}
                 onChange={onChange}
-                step={0.1}
+                step={100 / totalTelestrationDuration / 5}
             ></VideoSlider>
             <div
                 style={{

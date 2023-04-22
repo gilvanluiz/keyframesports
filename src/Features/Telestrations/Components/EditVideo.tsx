@@ -21,8 +21,8 @@ import {
     setVideoLoaded,
     clickVideoBox,
     VideoTickAction,
-    // VideoPlayAction,
-    // VideoStopAction,
+    // TelestrationPlayAction,
+    // TelestrationStopAction,
 } from '../State';
 import { ILocalStateMgr, withLocalState } from '../../../App/LocalState';
 import { ITelestrationStateMgr } from '../Types';
@@ -31,6 +31,7 @@ import { RecordingCanvas } from './RecordCanvas';
 import { PureVideo } from './PureVideo';
 import { PlayControls } from './PlayControls';
 import { TelestrationControls } from './TelestrationControls';
+import { isPuaseTime } from '../Utils/CalculateTime';
 // import { telestrationMounted } from 'src/App/UserEvents';
 // import { sendUserEvent } from 'src/App/UserEvents/UserEventManager';
 
@@ -85,13 +86,14 @@ const editVideo = ({
 }: IProps) => {
     // const [previousMode, setPreviousMode] = useState<EditMode>('default');
     const { state, dispatchAction } = telestrationStateMgr;
-    const {
-        // telestrationTime,
-        telestrationTimeTrackStoped,
-    } = state;
+    const [ticker, setTicker]: [0, any] = React.useState(0);
+
     const { state: localState } = localStateMgr;
 
     const {
+        telestrationTime,
+        videoPauseArray,
+        telestrationTimeTrackStoped,
         recording: {
             animationCanvasRef,
             cursorCanvasRef,
@@ -157,7 +159,7 @@ const editVideo = ({
         if (current) {
             const setDefaultMode = () => {
                 // setPreviousMode(state.editMode);
-                // dispatchAction(VideoPlayAction());
+                // dispatchAction(TelestrationPlayAction());
             };
             current.addEventListener('play', setDefaultMode);
             return () => current.removeEventListener('play', setDefaultMode);
@@ -171,7 +173,7 @@ const editVideo = ({
 
         if (current) {
             const previousModeListener = () => {
-                // dispatchAction(VideoStopAction());
+                // dispatchAction(TelestrationStopAction());
             };
 
             current.addEventListener('pause', previousModeListener);
@@ -249,13 +251,35 @@ const editVideo = ({
     const { videoSize } = state;
 
     const videoTickListener = (time: number) => {
-        dispatchAction(VideoTickAction(time));
+        // dispatchAction(VideoTickAction(time));
     };
+    const intervalRef = React.useRef<any>(null);
+
+    useEffect(() => {
+        if (intervalRef.current) {
+            clearInterval(intervalRef.current);
+        }
+        if (!telestrationTimeTrackStoped) {
+            intervalRef.current = setInterval(() => {
+                setTicker((t: number) => t + 200);
+            }, 200);
+        }
+    }, [telestrationTimeTrackStoped]);
+
+    useEffect(() => {
+        dispatchAction(VideoTickAction(ticker));
+    }, [ticker]);
 
     useEffect(() => {
         const { current: video } = videoRef;
         if (video) {
-            telestrationTimeTrackStoped ? video.pause() : video.play();
+            if (telestrationTimeTrackStoped) {
+                video.pause();
+            } else {
+                if (!isPuaseTime(telestrationTime, videoPauseArray)) {
+                    video.play();
+                }
+            }
         }
     }, [telestrationTimeTrackStoped]);
 

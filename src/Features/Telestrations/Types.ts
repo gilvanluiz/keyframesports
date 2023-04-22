@@ -277,7 +277,14 @@ export interface IChangeObjectVideoStopDurationAction {
     object: any;
     timeArray: number[];
 }
-
+export interface ITelestrationPercentateChangeAction {
+    type: 'telestrations/TELESTRATION_PERCENTAGE_CHANGE_ACTION';
+    percentage: number;
+}
+export interface ITelestrationPercentateCommittedAction {
+    type: 'telestrations/TELESTRATION_PERCENTAGE_COMMITTED_ACTION';
+    percentage: number;
+}
 export type ISetDragStateAction =
     | ISetDragStateStartAction
     | ISetDragStateEndAction;
@@ -310,7 +317,9 @@ export type IAction =
     | IRelativeCurrentTimeChangeAction
     | IVideoTickAction
     | IChangeObjectDurationAction
-    | IChangeObjectVideoStopDurationAction;
+    | IChangeObjectVideoStopDurationAction
+    | ITelestrationPercentateChangeAction
+    | ITelestrationPercentateCommittedAction;
 
 export type IShape = 'none' | 'circle' | 'arrow';
 

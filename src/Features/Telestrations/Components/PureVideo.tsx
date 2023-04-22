@@ -27,9 +27,6 @@ export class PureVideo extends React.Component<
         // } else {
         //     console.error('video ref loose');
         // }
-        // const { duration, currentTime } = video;
-        // const percentFinished = (currentTime / duration) * 100;
-        // return setProgressState(percentFinished);
     }
 
     public componentDidMount(): void {

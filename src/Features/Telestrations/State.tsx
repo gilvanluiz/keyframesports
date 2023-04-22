@@ -18,7 +18,14 @@ import TelestrationManager from './Model/TelestrationManager';
 import ArrowImg from './Assets/svg/keyframe_arrows_v2.svg';
 import CircleImg from './Assets/svg/keyframe_cursor_v3.svg';
 
-import { getRelativeTime, calculateTotalTime } from './Utils/CalculateTime';
+import {
+    calculateTotalTime,
+    getTeleTimeFromPercentage,
+    getTelestrationTimeFromPercentage,
+    getVideoTimeFromTelestrationTime,
+    isPuaseTime,
+} from './Utils/CalculateTime';
+import { updatePreview } from './Utils/VideoControl';
 
 const TelestrationContext = React.createContext({});
 
@@ -63,6 +70,12 @@ const CHANGE_OBJECT_DURATION_ACTION =
     'telestrations/CHANGE_OBJECT_DURATION_ACTION';
 const CHANGE_OBJECT_VIDEO_STOP_DURATION_ACTION =
     'telestrations/CHANGE_OBJECT_VIDEO_STOP_DURATION_ACTION';
+
+const TELESTRATION_PERCENTAGE_CHANGE_ACTION =
+    'telestrations/TELESTRATION_PERCENTAGE_CHANGE_ACTION';
+
+const TELESTRATION_PERCENTAGE_COMMITTED_ACTION =
+    'telestrations/TELESTRATION_PERCENTAGE_COMMITTED_ACTION';
 
 // ACTION CREATORS
 
@@ -165,11 +178,11 @@ export const clickVideoBox = (e: any) => ({
     event: e,
 });
 
-export const VideoPlayAction = () => ({
+export const TelestrationPlayAction = () => ({
     type: TELESTRATION_PLAY as 'telestrations/TELESTRATION_PLAY',
 });
 
-export const VideoStopAction = () => ({
+export const TelestrationStopAction = () => ({
     type: TELESTRATION_STOP as 'telestrations/TELESTRATION_STOP',
 });
 
@@ -201,6 +214,15 @@ export const IChangeObjectVideoStopDurationAction = (
     timeArray,
 });
 
+export const ITelestrationPercentateChangeAction = (percentage: number) => ({
+    type: TELESTRATION_PERCENTAGE_CHANGE_ACTION as 'telestrations/TELESTRATION_PERCENTAGE_CHANGE_ACTION',
+    percentage,
+});
+
+export const ITelestrationPercentateCommittedAction = (percentage: number) => ({
+    type: TELESTRATION_PERCENTAGE_COMMITTED_ACTION as 'telestrations/TELESTRATION_PERCENTAGE_COMMITTED_ACTION',
+    percentage,
+});
 // REDUCER
 
 type ITelestrationStateFn = (x: any) => ITelestrationState;
@@ -444,6 +466,7 @@ const telestrationReducer = (
         }
         case TELESTRATION_PLAY: {
             state.telestrationManager.setLiveModeFunction();
+
             const newState = {
                 ...state,
                 telestrationTimeTrackStoped: false,
@@ -467,16 +490,33 @@ const telestrationReducer = (
             return newState;
         }
         case VIDEI_TIME_ACTION: {
-            const { videoPauseArray } = state;
-
-            const telestrationTime = getRelativeTime(
-                action.time,
-                videoPauseArray
-            );
+            const {
+                videoPauseArray,
+                telestrationTime,
+                totalTelestrationDuration,
+            } = state;
+            const { current: video } = videoRef;
+            const newTelestrationTime = telestrationTime + 0.2;
+            if (newTelestrationTime >= totalTelestrationDuration) {
+                if (video) {
+                    video.pause();
+                    video.currentTime = 0;
+                    state.telestrationTimeTrackStoped = true;
+                    state.telestrationTime = 0;
+                }
+            } else {
+                if (isPuaseTime(newTelestrationTime, videoPauseArray)) {
+                    if (video && !video.paused) {
+                        video.pause();
+                    }
+                } else if (video && video.paused) {
+                    video.play();
+                }
+                state.telestrationTime = newTelestrationTime;
+            }
 
             const newState = {
                 ...state,
-                telestrationTime,
             };
 
             return newState;
@@ -503,7 +543,57 @@ const telestrationReducer = (
 
             return newState;
         }
+        case TELESTRATION_PERCENTAGE_CHANGE_ACTION: {
+            const { totalTelestrationDuration } = state;
+            const { current: video } = videoRef;
 
+            if (video) {
+                if (!video.paused) {
+                    video.pause();
+                    // needPlay = true;
+                }
+
+                // setTimeout(() => setProgressState(value), 0);
+            }
+            const telestrationTime = getTelestrationTimeFromPercentage(
+                action.percentage,
+                totalTelestrationDuration
+            );
+            const newState = {
+                ...state,
+                telestrationTime,
+            };
+            return newState;
+        }
+        case TELESTRATION_PERCENTAGE_COMMITTED_ACTION: {
+            const { totalTelestrationDuration, videoPauseArray } = state;
+            const { current: video } = videoRef;
+
+            const telestrationTime = getTeleTimeFromPercentage(
+                action.percentage,
+                totalTelestrationDuration
+            );
+
+            const videoTime = getVideoTimeFromTelestrationTime(
+                telestrationTime,
+                videoPauseArray
+            );
+
+            if (video) {
+                // if (needPlay) {
+                //     video.play();
+                //     needPlay = false;
+                // }
+                video.currentTime = videoTime;
+                updatePreview(videoTime, video);
+            }
+
+            const newState = {
+                ...state,
+                telestrationTime,
+            };
+            return newState;
+        }
         default: {
             throw Error(`Action not found`);
         }

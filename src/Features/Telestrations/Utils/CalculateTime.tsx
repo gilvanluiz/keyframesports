@@ -1,19 +1,15 @@
 import { ITelestrationState, IVideoPause } from '../Types';
 
-export const getRelativeTime = (
+export const getTelestrationTimeFromVideoTime = (
     currentVideoTime: number,
     videoPauseArray: IVideoPause[]
 ) => {
+    if (videoPauseArray.length === 0) {
+        return currentVideoTime;
+    }
     let before = 0;
     let vT = 0;
     let i = 0;
-    // for (i = 0; i < videoPauseArray.length; i++) {
-    //     if (vT + videoPauseArray[i].startTime - before >= currentVideoTime) {
-    //         break;
-    //     }
-    //     before = videoPauseArray[i].endTime;
-    //     vT += videoPauseArray[i].startTime - before;
-    // }
 
     while (
         i < videoPauseArray.length &&
@@ -27,7 +23,36 @@ export const getRelativeTime = (
     return before + currentVideoTime - vT;
 };
 
-export const getRelativeTimeFromPercentage = (
+export const getVideoTimeFromTelestrationTime = (
+    telestrationTime: number,
+    videoPauseArray: IVideoPause[]
+) => {
+    if (videoPauseArray.length === 0) {
+        return telestrationTime;
+    }
+    let tT = 0;
+    let i = 0;
+
+    while (
+        i < videoPauseArray.length &&
+        videoPauseArray[i].startTime <= telestrationTime
+    ) {
+        if (!i) {
+            tT += videoPauseArray[i].startTime;
+        } else {
+            tT += videoPauseArray[i].startTime - videoPauseArray[i - 1].endTime;
+        }
+        i++;
+    }
+    console.log(videoPauseArray);
+    if (videoPauseArray[i - 1].endTime < telestrationTime) {
+        tT += telestrationTime - videoPauseArray[i - 1].endTime;
+    }
+
+    return tT;
+};
+
+export const getTelestrationTimeFromPercentage = (
     progressState: number,
     totalTelestrationDuration: number
 ) => {
@@ -153,4 +178,24 @@ export const calculateTotalTime = (state: ITelestrationState) => {
     }
 
     // end -> cacullate total video duration and all video pausedtime
+};
+
+export const isPuaseTime = (
+    teleTime: number,
+    videoPauseArray: IVideoPause[]
+) => {
+    let isPause = false;
+    let i = 0;
+
+    while (i < videoPauseArray.length) {
+        if (
+            teleTime >= videoPauseArray[i].startTime &&
+            teleTime <= videoPauseArray[i].endTime
+        ) {
+            isPause = true;
+            break;
+        }
+        i++;
+    }
+    return isPause;
 };

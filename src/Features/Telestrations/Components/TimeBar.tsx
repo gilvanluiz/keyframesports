@@ -9,12 +9,10 @@ import {
 import { useEffect, useState, useRef } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import VideoTime from './VideoTime';
+import { getPercentageFromTeleTime } from '../Utils/CalculateTime';
 import {
-    getRelativeTimeFromPercentage,
-    getPercentageFromTeleTime,
-} from '../Utils/CalculateTime';
-import {
-    RelativeCurrentTimeChangeAction,
+    ITelestrationPercentateChangeAction,
+    ITelestrationPercentateCommittedAction,
     withTelestrationState,
 } from '../State';
 import { compose } from 'fp-ts/lib/function';
@@ -36,8 +34,6 @@ const TimeSlider = withStyles({
         background: 'black',
     },
 })(Slider);
-
-let needPlay = false;
 
 const useStyles = makeStyles((theme: ITheme) =>
     createStyles({
@@ -152,53 +148,56 @@ const timeBar = ({ classes, telestrationStateMgr }: ITimeBarProps) => {
     }, []);
 
     const onChange = (event: any, value: number) => {
-        const { current: video } = videoRef;
-        if (video) {
-            if (!video.paused) {
-                video.pause();
-                needPlay = true;
-            }
-            setTimeout(() => setProgressState(value), 0);
-        }
+        // const { current: video } = videoRef;
+        // if (video) {
+        //     if (!video.paused) {
+        //         video.pause();
+        //         needPlay = true;
+        //     }
+        //     setTimeout(() => setProgressState(value), 0);
+        // }
+        dispatchAction(ITelestrationPercentateChangeAction(value));
     };
 
     const onChangeCommitted = (event: any, value: number) => {
-        const { current: video } = videoRef;
-        if (video) {
-            if (needPlay) {
-                video.play();
-                needPlay = false;
-            }
-            const time = (video.duration * value) / 100;
-            video.currentTime = time;
-            setProgressState(value);
-            updatePreview(time);
-        }
-        updateRelativeVideoTime(
-            getRelativeTimeFromPercentage(
-                progressState,
-                totalTelestrationDuration
-            )
-        );
+        dispatchAction(ITelestrationPercentateCommittedAction(value));
+        // const { current: video } = videoRef;
+        // if (video) {
+        //     if (needPlay) {
+        //         video.play();
+        //         needPlay = false;
+        //     }
+        //     const time = (video.duration * value) / 100;
+        //     video.currentTime = time;
+        //     setProgressState(value);
+        //     updatePreview(time);
+        // }
+        // updateRelativeVideoTime(
+        //     getTelestrationTimeFromPercentage(
+        //         progressState,
+        //         totalTelestrationDuration
+        //     )
+        // );
     };
 
-    const updatePreview = async (time: number) => {
-        const { current: video } = videoRef;
+    // const updatePreview = async (time: number) => {
+    //     const { current: video } = videoRef;
 
-        if (video && video.paused) {
-            const currentVolume = video.volume;
-            // Turn off volume for update preview without sound.
-            video.volume = 0;
-            await video.play();
-            await video.pause();
-            video.currentTime = time;
-            video.volume = currentVolume;
-        }
-    };
+    //     if (video && video.paused) {
+    //         const currentVolume = video.volume;
+    //         // Turn off volume for update preview without sound.
+    //         video.volume = 0;
+    //         await video.play();
+    //         await video.pause();
+    //         video.currentTime = time;
+    //         video.volume = currentVolume;
+    //     }
+    // };
 
-    const updateRelativeVideoTime = (time: number) => {
-        dispatchAction(RelativeCurrentTimeChangeAction(time));
-    };
+    // const updateRelativeVideoTime = (time: number) => {
+    //     dispatchAction(RelativeCurrentTimeChangeAction(time));
+    // };
+
     useEffect(() => {
         setProgressState((telestrationTime / totalTelestrationDuration) * 100);
     }, [telestrationTime]);
@@ -252,8 +251,8 @@ const timeBar = ({ classes, telestrationStateMgr }: ITimeBarProps) => {
                 ThumbComponent={Thumb}
                 onChangeCommitted={onChangeCommitted}
                 onChange={onChange}
-                step={0.1}
                 ref={timeRef}
+                step={100 / totalTelestrationDuration / 5}
             ></TimeSlider>
             <div
                 style={{
