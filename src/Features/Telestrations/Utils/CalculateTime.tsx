@@ -44,8 +44,11 @@ export const getVideoTimeFromTelestrationTime = (
         }
         i++;
     }
-    console.log(videoPauseArray);
-    if (videoPauseArray[i - 1].endTime < telestrationTime) {
+    console.log(videoPauseArray, i);
+    if (
+        videoPauseArray[i - 1] &&
+        videoPauseArray[i - 1].endTime < telestrationTime
+    ) {
         tT += telestrationTime - videoPauseArray[i - 1].endTime;
     }
 

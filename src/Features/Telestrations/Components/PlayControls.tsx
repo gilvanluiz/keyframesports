@@ -5,7 +5,11 @@ import { withStyles, Theme } from '@material-ui/core/styles';
 import { compose } from 'fp-ts/lib/function';
 // import { SoundBar } from './SoundBar';
 import { ProgressBar } from './ProgressBar';
-import { withTelestrationState } from '../State';
+import {
+    TelestrationPlayAction,
+    TelestrationStopAction,
+    withTelestrationState,
+} from '../State';
 import { ITelestrationStateMgr } from '../Types';
 import { TimeBar } from './TimeBar';
 import { ShapeRows } from './ShapeRows';
@@ -74,7 +78,8 @@ export const playControls = ({
         previous: 1,
         current: 1,
     });
-    const { state } = telestrationStateMgr;
+    const { state, dispatchAction } = telestrationStateMgr;
+    const { telestrationTimeTrackStoped } = state;
     const { recording } = state;
     const { videoRef } = recording;
 
@@ -110,6 +115,7 @@ export const playControls = ({
             if (window['STOP_KEY_LISTENERS']) {
                 return false;
             }
+            console.log(code);
 
             if (video) {
                 switch (code) {
@@ -117,7 +123,12 @@ export const playControls = ({
                     case 'Space': {
                         event.preventDefault();
                         event.stopPropagation();
-                        return video.paused ? video.play() : video.pause();
+                        dispatchAction(
+                            telestrationTimeTrackStoped
+                                ? TelestrationPlayAction()
+                                : TelestrationStopAction()
+                        );
+                        break;
                     }
                     case 'Up':
                     case 'ArrowUp': {
@@ -185,7 +196,6 @@ export const playControls = ({
 
     const controlsListener = () => {
         document.addEventListener('keydown', keyDownHandler);
-
         return () => document.removeEventListener('keydown', keyDownHandler);
     };
 

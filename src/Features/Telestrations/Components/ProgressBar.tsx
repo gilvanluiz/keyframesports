@@ -9,6 +9,8 @@ import {
 
 import { compose } from 'fp-ts/lib/function';
 import {
+    ITelestrationPercentateChangeAction,
+    ITelestrationPercentateCommittedAction,
     TelestrationPlayAction,
     TelestrationStopAction,
     // RelativeCurrentTimeChangeAction,
@@ -31,12 +33,14 @@ import {
 
 import { useEffect, useState } from 'react';
 import { withStyles } from '@material-ui/core/styles';
-import { ITelestrationStateMgr } from '../Types';
+import { ITelestrationStateMgr, IVideoPause } from '../Types';
+import { formatTime } from 'src/Utilities/Time';
 
 const VideoSlider = withStyles({
     root: {
-        height: '25px',
-        width: '85%',
+        height: '100%',
+        width: '100%',
+        padding: '0',
     },
     track: {
         opacity: 0,
@@ -64,24 +68,8 @@ const ZoomSlider = withStyles({
     },
 })(Slider);
 
-let needPlay = false;
-
-const convertTime = (second: number) => {
-    if (!second) {
-        return '0';
-    }
-    const padString = Math.floor(second).toString().padStart(2, '0');
-    return `00:${padString}`;
-};
-
 const useStyles = makeStyles((theme: ITheme) =>
     createStyles({
-        // thumbLine: {
-        //     backgroundColor: '#fff',
-        //     minWidth: '1px',
-        //     minHeight: '84px',
-        //     borderRadius: '0px',
-        // },
         thumbLine: {
             backgroundColor: '#fff',
             minWidth: '7px',
@@ -93,16 +81,6 @@ const useStyles = makeStyles((theme: ITheme) =>
             minWidth: '5px',
             minHeight: '15px',
             borderRadius: '5px',
-        },
-
-        thumbTriangle: {
-            marginTop: '-2px',
-            fontSize: '0px',
-            lineHeight: '0%',
-            width: '0px',
-            borderBottom: '15px solid #fff',
-            borderLeft: '10px solid rgba(0, 0, 0, 0)',
-            borderRight: '10px solid rgba(0, 0, 0, 0)',
         },
     })
 );
@@ -118,7 +96,7 @@ const Thumb = (props: any) => {
         flexDirection: 'column' as 'column',
         width: 'auto',
         height: 'auto',
-        top: '15px',
+        top: '2px',
         // boxShadow: '#ebebeb 0 2px 2px',
         '&:focus, &:hover, &$active': {
             boxShadow: '#ccc 0 2px 3px 1px',
@@ -143,7 +121,7 @@ const ThumbZoom = (props: any) => {
         flexDirection: 'column' as 'column',
         width: 'auto',
         height: 'auto',
-        top: '15px',
+        top: '14px',
         // boxShadow: '#ebebeb 0 2px 2px',
         '&:focus, &:hover, &$active': {
             boxShadow: '#ccc 0 2px 3px 1px',
@@ -163,9 +141,8 @@ const styles = (theme: ITheme) => ({
         alignItems: 'center',
     },
     controlButtons: {
-        minWidth: '70px',
-        maxWidth: '70px',
         textAlign: 'center' as 'center',
+        display: 'flex',
         '& > svg': {
             cursor: 'pointer',
         },
@@ -183,8 +160,8 @@ const progressBar = ({ classes, telestrationStateMgr }: IProgressBarProps) => {
     const {
         telestrationTime,
         totalTelestrationDuration,
-        // videoPauseArray,
         telestrationTimeTrackStoped,
+        videoPauseArray,
         recording,
     } = state;
 
@@ -194,44 +171,26 @@ const progressBar = ({ classes, telestrationStateMgr }: IProgressBarProps) => {
     // const [volumnState, setVolumeState]: [any, any] = useState('volumoff');
 
     const onChange = (event: any, value: number) => {
-        const { current: video } = videoRef;
-        if (video) {
-            if (!video.paused) {
-                video.pause();
-                needPlay = true;
-            }
-            // Call 'setProgressState' in end of event loop
-            setTimeout(() => setProgressState(value), 0);
-        }
+        dispatchAction(ITelestrationPercentateChangeAction(value));
     };
 
     const onChangeCommitted = (event: any, value: number) => {
-        const { current: video } = videoRef;
-        if (video) {
-            if (needPlay) {
-                video.play();
-                needPlay = false;
-            }
-            const time = (video.duration * value) / 100;
-            video.currentTime = time;
-            setProgressState(value);
-            updatePreview(time);
-        }
+        dispatchAction(ITelestrationPercentateCommittedAction(value));
     };
 
-    const updatePreview = async (time: number) => {
-        const { current: video } = videoRef;
+    // const updatePreview = async (time: number) => {
+    //     const { current: video } = videoRef;
 
-        if (video && video.paused) {
-            const currentVolume = video.volume;
-            // Turn off volume for update preview without sound.
-            video.volume = 0;
-            await video.play();
-            await video.pause();
-            video.currentTime = time;
-            video.volume = currentVolume;
-        }
-    };
+    //     if (video && video.paused) {
+    //         const currentVolume = video.volume;
+    //         // Turn off volume for update preview without sound.
+    //         video.volume = 0;
+    //         await video.play();
+    //         await video.pause();
+    //         video.currentTime = time;
+    //         video.volume = currentVolume;
+    //     }
+    // };
 
     const play = () => {
         const { current: video } = videoRef;
@@ -263,7 +222,7 @@ const progressBar = ({ classes, telestrationStateMgr }: IProgressBarProps) => {
                 fontSize: 'x-large',
             }}
         >
-            <div className={classes.controluttons} style={{ display: 'flex' }}>
+            <div className={classes.controlButtons}>
                 {telestrationTimeTrackStoped ? (
                     <PlayArrowIcon fontSize='inherit' onClick={play} />
                 ) : (
@@ -275,31 +234,52 @@ const progressBar = ({ classes, telestrationStateMgr }: IProgressBarProps) => {
                 <VolumnDownIcon fontSize='inherit' />
             </div>
 
-            <VideoSlider
-                style={{ opacity: 1 }}
-                value={progressState}
-                ThumbComponent={Thumb}
-                onChangeCommitted={onChangeCommitted}
-                onChange={onChange}
-                step={100 / totalTelestrationDuration / 5}
-            ></VideoSlider>
             <div
                 style={{
-                    display: 'flex',
-                    position: 'absolute',
+                    position: 'relative',
                     width: '85%',
-                    left: '12%',
-                    backgroundColor: 'red',
-                    fontSize: '8px',
-                    pointerEvents: 'none',
-                    top: '30px',
+                    height: '25px',
                 }}
-            ></div>
+            >
+                {videoPauseArray.map((e: IVideoPause) => {
+                    const left = `${
+                        (e.startTime / totalTelestrationDuration) * 100
+                    }%}`;
+                    const width = `${
+                        ((e.endTime - e.startTime) /
+                            totalTelestrationDuration) *
+                        100
+                    }%`;
+                    return (
+                        <div
+                            style={{
+                                position: 'absolute',
+                                left,
+                                width,
+                                height: '100%',
+                                top: '0px',
+                                background:
+                                    'linear-gradient(90deg, rgba(158,158,158,1) 50%, rgba(123,123,123,1) 50%)',
+                                backgroundSize: '10px',
+                                backgroundRepeat: 'repeat',
+                            }}
+                        ></div>
+                    );
+                })}
+                <VideoSlider
+                    style={{ opacity: 1 }}
+                    value={progressState}
+                    ThumbComponent={Thumb}
+                    onChangeCommitted={onChangeCommitted}
+                    onChange={onChange}
+                    step={100 / totalTelestrationDuration / 5}
+                ></VideoSlider>
+            </div>
 
             <div
                 style={{
                     display: 'flex',
-                    gap: '10px',
+                    gap: '5px',
                     width: '150px',
                     position: 'relative',
                     alignItems: 'center',
@@ -313,7 +293,7 @@ const progressBar = ({ classes, telestrationStateMgr }: IProgressBarProps) => {
                         left: '10px',
                     }}
                 >
-                    {convertTime(totalTelestrationDuration)}
+                    {formatTime(totalTelestrationDuration)}
                 </div>
 
                 <ZoomSlider value={10} ThumbComponent={ThumbZoom} step={0.1} />

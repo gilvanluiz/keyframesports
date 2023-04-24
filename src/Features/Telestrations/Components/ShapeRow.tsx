@@ -3,6 +3,11 @@ import { compose } from 'fp-ts/lib/function';
 import { Theme as ITheme } from '@material-ui/core';
 import { useRef } from 'react';
 import { withStyles } from '@material-ui/core/styles';
+// import getMuiTheme from 'material-ui/styles/getMuiTheme';
+// import { MuiThemeProvider } from 'material-ui';
+
+// import { MuiThemeProvider } from '@material-ui/core';
+
 import { ITelestrationStateMgr } from '../Types';
 import {
     ChangeObjectDurationAction,
@@ -25,21 +30,8 @@ const styles = (theme: ITheme) => ({
         background: '#C4C4C4',
         left: '0.2%',
     },
-
-    // resizble: {
-    //     height: '25px',
-    //     justifyContent: 'space-between',
-    // },
-    // resizer: {
-    //     backgroundColor: 'white',
-    //     border: 'solid 1px black',
-    //     borderRadius: '10px',
-    //     cursor: 'col-resize',
-    //     width: '10px',
-    //     height: '10px',
-    //     alignSelf: 'center',
-    // },
 });
+
 const PauseSlider = withStyles({
     root: {
         height: '25px',
@@ -128,7 +120,7 @@ const shapeRow = ({
     const { totalTelestrationDuration } = state;
     const { videoPauseDuration, objectDuration } = shapeDetail;
     const { color } = shapeDetail.object;
-    console.log(videoPauseDuration, totalTelestrationDuration);
+
     const pauseArray = [
         getPercentageFromTeleTime(
             videoPauseDuration.startTime,
@@ -155,7 +147,7 @@ const shapeRow = ({
     // const { videoPauseDuration } = shapeDetail;
 
     const shapeBarRef: any = useRef(null);
-
+    const spaneRef = useRef<any>(null);
     // const [secondWidth, setSecondWidth]: [number, any] = useState(100);
 
     // useEffect(() => {
@@ -211,7 +203,11 @@ const shapeRow = ({
             dispatchAction(ChangeObjectDurationAction(shapeDetail, timeArray));
         }
     };
-
+    React.useEffect(() => {
+        spaneRef.current.querySelector(
+            '.MuiSlider-track'
+        ).style.backgroundColor = color;
+    }, [color]);
     const rowTitleStyle = {
         width: '12%',
         height: '25px',
@@ -243,15 +239,13 @@ const shapeRow = ({
                 <PauseSlider
                     value={pauseArray}
                     onChange={handlePauseChange}
-                    valueLabelDisplay='auto'
                     ThumbComponent={Thumb}
                     aria-labelledby='range-slider'
                 ></PauseSlider>
-
                 <ShapeSlider
+                    ref={spaneRef}
                     value={stopArray}
                     onChange={handleShapeChange}
-                    valueLabelDisplay='auto'
                     ThumbComponent={Thumb}
                     aria-labelledby='range-slider'
                 />

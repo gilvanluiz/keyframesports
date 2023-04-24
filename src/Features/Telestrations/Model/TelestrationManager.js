@@ -1932,53 +1932,53 @@ export default class TelestrationManager {
         }
     };
 
-    ListenSliderInputs = () => {
-        //access input and adding observer to access related tool slider change
-        const sliderSizeInput = document.getElementById('size-slider-input');
-        const sliderPerspectiveInput = document.getElementById(
-            'perspective-slider-input'
-        );
-        const config = { attributes: true, value: true };
+    // ListenSliderInputs = () => {
+    //     //access input and adding observer to access related tool slider change
+    //     const sliderSizeInput = document.getElementById('size-slider-input');
+    //     const sliderPerspectiveInput = document.getElementById(
+    //         'perspective-slider-input'
+    //     );
+    //     const config = { attributes: true, value: true };
 
-        // Callback function to execute when mutations are observed
-        const toolSizeCallback = (mutationsList, observer) => {
-            // Use traditional 'for loops' for IE 11
-            for (const mutation of mutationsList) {
-                if (mutation.type === 'value') {
-                } else if (mutation.type === 'attributes') {
-                    this.onSliderChangeSize(sliderSizeInput.value);
-                }
-            }
-        };
+    //     // Callback function to execute when mutations are observed
+    //     const toolSizeCallback = (mutationsList, observer) => {
+    //         // Use traditional 'for loops' for IE 11
+    //         for (const mutation of mutationsList) {
+    //             if (mutation.type === 'value') {
+    //             } else if (mutation.type === 'attributes') {
+    //                 this.onSliderChangeSize(sliderSizeInput.value);
+    //             }
+    //         }
+    //     };
 
-        // Create an observer instance linked to the callback function
-        const sizeObserver = new MutationObserver(toolSizeCallback);
-        // sometimes it's not true and throwing error
-        if (sliderSizeInput) {
-            sizeObserver.observe(sliderSizeInput, config);
-        }
+    //     // Create an observer instance linked to the callback function
+    //     const sizeObserver = new MutationObserver(toolSizeCallback);
+    //     // sometimes it's not true and throwing error
+    //     if (sliderSizeInput) {
+    //         sizeObserver.observe(sliderSizeInput, config);
+    //     }
 
-        const perspectiveInputCallback = (mutationsList, observer) => {
-            // Use traditional 'for loops' for IE 11
-            for (const mutation of mutationsList) {
-                if (mutation.type === 'value') {
-                } else if (mutation.type === 'attributes') {
-                    this.changeZAngleSlider(sliderPerspectiveInput.value);
-                }
-            }
-        };
+    //     const perspectiveInputCallback = (mutationsList, observer) => {
+    //         // Use traditional 'for loops' for IE 11
+    //         for (const mutation of mutationsList) {
+    //             if (mutation.type === 'value') {
+    //             } else if (mutation.type === 'attributes') {
+    //                 this.changeZAngleSlider(sliderPerspectiveInput.value);
+    //             }
+    //         }
+    //     };
 
-        const perspectiveInputObserver = new MutationObserver(
-            perspectiveInputCallback
-        );
-        // sometimes it's not true and throwing error
-        if (sliderPerspectiveInput) {
-            perspectiveInputObserver.observe(sliderPerspectiveInput, config);
-        }
-    };
+    //     const perspectiveInputObserver = new MutationObserver(
+    //         perspectiveInputCallback
+    //     );
+    //     // sometimes it's not true and throwing error
+    //     if (sliderPerspectiveInput) {
+    //         perspectiveInputObserver.observe(sliderPerspectiveInput, config);
+    //     }
+    // };
 
     setEvents = function () {
-        this.ListenSliderInputs();
+        // this.ListenSliderInputs();
         this.nonRecordableCanvas.addEventListener('mousemove', (event) =>
             this.onmousemove(event)
         );

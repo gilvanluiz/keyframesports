@@ -19,31 +19,31 @@ export class PureVideo extends React.Component<
     public shouldComponentUpdate() {
         return false;
     }
-    public onTick(e: Event): void {
-        // const { videoRef, videoTickListener } = this.props;
-        // const { current: video } = videoRef;
-        // if (video) {
-        //     videoTickListener(video.currentTime);
-        // } else {
-        //     console.error('video ref loose');
-        // }
-    }
+    // public onTick(e: Event): void {
+    // const { videoRef, videoTickListener } = this.props;
+    // const { current: video } = videoRef;
+    // if (video) {
+    //     videoTickListener(video.currentTime);
+    // } else {
+    //     console.error('video ref loose');
+    // }
+    // }
 
-    public componentDidMount(): void {
-        const { videoRef } = this.props;
-        const { current: video } = videoRef;
-        if (video) {
-            video.addEventListener('timeupdate', this.onTick.bind(this));
-        }
-    }
+    // public componentDidMount(): void {
+    //     const { videoRef } = this.props;
+    //     const { current: video } = videoRef;
+    //     if (video) {
+    //         video.addEventListener('timeupdate', this.onTick.bind(this));
+    //     }
+    // }
 
-    public componentWillUnmount(): void {
-        const { videoRef } = this.props;
-        const { current: video } = videoRef;
-        if (video) {
-            video.removeEventListener('timeupdate', this.onTick.bind(this));
-        }
-    }
+    // public componentWillUnmount(): void {
+    //     const { videoRef } = this.props;
+    //     const { current: video } = videoRef;
+    //     if (video) {
+    //         video.removeEventListener('timeupdate', this.onTick.bind(this));
+    //     }
+    // }
 
     public render() {
         const { videoRef, src, handleVideoLoad } = this.props;

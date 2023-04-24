@@ -63,19 +63,19 @@ const TELESTRATION_PLAY = 'telestrations/TELESTRATION_PLAY';
 const TELESTRATION_STOP = 'telestrations/TELESTRATION_STOP';
 const RELATIVE_CURRENT_TIME_CHANGE =
     'telestrations/RELATIVE_CURRENT_TIME_CHANGE';
-
 const VIDEI_TIME_ACTION = 'telestrations/VIDEI_TIME_ACTION';
-
 const CHANGE_OBJECT_DURATION_ACTION =
     'telestrations/CHANGE_OBJECT_DURATION_ACTION';
 const CHANGE_OBJECT_VIDEO_STOP_DURATION_ACTION =
     'telestrations/CHANGE_OBJECT_VIDEO_STOP_DURATION_ACTION';
-
 const TELESTRATION_PERCENTAGE_CHANGE_ACTION =
     'telestrations/TELESTRATION_PERCENTAGE_CHANGE_ACTION';
-
 const TELESTRATION_PERCENTAGE_COMMITTED_ACTION =
     'telestrations/TELESTRATION_PERCENTAGE_COMMITTED_ACTION';
+const TELESTRATION_SIZE_CHANGE_ACTION =
+    'telestrations/TELESTRATION_SIZE_CHANGE_ACTION';
+const TELESTRATION_PERSPECTIVE_CHANGE_ACTION =
+    'telestrations/TELESTRATION_PERSPECTIVE_CHANGE_ACTION';
 
 // ACTION CREATORS
 
@@ -223,6 +223,17 @@ export const ITelestrationPercentateCommittedAction = (percentage: number) => ({
     type: TELESTRATION_PERCENTAGE_COMMITTED_ACTION as 'telestrations/TELESTRATION_PERCENTAGE_COMMITTED_ACTION',
     percentage,
 });
+
+export const ITelestrationSizeChangeAction = (value: number) => ({
+    type: TELESTRATION_SIZE_CHANGE_ACTION as 'telestrations/TELESTRATION_SIZE_CHANGE_ACTION',
+    value,
+});
+
+export const ITelestrationPerspectiveChangeAction = (value: number) => ({
+    type: TELESTRATION_PERSPECTIVE_CHANGE_ACTION as 'telestrations/TELESTRATION_PERSPECTIVE_CHANGE_ACTION',
+    value,
+});
+
 // REDUCER
 
 type ITelestrationStateFn = (x: any) => ITelestrationState;
@@ -367,7 +378,12 @@ const telestrationReducer = (
         case CHANGE_TELESTRATION_COLOR: {
             const { color } = action;
             state.telestrationManager.setTelestrationColor(color);
-            return state;
+
+            const newState = {
+                ...state,
+            };
+
+            return newState;
         }
         case CHANGE_TEXT: {
             const { text } = action;
@@ -453,12 +469,6 @@ const telestrationReducer = (
 
             calculateTotalTime(state);
 
-            console.log(
-                'addedshapesarray>>>>>>>',
-                state.telestrationManager.addedShapes
-            );
-            console.log('pausetimearray>>>>>', state.videoPauseArray);
-
             const newState = {
                 ...state,
             };
@@ -482,7 +492,6 @@ const telestrationReducer = (
             return newState;
         }
         case RELATIVE_CURRENT_TIME_CHANGE: {
-            console.log('relative video time changed:>>>', action.time);
             const newState = {
                 ...state,
                 telestrationTime: action.time,
@@ -591,6 +600,24 @@ const telestrationReducer = (
             const newState = {
                 ...state,
                 telestrationTime,
+            };
+            return newState;
+        }
+        case TELESTRATION_SIZE_CHANGE_ACTION: {
+            const { telestrationManager } = state;
+            telestrationManager.onSliderChangeSize(action.value);
+
+            const newState = {
+                ...state,
+            };
+            return newState;
+        }
+        case TELESTRATION_PERSPECTIVE_CHANGE_ACTION: {
+            const { telestrationManager } = state;
+            telestrationManager.changeZAngleSlider(action.value);
+
+            const newState = {
+                ...state,
             };
             return newState;
         }

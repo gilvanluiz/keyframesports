@@ -285,6 +285,17 @@ export interface ITelestrationPercentateCommittedAction {
     type: 'telestrations/TELESTRATION_PERCENTAGE_COMMITTED_ACTION';
     percentage: number;
 }
+
+export interface ITelestrationSizeChangeAction {
+    type: 'telestrations/TELESTRATION_SIZE_CHANGE_ACTION';
+    value: number;
+}
+
+export interface ITelestrationPerspectiveChangeAction {
+    type: 'telestrations/TELESTRATION_PERSPECTIVE_CHANGE_ACTION';
+    value: number;
+}
+
 export type ISetDragStateAction =
     | ISetDragStateStartAction
     | ISetDragStateEndAction;
@@ -319,7 +330,9 @@ export type IAction =
     | IChangeObjectDurationAction
     | IChangeObjectVideoStopDurationAction
     | ITelestrationPercentateChangeAction
-    | ITelestrationPercentateCommittedAction;
+    | ITelestrationPercentateCommittedAction
+    | ITelestrationSizeChangeAction
+    | ITelestrationPerspectiveChangeAction;
 
 export type IShape = 'none' | 'circle' | 'arrow';
 

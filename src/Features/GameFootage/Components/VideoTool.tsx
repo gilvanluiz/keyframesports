@@ -23,6 +23,8 @@ import {
 import { StyledSlider } from './Slider';
 import { ColorPicker } from '../../../Features/Telestrations/Components/ColorPicker';
 import {
+    ITelestrationSizeChangeAction,
+    ITelestrationPerspectiveChangeAction,
     changeFontSize,
     changeTelestrationColor,
     changeText,
@@ -131,7 +133,15 @@ const videoTool = ({ classes, telestrationStateMgr }: IProp) => {
         const { r, g, b, a } = rgb;
         setPickerColor(`rgba(${r}, ${g}, ${b}, ${a})`);
     };
+    const onSizeSliderChange = (e: any, newValue: number) => {
+        dispatchAction(ITelestrationSizeChangeAction(newValue));
 
+        setToolSize(newValue);
+    };
+    const onPerspectiveChange = (e: any, newValue: number) => {
+        dispatchAction(ITelestrationPerspectiveChangeAction(newValue));
+        setToolPerspective(newValue);
+    };
     return (
         <>
             <input type='hidden' id='size-slider-input' value={toolSize} />
@@ -202,9 +212,7 @@ const videoTool = ({ classes, telestrationStateMgr }: IProp) => {
                                         <StyledSlider
                                             style={{ width: '40%' }}
                                             value={toolSize}
-                                            onChange={(e, newValue: number) =>
-                                                setToolSize(newValue)
-                                            }
+                                            onChange={onSizeSliderChange}
                                             max={200}
                                             min={10}
                                             step={4}
@@ -225,15 +233,14 @@ const videoTool = ({ classes, telestrationStateMgr }: IProp) => {
                                             step={0.0005}
                                             value={toolPerspective}
                                             aria-labelledby='slider'
-                                            onChange={(e, newValue: number) =>
-                                                setToolPerspective(newValue)
-                                            }
+                                            onChange={onPerspectiveChange}
                                         />
                                     </div>
                                 </>
                             )}
                         </div>
                     </Collapse>
+
                     <Divider />
                     {false && (
                         <div
