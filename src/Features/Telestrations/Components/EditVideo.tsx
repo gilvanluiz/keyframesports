@@ -16,7 +16,7 @@ import {
 } from '../Utils/Canvas';
 import {
     withTelestrationState,
-    // setModeAction,
+    setModeAction,
     setVideoLoadError,
     setVideoLoaded,
     clickVideoBox,
@@ -239,11 +239,11 @@ const editVideo = ({
         });
     };
 
-    // const keyDownHandler = (event: any) => {
-    //     if (event.key === 'Escape') {
-    //         dispatchAction(setModeAction('save_effect'));
-    //     }
-    // };
+    const keyDownHandler = (event: any) => {
+        if (event.key === 'Escape') {
+            dispatchAction(setModeAction('save_effect'));
+        }
+    };
 
     const clickVideoBoxHandler = (e: any) => {
         dispatchAction(clickVideoBox(e));
@@ -251,9 +251,8 @@ const editVideo = ({
     const { videoSize } = state;
 
     const videoTickListener = (time: number) => {
-        dispatchAction(VideoTickAction(time));
+        // dispatchAction(VideoTickAction(time));
     };
-
     const intervalRef = React.useRef<any>(null);
 
     useEffect(() => {
@@ -288,7 +287,7 @@ const editVideo = ({
         <Box
             className={classes.container}
             tabIndex={0}
-            // onKeyDown={keyDownHandler}
+            onKeyDown={keyDownHandler}
         >
             <Box
                 className={clsx(classes.root, extraRootClasses)}

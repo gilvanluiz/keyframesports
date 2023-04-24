@@ -196,7 +196,6 @@ const progressBar = ({ classes, telestrationStateMgr }: IProgressBarProps) => {
         const { current: video } = videoRef;
         if (video) {
             dispatchAction(TelestrationPlayAction());
-            // return video.paused ? video.play() : video.pause();
         }
     };
 
@@ -204,7 +203,6 @@ const progressBar = ({ classes, telestrationStateMgr }: IProgressBarProps) => {
         const { current: video } = videoRef;
         if (video) {
             dispatchAction(TelestrationStopAction());
-            // return video.paused ? video.play() : video.pause();
         }
     };
 

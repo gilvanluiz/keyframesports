@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useEffect, useState, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { Popover, Typography } from '@material-ui/core';
 import { withStyles, Theme } from '@material-ui/core/styles';
 import { compose } from 'fp-ts/lib/function';
@@ -78,6 +78,7 @@ export const playControls = ({
         previous: 1,
         current: 1,
     });
+    const [keyState, setKeyState]: [string, any] = useState('');
     const { state, dispatchAction } = telestrationStateMgr;
     const { telestrationTimeTrackStoped } = state;
     const { recording } = state;
@@ -93,89 +94,30 @@ export const playControls = ({
         setPopover(null);
     };
 
-    const updatePreview = async (time: number) => {
-        const { current: video } = videoRef;
+    // const updatePreview = async (time: number) => {
+    //     const { current: video } = videoRef;
 
-        if (video && video.paused) {
-            const currentVolume = video.volume;
-            // Turn off volume for update preview without sound.
-            video.volume = 0;
-            await video.play();
-            await video.pause();
-            video.currentTime = time;
-            video.volume = currentVolume;
+    //     if (video && video.paused) {
+    //         const currentVolume = video.volume;
+    //         // Turn off volume for update preview without sound.
+    //         video.volume = 0;
+    //         await video.play();
+    //         await video.pause();
+    //         video.currentTime = time;
+    //         video.volume = currentVolume;
+    //     }
+    // };
+
+    const keyDownHandler = (event: any) => {
+        const { code } = event;
+
+        /* tslint:disable-next-line */
+        if (!window['STOP_KEY_LISTENERS']) {
+            event.preventDefault();
+            event.stopPropagation();
+            setKeyState(code);
         }
     };
-
-    const keyDownHandler = useCallback(
-        (event: any) => {
-            const { code } = event;
-            const { current: video } = videoRef;
-            /* tslint:disable-next-line */
-            if (window['STOP_KEY_LISTENERS']) {
-                return false;
-            }
-            console.log(code);
-
-            if (video) {
-                switch (code) {
-                    case 'KeyK':
-                    case 'Space': {
-                        event.preventDefault();
-                        event.stopPropagation();
-                        dispatchAction(
-                            telestrationTimeTrackStoped
-                                ? TelestrationPlayAction()
-                                : TelestrationStopAction()
-                        );
-                        break;
-                    }
-                    case 'Up':
-                    case 'ArrowUp': {
-                        return video.paused ? video.play() : null;
-                    }
-                    case 'Down':
-                    case 'ArrowDown': {
-                        return !video.paused ? video.pause() : null;
-                    }
-                    case 'Left':
-                    case 'ArrowLeft': {
-                        const time = video.currentTime - 2;
-                        video.currentTime = time;
-                        updatePreview(time);
-                        return video.currentTime;
-                    }
-                    case 'Right':
-                    case 'ArrowRight': {
-                        const time = video.currentTime + 2;
-                        video.currentTime = time;
-                        updatePreview(time);
-                        return video.currentTime;
-                    }
-                    case 'KeyM': {
-                        const volume =
-                            video.volume > 0
-                                ? 0
-                                : volumeState.previous === 0
-                                ? 1
-                                : volumeState.previous;
-                        video.volume = volume;
-                        setVolumeState({
-                            ...volumeState,
-                            current: volume,
-                        });
-                        return video.volume;
-                    }
-                    default: {
-                        return;
-                    }
-                }
-            } else {
-                return;
-            }
-        },
-        [volumeState]
-    );
 
     // const dispatchKeyboardEvent = (code: string) => {
     //     const { current: video } = videoRef;
@@ -194,9 +136,72 @@ export const playControls = ({
     //     );
     // };
 
+    const keyStateHandler = () => {
+        const { current: video } = videoRef;
+        if (video) {
+            switch (keyState) {
+                case 'KeyK':
+                case 'Space': {
+                    dispatchAction(
+                        telestrationTimeTrackStoped
+                            ? TelestrationPlayAction()
+                            : TelestrationStopAction()
+                    );
+                    break;
+                }
+                // case 'Up':
+                // case 'ArrowUp': {
+                //     return video.paused ? video.play() : null;
+                // }
+                // case 'Down':
+                // case 'ArrowDown': {
+                //     return !video.paused ? video.pause() : null;
+                // }
+                // case 'Left':
+                // case 'ArrowLeft': {
+                //     const time = video.currentTime - 2;
+                //     video.currentTime = time;
+                //     updatePreview(time);
+                //     return video.currentTime;
+                // }
+                // case 'Right':
+                // case 'ArrowRight': {
+                //     const time = video.currentTime + 2;
+                //     video.currentTime = time;
+                //     updatePreview(time);
+                //     return video.currentTime;
+                // }
+                case 'KeyM': {
+                    const volume =
+                        video.volume > 0
+                            ? 0
+                            : volumeState.previous === 0
+                            ? 1
+                            : volumeState.previous;
+                    video.volume = volume;
+                    setVolumeState({
+                        ...volumeState,
+                        current: volume,
+                    });
+                    // return video.volume;
+                }
+            }
+        }
+    };
+
+    useEffect(keyStateHandler, [keyState]);
+
     const controlsListener = () => {
         document.addEventListener('keydown', keyDownHandler);
-        return () => document.removeEventListener('keydown', keyDownHandler);
+        document.addEventListener('keyup', () => {
+            setKeyState('');
+        });
+        return () => {
+            document.removeEventListener('keydown', keyDownHandler);
+            document.removeEventListener('keyup', () => {
+                setKeyState('');
+            });
+        };
     };
 
     useEffect(controlsListener, [volumeState]);
