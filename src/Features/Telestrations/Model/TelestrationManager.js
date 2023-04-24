@@ -14,6 +14,8 @@ import Watermark from '../Assets/KeyframeWatermark.png';
 import { FadeInOutAnimation } from './Animations/FadeInOutAnimation';
 import { WebGLUtils } from '../Utils/WebGLUtils';
 
+import { gsap } from 'gsap';
+
 import {
     telestrationCircleAplied,
     telestrationHaloAplied,
@@ -59,7 +61,7 @@ export default class TelestrationManager {
             CURSOR_COLOR: '#cc0000',
             PLAYER_CUT_OUT_ARROW_COLOR: '#cc0000',
             FADE_IN_TIME: 1,
-            FADE_OUT_TIME: 0.16,
+            FADE_OUT_TIME: 0.5,
             MAX_CURSOR_RADIUS: 200,
             MAX_LIGHTSHAFT_RADIUS: 200,
             MAX_ARROW_WIDTH: 50,
@@ -151,6 +153,70 @@ export default class TelestrationManager {
         this.sharpLightImage.src = SharpLight;
         this.watermarkImage = new Image();
         this.watermarkImage.src = Watermark;
+    };
+    renderTelestrationCanvas = function () {
+        this.drawCursors();
+        this.drawArrows();
+        this.drawPolygons();
+        this.drawClosingObjects(false);
+        this.drawCreationTelestrations(this.nonRecordableContext);
+        this.drawLightShafts(this.context, true);
+    };
+
+    renderPostChromaKeyTelestrations = function () {
+        switch (this.currentFunction) {
+            case this.FUNCTION_ENUM.PLACE_LIGHT_SHAFT:
+                this.drawCreationLightShaft(this.nonRecordableContext, false);
+                break;
+            case this.FUNCTION_ENUM.PLAYER_CUT_OUT:
+                this.creationObject.draw(
+                    this.nonRecordableContext,
+                    this.getVideoTime(),
+                    false,
+                    this.nonRecordableContext
+                );
+                break;
+            case this.FUNCTION_ENUM.SELECT_SHAPE:
+                this.creationObject.draw(this.nonRecordableContext);
+                break;
+        }
+
+        this.drawLightShafts(this.context, false);
+        this.drawPlayerCutOuts();
+        this.drawClosingObjects(true);
+        this.drawTextBoxes(this);
+    };
+
+    draw = function () {
+        this.clearCanvases();
+
+        // prepare chroma key and draw background
+        if (this.chromaKeyEnabled() && this.video.paused) {
+            if (!this.chromaKeyPrepared) {
+                this.prepareChromaKeyCanvas();
+            }
+
+            this.drawChromaKeyBackground();
+        } else {
+            this.chromaKeyPrepared = false;
+            this.drawVideo();
+        }
+
+        if (this.currentFunction != this.FUNCTION_ENUM.CHROMA_KEY_PICKER) {
+            this.renderTelestrationCanvas();
+            this.drawTelestrationCanvas();
+        }
+
+        // if exists, draw foreground
+        if (this.chromaKeyEnabled() && this.video.paused) {
+            this.drawChromaKeyForeground();
+        }
+
+        if (this.currentFunction != this.FUNCTION_ENUM.CHROMA_KEY_PICKER) {
+            this.renderPostChromaKeyTelestrations();
+        }
+
+        this.renderRecordingCanvas();
     };
 
     getBaseLightShaftRadius = function () {
@@ -440,39 +506,6 @@ export default class TelestrationManager {
         context.restore();
     };
 
-    renderTelestrationCanvas = function () {
-        this.drawCursors();
-        this.drawArrows();
-        this.drawPolygons();
-        this.drawClosingObjects(false);
-        this.drawCreationTelestrations(this.nonRecordableContext);
-        this.drawLightShafts(this.context, true);
-    };
-
-    renderPostChromaKeyTelestrations = function () {
-        switch (this.currentFunction) {
-            case this.FUNCTION_ENUM.PLACE_LIGHT_SHAFT:
-                this.drawCreationLightShaft(this.nonRecordableContext, false);
-                break;
-            case this.FUNCTION_ENUM.PLAYER_CUT_OUT:
-                this.creationObject.draw(
-                    this.nonRecordableContext,
-                    this.getVideoTime(),
-                    false,
-                    this.nonRecordableContext
-                );
-                break;
-            case this.FUNCTION_ENUM.SELECT_SHAPE:
-                this.creationObject.draw(this.nonRecordableContext);
-                break;
-        }
-
-        this.drawLightShafts(this.context, false);
-        this.drawPlayerCutOuts();
-        this.drawClosingObjects(true);
-        this.drawTextBoxes(this);
-    };
-
     isPostChromaKeyObject = function (obj) {
         return obj instanceof PlayerCutOut || obj instanceof LightShaft;
     };
@@ -506,38 +539,6 @@ export default class TelestrationManager {
     setShadowBlur = function (context) {
         context.shadowBlur = 10;
         context.shadowColor = 'rgba(255,255,255,0.8)';
-    };
-
-    draw = function () {
-        this.clearCanvases();
-
-        // prepare chroma key and draw background
-        if (this.chromaKeyEnabled() && this.video.paused) {
-            if (!this.chromaKeyPrepared) {
-                this.prepareChromaKeyCanvas();
-            }
-
-            this.drawChromaKeyBackground();
-        } else {
-            this.chromaKeyPrepared = false;
-            this.drawVideo();
-        }
-
-        if (this.currentFunction != this.FUNCTION_ENUM.CHROMA_KEY_PICKER) {
-            this.renderTelestrationCanvas();
-            this.drawTelestrationCanvas();
-        }
-
-        // if exists, draw foreground
-        if (this.chromaKeyEnabled() && this.video.paused) {
-            this.drawChromaKeyForeground();
-        }
-
-        if (this.currentFunction != this.FUNCTION_ENUM.CHROMA_KEY_PICKER) {
-            this.renderPostChromaKeyTelestrations();
-        }
-
-        this.renderRecordingCanvas();
     };
 
     renderRecordingCanvas = function () {
@@ -702,6 +703,25 @@ export default class TelestrationManager {
             true
         );
         this.closingObjects.push(drawnObject);
+    };
+
+    fadeInTelestration = function (drawnObject) {
+        gsap.to(drawnObject, {
+            opacity: 1,
+            duration: this.config.FADE_IN_TIME,
+            onUpdate: () => {
+                console.log('draw update>>>', drawnObject.opacity);
+            },
+        });
+    };
+    fadeOutTelestration = function (drawnObject) {
+        gsap.to(drawnObject, {
+            opacity: 0,
+            duration: this.config.FADE_OUT_TIME,
+            onUpdate: () => {
+                console.log('draw update>>>', drawnObject.opacity);
+            },
+        });
     };
 
     clearTelestrations = function () {
@@ -1168,7 +1188,8 @@ export default class TelestrationManager {
                 this.config.CURSOR_COLOR,
                 this.zAngle
             );
-            kf.startOpenTimer(this.config.FADE_IN_TIME);
+            // kf.startOpenTimer(this.config.FADE_IN_TIME);
+            // this.fadeInTelestration(kf);
             this.cursors.push(kf);
             const objectDetail = new DrawnObjectDetail(kf, currentTime);
             this.addedShapes.push(objectDetail);

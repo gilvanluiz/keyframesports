@@ -503,7 +503,25 @@ const telestrationReducer = (
                 videoPauseArray,
                 telestrationTime,
                 totalTelestrationDuration,
+                telestrationManager,
             } = state;
+
+            telestrationManager.addedShapes.forEach((object: any) => {
+                if (
+                    object.object.opacity === 0 &&
+                    object.objectDuration.startTime < telestrationTime &&
+                    object.objectDuration.endTime > telestrationTime
+                ) {
+                    telestrationManager.fadeInTelestration(object.object);
+                }
+                if (
+                    object.object.opacity === 1 &&
+                    object.objectDuration.endTime < telestrationTime
+                ) {
+                    telestrationManager.fadeOutTelestration(object.object);
+                }
+            });
+
             const { current: video } = videoRef;
             const newTelestrationTime = telestrationTime + 0.2;
             if (newTelestrationTime >= totalTelestrationDuration) {
@@ -553,7 +571,7 @@ const telestrationReducer = (
             return newState;
         }
         case TELESTRATION_PERCENTAGE_CHANGE_ACTION: {
-            const { totalTelestrationDuration } = state;
+            const { totalTelestrationDuration, telestrationManager } = state;
             const { current: video } = videoRef;
 
             if (video) {
@@ -561,13 +579,31 @@ const telestrationReducer = (
                     video.pause();
                     // needPlay = true;
                 }
-
                 // setTimeout(() => setProgressState(value), 0);
             }
+
             const telestrationTime = getTelestrationTimeFromPercentage(
                 action.percentage,
                 totalTelestrationDuration
             );
+
+            telestrationManager.addedShapes.forEach((object: any) => {
+                if (
+                    object.object.opacity !== 1 &&
+                    object.objectDuration.startTime < telestrationTime &&
+                    object.objectDuration.endTime > telestrationTime
+                ) {
+                    object.object.opacity = 1;
+                }
+                if (
+                    object.object.opacity !== 0 &&
+                    (object.objectDuration.endTime < telestrationTime ||
+                        object.objectDuration.startTime > telestrationTime)
+                ) {
+                    object.object.opacity = 0;
+                }
+            });
+
             const newState = {
                 ...state,
                 telestrationTime,

@@ -115,10 +115,10 @@ export class Cursor {
         this.y = position.y;
     };
 
-    startOpenTimer = function (timer) {
+    startOpenTimer = function (timer = this.manager.config.FADE_IN_TIME) {
         this.animation = new FadeInOutAnimation(
             this.manager,
-            this.manager.config.FADE_IN_TIME,
+            timer,
             this,
             0,
             false

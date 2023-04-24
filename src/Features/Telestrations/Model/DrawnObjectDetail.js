@@ -6,7 +6,7 @@ export class DrawnObjectDetail {
             endTime: currentVideoTime + 5,
         };
         this.objectDuration = {
-            startTime: currentVideoTime + 1,
+            startTime: currentVideoTime,
             endTime: currentVideoTime + 4,
         };
     }
