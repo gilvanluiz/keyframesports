@@ -244,7 +244,7 @@ const telestrationReducer = (
     state: ITelestrationState,
     action: IAction
 ): ReducerResult => {
-    console.log(action);
+    // console.log(action);
     switch (action.type) {
         case SET_VIDEO_LOAD_ERROR: {
             const { message } = action;

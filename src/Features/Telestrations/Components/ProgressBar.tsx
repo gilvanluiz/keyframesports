@@ -208,7 +208,7 @@ const progressBar = ({ classes, telestrationStateMgr }: IProgressBarProps) => {
 
     useEffect(() => {
         setProgressState((telestrationTime / totalTelestrationDuration) * 100);
-    }, [telestrationTime]);
+    }, [telestrationTime, totalTelestrationDuration]);
 
     return (
         <div
@@ -239,21 +239,27 @@ const progressBar = ({ classes, telestrationStateMgr }: IProgressBarProps) => {
                     height: '25px',
                 }}
             >
-                {videoPauseArray.map((e: IVideoPause) => {
-                    const left = `${
-                        (e.startTime / totalTelestrationDuration) * 100
-                    }%}`;
-                    const width = `${
-                        ((e.endTime - e.startTime) /
-                            totalTelestrationDuration) *
-                        100
-                    }%`;
+                {videoPauseArray.map((e: IVideoPause, i: number) => {
+                    console.log(
+                        `${(e.startTime / totalTelestrationDuration) * 100}%`
+                    );
+
                     return (
                         <div
+                            key={i}
                             style={{
                                 position: 'absolute',
-                                left,
-                                width,
+
+                                width: `${
+                                    ((e.endTime - e.startTime) /
+                                        totalTelestrationDuration) *
+                                    100
+                                }%`,
+                                left: `${
+                                    (e.startTime / totalTelestrationDuration) *
+                                    100
+                                }%`,
+
                                 height: '100%',
                                 top: '0px',
                                 background:
