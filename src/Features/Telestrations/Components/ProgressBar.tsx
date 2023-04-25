@@ -240,10 +240,6 @@ const progressBar = ({ classes, telestrationStateMgr }: IProgressBarProps) => {
                 }}
             >
                 {videoPauseArray.map((e: IVideoPause, i: number) => {
-                    console.log(
-                        `${(e.startTime / totalTelestrationDuration) * 100}%`
-                    );
-
                     return (
                         <div
                             key={i}
