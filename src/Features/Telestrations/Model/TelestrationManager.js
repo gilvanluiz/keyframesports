@@ -708,7 +708,6 @@ export default class TelestrationManager {
     fadeInTelestration = function (drawnObject) {
         gsap.to(drawnObject, {
             opacity: 1,
-            alpha: 1,
             duration: this.config.FADE_IN_TIME,
             onUpdate: () => {
                 console.log('draw update>>>', drawnObject.opacity);
@@ -719,7 +718,6 @@ export default class TelestrationManager {
     fadeOutTelestration = function (drawnObject) {
         gsap.to(drawnObject, {
             opacity: 0,
-            alpha: 0,
             duration: this.config.FADE_OUT_TIME,
             onUpdate: () => {
                 console.log('draw update>>>', drawnObject.opacity);

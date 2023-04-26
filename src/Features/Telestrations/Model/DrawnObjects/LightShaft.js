@@ -19,7 +19,7 @@ export class LightShaft {
 
         this.position = initialPosition;
 
-        this.alpha = 0.35;
+        this.opacity = 1;
         this.radius = cursorRadius;
 
         this.manager = manager;
@@ -56,11 +56,11 @@ export class LightShaft {
         this.manager.setObjectPerspectiveMode(this, context);
         position = this.manager.transformToAbsolutePosition(position, this);
 
-        let opacityModifier = this.animation ? this.animation.opacity : 1;
+        // let opacityModifier = this.animation ? this.animation.opacity : 1;
         // now draw the inner secondary color arcs ars
         context.save();
 
-        context.globalAlpha = opacityModifier * this.alpha;
+        context.globalAlpha = this.opacity * 0.35;
         context.fillStyle = '#ffffff';
         context.strokeStyle = '#ffffff';
 
@@ -99,24 +99,18 @@ export class LightShaft {
             context.arc(position.x, position.y, radius * 1.8, 0, 2 * Math.PI);
 
             context.save();
-            context.globalAlpha =
-                opacityModifier * (this.alpha + this.alpha * 0.5);
+            context.globalAlpha = this.opacity * 0.5;
             context.fillStyle = ringGradient;
             context.fill();
 
-            context.globalAlpha = opacityModifier * 0.1;
+            context.globalAlpha = this.opacity * 0.15;
             context.fillStyle = largeGradient;
             context.fill();
             context.restore();
 
             context.restore();
 
-            this.drawAnimatingLight(
-                context,
-                position,
-                radius * 1.2,
-                opacityModifier
-            );
+            this.drawAnimatingLight(context, position, radius * 1.2);
         } else {
             context.beginPath();
             let topRadiusFraction = 1;
@@ -151,7 +145,7 @@ export class LightShaft {
         this.manager.unsetPerspectiveMode(context);
     };
 
-    drawAnimatingLight = function (context, position, radius, opacityModifier) {
+    drawAnimatingLight = function (context, position, radius) {
         let lightPosition = {
             x: position.x + Math.cos(this.angleTimeOffset) * radius,
             y: position.y + Math.sin(this.angleTimeOffset) * radius,
@@ -166,7 +160,7 @@ export class LightShaft {
 
         context.shadowBlur = 2;
         context.shadowColor = 'white';
-        context.globalAlpha = opacityModifier * 0.3;
+        context.globalAlpha = this.opacity * 0.15;
         context.drawImage(
             this.manager.sharpLightImage,
             lightPosition.x - radius / 2,
