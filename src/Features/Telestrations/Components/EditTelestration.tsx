@@ -51,7 +51,7 @@ const editTelestration = ({
             }}
         >
             <EditVideo
-                // video_url={videoURL}
+                // videoUrl={videoURL}
                 videoUrl={coach_paint_example}
                 videoTitle={title}
                 videoID={videoID}

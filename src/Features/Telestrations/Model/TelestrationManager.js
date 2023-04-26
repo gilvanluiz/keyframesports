@@ -708,15 +708,18 @@ export default class TelestrationManager {
     fadeInTelestration = function (drawnObject) {
         gsap.to(drawnObject, {
             opacity: 1,
+            alpha: 1,
             duration: this.config.FADE_IN_TIME,
             onUpdate: () => {
                 console.log('draw update>>>', drawnObject.opacity);
             },
         });
     };
+
     fadeOutTelestration = function (drawnObject) {
         gsap.to(drawnObject, {
             opacity: 0,
+            alpha: 0,
             duration: this.config.FADE_OUT_TIME,
             onUpdate: () => {
                 console.log('draw update>>>', drawnObject.opacity);
@@ -1188,10 +1191,13 @@ export default class TelestrationManager {
                 this.config.CURSOR_COLOR,
                 this.zAngle
             );
-            // kf.startOpenTimer(this.config.FADE_IN_TIME);
-            // this.fadeInTelestration(kf);
+
             this.cursors.push(kf);
-            const objectDetail = new DrawnObjectDetail(kf, currentTime);
+            const objectDetail = new DrawnObjectDetail(
+                kf,
+                currentTime,
+                'circle'
+            );
             this.addedShapes.push(objectDetail);
 
             this.actionManager.pushAction(ActionTypeEnum.PLACE_CURSOR);
@@ -1203,7 +1209,7 @@ export default class TelestrationManager {
         }
     };
 
-    placeLightShaft = function () {
+    placeLightShaft = function (currentTime) {
         let ls = new LightShaft(
             this,
             this.getVideoTime(),
@@ -1214,6 +1220,13 @@ export default class TelestrationManager {
         );
         ls.startOpenTimer(this.config.FADE_IN_TIME);
         this.lightShafts.push(ls);
+        const objectDetail = new DrawnObjectDetail(
+            ls,
+            currentTime,
+            'lightshaft'
+        );
+        this.addedShapes.push(objectDetail);
+
         this.actionManager.pushAction(ActionTypeEnum.PLACE_LIGHT_SHAFT);
         sendUserEvent(telestrationHaloAplied, window.location.href, videoId);
     };
@@ -1764,7 +1777,7 @@ export default class TelestrationManager {
                 this.placeArrowPoint();
                 break;
             case this.FUNCTION_ENUM.PLACE_LIGHT_SHAFT:
-                this.placeLightShaft();
+                this.placeLightShaft(currentTime);
                 break;
             case this.FUNCTION_ENUM.CHROMA_KEY_PICKER:
                 this.pickChromaPixelActionTrigger();

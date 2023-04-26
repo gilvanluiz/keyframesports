@@ -60,7 +60,6 @@ const ShapeSlider = withStyles({
     },
     track: {
         height: '25px',
-        background: 'red',
         pointerEvents: 'all',
     },
     rail: {
@@ -120,7 +119,6 @@ const shapeRow = ({
     const { totalTelestrationDuration } = state;
     const { videoPauseDuration, objectDuration } = shapeDetail;
     const { color } = shapeDetail.object;
-
     const pauseArray = [
         getPercentageFromTeleTime(
             videoPauseDuration.startTime,
@@ -203,11 +201,13 @@ const shapeRow = ({
             dispatchAction(ChangeObjectDurationAction(shapeDetail, timeArray));
         }
     };
+
     React.useEffect(() => {
         spaneRef.current.querySelector(
             '.MuiSlider-track'
         ).style.backgroundColor = color;
     }, [color]);
+
     const rowTitleStyle = {
         width: '12%',
         height: '25px',

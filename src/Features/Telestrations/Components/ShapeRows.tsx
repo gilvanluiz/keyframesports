@@ -3,7 +3,6 @@ import { compose } from 'fp-ts/lib/function';
 import { Theme as ITheme } from '@material-ui/core';
 import { useRef } from 'react';
 import { withStyles } from '@material-ui/core/styles';
-
 import { ITelestrationStateMgr } from '../Types';
 import { withTelestrationState } from '../State';
 import { ShapeRow } from './ShapeRow';
@@ -31,6 +30,12 @@ const shapeRows = ({ classes, telestrationStateMgr }: IShapeRowsProps) => {
     const { telestrationManager } = state;
     const rowRef = useRef<HTMLDivElement>(null);
 
+    const objectsCount = { circle: 0, lightshaft: 0 };
+    // React.useEffect(() => {
+    //     objectsCount.circle = 0;
+    //     objectsCount.lightshaft = 0;
+    // }, [telestrationManager.addedShapes]);
+
     return (
         <div
             className={classes.shapeRowsDiv}
@@ -42,16 +47,26 @@ const shapeRows = ({ classes, telestrationStateMgr }: IShapeRowsProps) => {
             ref={rowRef}
         >
             {telestrationManager.addedShapes.map(
-                (shape: any, index: number) => (
-                    <ShapeRow
-                        key={index}
-                        title={`Circle ${index + 1}`}
-                        shapeDetail={shape}
-                        totalTelestrationDuration={
-                            state.totalTelestrationDuration
-                        }
-                    />
-                )
+                (shape: any, index: number) => {
+                    switch (shape.type) {
+                        case 'circle':
+                            objectsCount.circle++;
+                            break;
+                        case 'lightshaft':
+                            objectsCount.lightshaft++;
+                            break;
+                    }
+                    return (
+                        <ShapeRow
+                            key={index}
+                            title={`${shape.type} ${objectsCount[shape.type]}`}
+                            shapeDetail={shape}
+                            totalTelestrationDuration={
+                                state.totalTelestrationDuration
+                            }
+                        />
+                    );
+                }
             )}
         </div>
     );

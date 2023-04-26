@@ -13,7 +13,7 @@ export class LightShaft {
         this.isClosing = false;
         this.closeTimer = 0;
         this.zAngle = zAngle;
-
+        this.color = '#ffffff';
         this.keyFrames = new KeyFrameManager();
         this.keyFrames.pushKeyFrame(initialTime, initialPosition);
 
@@ -99,7 +99,8 @@ export class LightShaft {
             context.arc(position.x, position.y, radius * 1.8, 0, 2 * Math.PI);
 
             context.save();
-            context.globalAlpha = opacityModifier * (this.alpha + 0.15);
+            context.globalAlpha =
+                opacityModifier * (this.alpha + this.alpha * 0.5);
             context.fillStyle = ringGradient;
             context.fill();
 
@@ -125,10 +126,8 @@ export class LightShaft {
             context.lineTo(position.x + radius, position.y);
             context.lineTo(position.x - radius, position.y);
             context.lineTo(position.x - radius * topRadiusFraction, starty);
-
             context.shadowBlur = 10;
             context.shadowColor = '#ffffff';
-
             let yscale = 1 + 2 / Math.pow(this.zAngle, 1.3);
             context.scale(1, yscale);
             let lightGradient = context.createRadialGradient(
@@ -142,7 +141,6 @@ export class LightShaft {
             lightGradient.addColorStop(0, 'rgba(255, 255, 255, 0)');
             lightGradient.addColorStop(0.01 * yscale, 'white');
             lightGradient.addColorStop(1, 'white');
-
             context.fillStyle = lightGradient;
             context.fill();
             context.restore();
