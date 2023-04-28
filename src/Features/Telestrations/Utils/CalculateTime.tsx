@@ -123,7 +123,6 @@ export const calculateTotalTime = (state: ITelestrationState) => {
             );
 
             if (overState.covered.length > 0) {
-                console.log('covered object:>>>', overState.covered);
                 overState.covered.forEach((c: number, i: number) => {
                     state.videoPauseArray.splice(c - i, 1);
                 });
@@ -131,7 +130,6 @@ export const calculateTotalTime = (state: ITelestrationState) => {
 
             if (overState.startOvered !== -1 && overState.endOvered !== -1) {
                 // full overed
-                console.log('full overed');
                 if (overState.startOvered !== overState.endOvered) {
                     pauseD +=
                         state.videoPauseArray[overState.endOvered].startTime -
@@ -147,7 +145,6 @@ export const calculateTotalTime = (state: ITelestrationState) => {
                 overState.endOvered === -1
             ) {
                 // only start overed
-                console.log('only start overed');
                 pauseD +=
                     videoPauseDuration.endTime -
                     state.videoPauseArray[overState.startOvered].endTime;
@@ -158,7 +155,6 @@ export const calculateTotalTime = (state: ITelestrationState) => {
                 overState.endOvered === -1
             ) {
                 // only end overed
-                console.log('only end overed');
                 pauseD +=
                     state.videoPauseArray[overState.startOvered].startTime -
                     videoPauseDuration.startTime;
@@ -167,7 +163,6 @@ export const calculateTotalTime = (state: ITelestrationState) => {
                     videoPauseDuration.startTime;
             } else {
                 // no overed
-                console.log('no overed');
                 pauseD +=
                     videoPauseDuration.endTime - videoPauseDuration.startTime;
 

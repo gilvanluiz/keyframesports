@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { compose } from 'fp-ts/lib/function';
-import { Theme as ITheme } from '@material-ui/core';
+import { Theme as ITheme, TextField } from '@material-ui/core';
 import { useRef } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 // import getMuiTheme from 'material-ui/styles/getMuiTheme';
@@ -29,6 +29,9 @@ const styles = (theme: ITheme) => ({
         height: '25px',
         background: '#C4C4C4',
         left: '0.2%',
+    },
+    input: {
+        color: 'black',
     },
 });
 
@@ -67,6 +70,15 @@ const ShapeSlider = withStyles({
         height: '25px',
     },
 })(Slider);
+
+const CustomTextField = withStyles({
+    root: {
+        '& .MuiInputBase-input': {
+            color: 'black',
+            padding: '0px',
+        },
+    },
+})(TextField);
 
 const Thumb = (props: any) => {
     const style = {
@@ -149,11 +161,12 @@ const shapeRow = ({
     // const [secondWidth, setSecondWidth]: [number, any] = useState(100);
 
     // useEffect(() => {
-    //     setSecondWidth(shapeBarRef.current.offsetWidth / totalTelestrationDuration);
+    //     setSecondWidt(shapeBarRef.current.offsetWidth / totalTelestrationDuration);
     // }, [totalTelestrationDuration]);
 
     // const [pauseArray, setPauseArray] = useState([20, 50]);
     // const [shapeArray, setShapeArray] = useState([30, 40]);
+    const [isdisabled, setIsDisabled]: [boolean, any] = React.useState(true);
 
     const handlePauseChange = (
         event: React.ChangeEvent<{}>,
@@ -223,12 +236,27 @@ const shapeRow = ({
             <div style={rowTitleStyle}>
                 <div
                     style={{
-                        backgroundColor: `${color}`,
+                        // backgroundColor: `${color}`,
+                        backgroundColor: 'red',
                         width: '7px',
                         height: '100%',
                     }}
                 ></div>
-                {title}
+                <CustomTextField
+                    // InputProps={{
+                    //     className: {classes.input},
+                    // }}
+                    disabled={isdisabled}
+                    id='outlined-disabled'
+                    margin='none'
+                    defaultValue={title}
+                    onKeyDown={(e) => {
+                        e.stopPropagation();
+                    }}
+                    onDoubleClick={(e) => {
+                        setIsDisabled(false);
+                    }}
+                />
             </div>
 
             <div

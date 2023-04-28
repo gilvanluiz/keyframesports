@@ -249,6 +249,11 @@ export interface IClickVideoBoxAction {
     event: any;
 }
 
+export interface IDblClickVidoeBoxAction {
+    type: 'telestrations/DOUBLE_CLICK_VIDEO_BOX';
+    event: any;
+}
+
 export interface ITelestrationPlayAction {
     type: 'telestrations/TELESTRATION_PLAY';
 }
@@ -323,6 +328,7 @@ export type IAction =
     | ISetVideoLoadErrorAction
     | ISetVideoLoadedAction
     | IClickVideoBoxAction
+    | IDblClickVidoeBoxAction
     | ITelestrationPlayAction
     | ITelestrationStopAction
     | IRelativeCurrentTimeChangeAction

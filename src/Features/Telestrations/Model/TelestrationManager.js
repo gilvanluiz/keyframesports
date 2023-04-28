@@ -709,9 +709,6 @@ export default class TelestrationManager {
         gsap.to(drawnObject, {
             opacity: 1,
             duration: this.config.FADE_IN_TIME,
-            onUpdate: () => {
-                console.log('draw update>>>', drawnObject.opacity);
-            },
         });
     };
 
@@ -719,9 +716,6 @@ export default class TelestrationManager {
         gsap.to(drawnObject, {
             opacity: 0,
             duration: this.config.FADE_OUT_TIME,
-            onUpdate: () => {
-                console.log('draw update>>>', drawnObject.opacity);
-            },
         });
     };
 
@@ -1257,10 +1251,19 @@ export default class TelestrationManager {
         }
     };
 
-    placeLastLinkedCursorPoint = function () {
+    placeLastLinkedCursorPoint = function (currentTime) {
         this.creationObject.confirmLastCursor();
         this.creationObject.markAsFinished();
         this.linkedCursors.push(this.creationObject);
+
+        const objectDetail = new DrawnObjectDetail(
+            this.creationObject,
+            currentTime,
+            'linkedcursor'
+        );
+
+        this.addedShapes.push(objectDetail);
+
         this.actionManager.pushAction(ActionTypeEnum.PLACE_LINKED_CURSOR);
         this.initializeCreationLinkedCursor();
         sendUserEvent(telestrationLinkFinished, window.location.href, videoId);
@@ -1887,7 +1890,7 @@ export default class TelestrationManager {
         }
     };
 
-    ondblclick = function (event) {
+    ondblclick = function (event, currentTime) {
         this.captureCanvasMousePosition(event);
         switch (this.currentFunction) {
             case this.FUNCTION_ENUM.PLACE_ARROW_POINT:
@@ -1895,7 +1898,7 @@ export default class TelestrationManager {
                 this.initializeCurrentFunction();
                 break;
             case this.FUNCTION_ENUM.PLACE_LINKED_CURSOR:
-                this.placeLastLinkedCursorPoint();
+                this.placeLastLinkedCursorPoint(currentTime);
                 break;
         }
     };
@@ -2028,9 +2031,9 @@ export default class TelestrationManager {
         // this.nonRecordableCanvas.addEventListener('click', (event) =>
         //     this.onclick(event)
         // );
-        this.nonRecordableCanvas.addEventListener('dblclick', (event) =>
-            this.ondblclick(event)
-        );
+        // this.nonRecordableCanvas.addEventListener('dblclick', (event) =>
+        //     this.ondblclick(event)
+        // );
         this.nonRecordableCanvas.addEventListener('contextmenu', (event) =>
             this.oncontextmenu(event)
         );

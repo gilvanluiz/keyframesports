@@ -59,6 +59,7 @@ const CHANGE_TEXT_BACKGROUND_COLOR =
     'telestrations/CHANGE_TEXT_BACKGROUND_COLOR';
 const SAVE_TEXT_BOX = 'telestrations/SAVE_TEXT_BOX';
 const CLICK_VIDEO_BOX = 'telestrations/CLICK_VIDEO_BOX';
+const DOUBLE_CLICK_VIDEO_BOX = 'telestrations/DOUBLE_CLICK_VIDEO_BOX';
 const TELESTRATION_PLAY = 'telestrations/TELESTRATION_PLAY';
 const TELESTRATION_STOP = 'telestrations/TELESTRATION_STOP';
 const RELATIVE_CURRENT_TIME_CHANGE =
@@ -175,6 +176,11 @@ export const setVideoLoaded = () => ({
 
 export const clickVideoBox = (e: any) => ({
     type: CLICK_VIDEO_BOX as 'telestrations/CLICK_VIDEO_BOX',
+    event: e,
+});
+
+export const doubleClickVideoBox = (e: any) => ({
+    type: DOUBLE_CLICK_VIDEO_BOX as 'telestrations/DOUBLE_CLICK_VIDEO_BOX',
     event: e,
 });
 
@@ -474,6 +480,20 @@ const telestrationReducer = (
             };
             return newState;
         }
+        case DOUBLE_CLICK_VIDEO_BOX: {
+            state.telestrationManager.ondblclick(
+                action.event,
+                state.telestrationTime
+            );
+
+            calculateTotalTime(state);
+
+            const newState = {
+                ...state,
+            };
+            return newState;
+        }
+
         case TELESTRATION_PLAY: {
             state.telestrationManager.setLiveModeFunction();
 

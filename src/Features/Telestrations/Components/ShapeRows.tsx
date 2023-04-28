@@ -30,11 +30,7 @@ const shapeRows = ({ classes, telestrationStateMgr }: IShapeRowsProps) => {
     const { telestrationManager } = state;
     const rowRef = useRef<HTMLDivElement>(null);
 
-    const objectsCount = { circle: 0, lightshaft: 0 };
-    // React.useEffect(() => {
-    //     objectsCount.circle = 0;
-    //     objectsCount.lightshaft = 0;
-    // }, [telestrationManager.addedShapes]);
+    const objectsCount = { circle: 0, lightshaft: 0, linkedcursor: 0 };
 
     return (
         <div
@@ -54,6 +50,9 @@ const shapeRows = ({ classes, telestrationStateMgr }: IShapeRowsProps) => {
                             break;
                         case 'lightshaft':
                             objectsCount.lightshaft++;
+                            break;
+                        case 'linkedcursor':
+                            objectsCount.linkedcursor++;
                             break;
                     }
                     return (

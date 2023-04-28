@@ -21,6 +21,7 @@ import {
     setVideoLoaded,
     clickVideoBox,
     VideoTickAction,
+    doubleClickVideoBox,
     // TelestrationPlayAction,
     // TelestrationStopAction,
 } from '../State';
@@ -227,6 +228,10 @@ const editVideo = ({
         videoRef,
     });
 
+    const handleCanvasDblClick = (e: any) => {
+        dispatchAction(doubleClickVideoBox(e));
+    };
+
     const onCanvasMouseDrag = (mouseMode: 'down' | 'up') => (
         e: React.MouseEvent<HTMLElement>
     ) => {
@@ -293,6 +298,7 @@ const editVideo = ({
                 className={clsx(classes.root, extraRootClasses)}
                 style={{ maxHeight: '80%' }}
                 onMouseDown={clickVideoBoxHandler}
+                onDoubleClick={handleCanvasDblClick}
             >
                 <canvas
                     className={clsx(classes.easyChangeSize, canvasClasses)}
