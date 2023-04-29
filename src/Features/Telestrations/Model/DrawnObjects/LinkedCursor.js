@@ -4,7 +4,7 @@ import { FadeInOutAnimation } from '../Animations/FadeInOutAnimation';
 export class LinkedCursor {
     constructor(manager, time, radius, color, zAngle) {
         this.time = time;
-
+        this.opacity = 1;
         this.manager = manager;
         // external animations
 
@@ -153,7 +153,11 @@ export class LinkedCursor {
             this.drawCursorsLine(context, i - 1, i);
         }
 
-        this.cursors.map((c) => c.draw(context, time, true));
+        this.cursors.map((c) => {
+            c.draw(context, time, true);
+            c.opacity = this.opacity;
+        });
+
         this.manager.unsetPerspectiveMode(context);
     };
 
