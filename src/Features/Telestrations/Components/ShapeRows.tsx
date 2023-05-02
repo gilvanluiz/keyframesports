@@ -4,16 +4,17 @@ import { Theme as ITheme } from '@material-ui/core';
 import { useRef } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import { ITelestrationStateMgr } from '../Types';
-import { withTelestrationState } from '../State';
+import { AddedShapeOrderChangeAction, withTelestrationState } from '../State';
 import { ShapeRow } from './ShapeRow';
+import { SortableContainer, SortableElement } from 'react-sortable-hoc';
 
 const styles = (theme: ITheme) => ({
     shapeRowsDiv: {
         height: '130px',
-        scrollbarColor: '#aaaaaa',
-        scrollbarWidth: '6px',
         gap: '2px',
         display: 'flex',
+        // scrollbarColor: '#aaaaaa',
+        // scrollbarWidth: '6px',
         // scrollBehavior: 'auto',
         // overflowX: 'auto',
         // flexDirection: 'column',
@@ -25,13 +26,44 @@ interface IShapeRowsProps {
     telestrationStateMgr: ITelestrationStateMgr;
 }
 
+const SortableItem = SortableElement(({ value }: any) => (
+    <div>
+        <ShapeRow shapeDetail={value} />
+    </div>
+));
+
+const SortableList = SortableContainer(({ items }: any) => {
+    return (
+        <div>
+            {items.map((shape: any, index: number) => (
+                <SortableItem key={shape.title} index={index} value={shape} />
+            ))}
+        </div>
+    );
+});
+
 const shapeRows = ({ classes, telestrationStateMgr }: IShapeRowsProps) => {
-    const { state } = telestrationStateMgr;
-    const { telestrationManager } = state;
+    const { state, dispatchAction } = telestrationStateMgr;
+    // const { telestrationManager } = state;
+
     const rowRef = useRef<HTMLDivElement>(null);
+    // const [shapeArray, setShapeArray]: [any, any] = React.useState([]);
 
-    const objectsCount = { circle: 0, lightshaft: 0, linkedcursor: 0 };
+    const onSortEnd = ({ oldIndex, newIndex }: any) => {
+        dispatchAction(AddedShapeOrderChangeAction(oldIndex, newIndex));
+        // this.setState(({ items }) => ({
+        //   items: arrayMove(items, oldIndex, newIndex)
+        // }));
+    };
 
+    // React.useEffect(() => {
+    //     console.log('change order');
+
+    //     // setShapeArray(state.telestrationManager.addedShapes);
+
+    //     setShapeArray(state.telestrationManager.addedShapes);
+    //     setTimeout(() => console.log(shapeArray), 1);
+    // }, [state]);
     return (
         <div
             className={classes.shapeRowsDiv}
@@ -42,7 +74,12 @@ const shapeRows = ({ classes, telestrationStateMgr }: IShapeRowsProps) => {
             }}
             ref={rowRef}
         >
-            {telestrationManager.addedShapes.map(
+            <SortableList
+                items={state.telestrationManager.addedShapes}
+                onSortEnd={onSortEnd}
+                useDragHandle
+            />
+            {/* {telestrationManager.addedShapes.map(
                 (shape: any, index: number) => {
                     switch (shape.type) {
                         case 'circle':
@@ -66,7 +103,7 @@ const shapeRows = ({ classes, telestrationStateMgr }: IShapeRowsProps) => {
                         />
                     );
                 }
-            )}
+            )} */}
         </div>
     );
 };

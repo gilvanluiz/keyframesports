@@ -3,6 +3,8 @@ import { compose } from 'fp-ts/lib/function';
 import { Theme as ITheme, TextField } from '@material-ui/core';
 import { useRef } from 'react';
 import { withStyles } from '@material-ui/core/styles';
+import { SortableHandle } from 'react-sortable-hoc';
+
 // import getMuiTheme from 'material-ui/styles/getMuiTheme';
 // import { MuiThemeProvider } from 'material-ui';
 
@@ -93,13 +95,22 @@ const Thumb = (props: any) => {
         transform: 'translateX(-50%)',
         // boxShadow: '#ebebeb 0 2px 2px',
         pointerEvents: 'all',
+        cursor: 'col-resize',
         '&:focus, &:hover, &$active': {
             boxShadow: '#ccc 0 2px 3px 1px',
         },
     };
 
     return (
-        <div {...props} style={style}>
+        <div
+            {...props}
+            style={style}
+            onDrag={(e) => {
+                console.log('thumb dragging');
+                e.preventDefault();
+                e.stopPropagation();
+            }}
+        >
             <div
                 style={{
                     backgroundColor: '#fff',
@@ -119,9 +130,14 @@ interface IShapeRowProps {
     telestrationStateMgr: ITelestrationStateMgr;
     classes: any;
 }
+
+const DragHandle = SortableHandle(() => (
+    <span style={{ cursor: 'move', backgroundColor: 'white' }}>::::::</span>
+));
+
 const shapeRow = ({
-    key,
-    title,
+    // key,
+    // title,
     shapeDetail,
     telestrationStateMgr,
     classes,
@@ -236,20 +252,17 @@ const shapeRow = ({
             <div style={rowTitleStyle}>
                 <div
                     style={{
-                        // backgroundColor: `${color}`,
-                        backgroundColor: 'red',
-                        width: '7px',
+                        backgroundColor: `${color}`,
+                        width: '10px',
                         height: '100%',
                     }}
                 ></div>
+                <DragHandle />
                 <CustomTextField
-                    // InputProps={{
-                    //     className: {classes.input},
-                    // }}
                     disabled={isdisabled}
                     id='outlined-disabled'
                     margin='none'
-                    defaultValue={title}
+                    defaultValue={shapeDetail.title}
                     onKeyDown={(e) => {
                         e.stopPropagation();
                     }}
@@ -263,6 +276,10 @@ const shapeRow = ({
                 ref={shapeBarRef}
                 className={classes.shapeBar}
                 style={{ position: 'relative' }}
+                onMouseDown={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                }}
             >
                 <PauseSlider
                     value={pauseArray}

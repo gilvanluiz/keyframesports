@@ -301,6 +301,12 @@ export interface ITelestrationPerspectiveChangeAction {
     value: number;
 }
 
+export interface IAddedShapeOrderChangeAction {
+    type: 'telestrations/ADDEDSHAPE_ORDER_CHANGE_ACTION';
+    oldIndex: number;
+    newIndex: number;
+}
+
 export type ISetDragStateAction =
     | ISetDragStateStartAction
     | ISetDragStateEndAction;
@@ -338,7 +344,8 @@ export type IAction =
     | ITelestrationPercentateChangeAction
     | ITelestrationPercentateCommittedAction
     | ITelestrationSizeChangeAction
-    | ITelestrationPerspectiveChangeAction;
+    | ITelestrationPerspectiveChangeAction
+    | IAddedShapeOrderChangeAction;
 
 export type IShape = 'none' | 'circle' | 'arrow';
 

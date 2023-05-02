@@ -1185,10 +1185,19 @@ export default class TelestrationManager {
             );
 
             this.cursors.push(kf);
+
+            let index = 0;
+            this.addedShapes.forEach((shape) => {
+                if (shape.type === 'circle') {
+                    index++;
+                }
+            });
+
             const objectDetail = new DrawnObjectDetail(
                 kf,
                 currentTime,
-                'circle'
+                'circle',
+                ++index
             );
             this.addedShapes.push(objectDetail);
 
@@ -1212,10 +1221,19 @@ export default class TelestrationManager {
         );
         ls.startOpenTimer(this.config.FADE_IN_TIME);
         this.lightShafts.push(ls);
+
+        let index = 0;
+        this.addedShapes.forEach((shape) => {
+            if (shape.type === 'lightshaft') {
+                index++;
+            }
+        });
+
         const objectDetail = new DrawnObjectDetail(
             ls,
             currentTime,
-            'lightshaft'
+            'lightshaft',
+            ++index
         );
         this.addedShapes.push(objectDetail);
 
@@ -1256,10 +1274,18 @@ export default class TelestrationManager {
         this.creationObject.markAsFinished();
         this.linkedCursors.push(this.creationObject);
 
+        let index = 0;
+        this.addedShapes.forEach((shape) => {
+            if (shape.type === 'linkedcursor') {
+                index++;
+            }
+        });
+
         const objectDetail = new DrawnObjectDetail(
             this.creationObject,
             currentTime,
-            'linkedcursor'
+            'linkedcursor',
+            ++index
         );
 
         this.addedShapes.push(objectDetail);

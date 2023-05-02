@@ -77,7 +77,8 @@ const TELESTRATION_SIZE_CHANGE_ACTION =
     'telestrations/TELESTRATION_SIZE_CHANGE_ACTION';
 const TELESTRATION_PERSPECTIVE_CHANGE_ACTION =
     'telestrations/TELESTRATION_PERSPECTIVE_CHANGE_ACTION';
-
+const ADDEDSHAPE_ORDER_CHANGE_ACTION =
+    'telestrations/ADDEDSHAPE_ORDER_CHANGE_ACTION';
 // ACTION CREATORS
 
 export const setModeAction = (
@@ -240,6 +241,14 @@ export const ITelestrationPerspectiveChangeAction = (value: number) => ({
     value,
 });
 
+export const AddedShapeOrderChangeAction = (
+    oldIndex: number,
+    newIndex: number
+) => ({
+    type: ADDEDSHAPE_ORDER_CHANGE_ACTION as 'telestrations/ADDEDSHAPE_ORDER_CHANGE_ACTION',
+    oldIndex,
+    newIndex,
+});
 // REDUCER
 
 type ITelestrationStateFn = (x: any) => ITelestrationState;
@@ -671,6 +680,19 @@ const telestrationReducer = (
         case TELESTRATION_PERSPECTIVE_CHANGE_ACTION: {
             const { telestrationManager } = state;
             telestrationManager.changeZAngleSlider(action.value);
+
+            const newState = {
+                ...state,
+            };
+            return newState;
+        }
+        case ADDEDSHAPE_ORDER_CHANGE_ACTION: {
+            const { telestrationManager } = state;
+
+            const { addedShapes } = telestrationManager;
+            // addedShapes.pop();
+            const indexItem = addedShapes.splice(action.oldIndex, 1)[0];
+            addedShapes.splice(action.newIndex, 0, indexItem);
 
             const newState = {
                 ...state,

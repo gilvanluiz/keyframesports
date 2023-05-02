@@ -1,6 +1,8 @@
 export class DrawnObjectDetail {
-    constructor(object, currentVideoTime, id) {
-        this.type = id;
+    constructor(object, currentVideoTime, type, index) {
+        // this.index = index;
+        this.type = type;
+        this.title = `${type} ${index}`;
         this.object = object;
         this.videoPauseDuration = {
             startTime: currentVideoTime - 1 < 0 ? 0 : currentVideoTime - 1,
