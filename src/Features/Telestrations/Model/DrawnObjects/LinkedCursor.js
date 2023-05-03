@@ -124,7 +124,7 @@ export class LinkedCursor {
             context.save();
             context.lineWidth = 10;
             context.strokeStyle = this.color;
-
+            context.globalAlpha = this.opacity;
             context.shadowBlur = 4;
             context.shadowColor = 'rgba(255,255,255,0.8)';
 

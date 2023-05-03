@@ -1295,7 +1295,7 @@ export default class TelestrationManager {
         sendUserEvent(telestrationLinkFinished, window.location.href, videoId);
     };
 
-    placePolygonPoint = function () {
+    placePolygonPoint = function (currentTime) {
         if (this.creationObject.points.length === 1) {
             sendUserEvent(
                 telestrationPolygonStartedDrawing,
@@ -1311,6 +1311,21 @@ export default class TelestrationManager {
             );
             this.creationObject.markAsFinished();
             this.polygons.push(this.creationObject);
+
+            let index = 0;
+            this.addedShapes.forEach((shape) => {
+                if (shape.type === 'polygon') {
+                    index++;
+                }
+            });
+            const objectDetail = new DrawnObjectDetail(
+                this.creationObject,
+                currentTime,
+                'polygon',
+                ++index
+            );
+            this.addedShapes.push(objectDetail);
+
             this.actionManager.pushAction(ActionTypeEnum.PLACE_POLYGON);
             this.initializeCreationPolygon();
         } else {
@@ -1717,6 +1732,7 @@ export default class TelestrationManager {
             this.config.POLYGON_OPACITY,
             this.zAngle
         );
+
         this.creationObject.addPoint(this.getRelativeMousePosition());
     };
 
@@ -1810,7 +1826,7 @@ export default class TelestrationManager {
                 this.pickChromaPixelActionTrigger();
                 break;
             case this.FUNCTION_ENUM.PLACE_POLYGON:
-                this.placePolygonPoint();
+                this.placePolygonPoint(currentTime);
                 break;
             case this.FUNCTION_ENUM.PLACE_LINKED_CURSOR:
                 this.placeLinkedCursorPoint();

@@ -4,7 +4,8 @@ export class Polygon {
     constructor(manager, color, borderColor, opacity, zAngle) {
         this.color = color;
         this.borderColor = borderColor;
-        this.opacity = opacity;
+        this.opacity = 1;
+        this.fillOpacity = opacity;
         this.zAngle = zAngle;
 
         this.manager = manager;
@@ -74,7 +75,7 @@ export class Polygon {
             if (this.animation) {
                 this.animation.set(context);
             }
-
+            context.globalAlpha = this.opacity;
             context.lineWidth = 4;
             context.strokeStyle = this.borderColor;
 
@@ -88,9 +89,10 @@ export class Polygon {
 
             context.save();
             context.fillStyle = this.color;
-            context.globalAlpha = this.animation
-                ? this.animation.opacity * this.opacity
-                : this.opacity;
+            context.globalAlpha =
+                (this.animation
+                    ? this.animation.opacity * this.fillOpacity
+                    : this.fillOpacity) * this.opacity;
             context.fill();
             context.restore();
 
