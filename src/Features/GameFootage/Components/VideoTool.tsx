@@ -35,7 +35,7 @@ import {
 } from '../../Telestrations/State';
 import { ITelestrationStateMgr } from 'src/Features/Telestrations/Types';
 import { compose } from 'fp-ts/lib/function';
-import { drawTools } from 'src/Assets/video';
+// import { drawTools } from 'src/Assets/video';
 import { CirclePicker } from 'react-color';
 
 const styles = (theme: ITheme) => ({
@@ -51,11 +51,11 @@ interface IProp extends IWithStyles {
     telestrationStateMgr: ITelestrationStateMgr;
 }
 
-interface ITool {
-    name: string;
-    label: string;
-    mode: string;
-}
+// interface ITool {
+//     name: string;
+//     label: string;
+//     mode: string;
+// }
 
 const defaulTextBoxState = {
     text: '',
@@ -84,9 +84,12 @@ const videoTool = ({ classes, telestrationStateMgr }: IProp) => {
     const [colorList, setColorList] = useState(initialColors);
 
     const { state, dispatchAction } = telestrationStateMgr;
-    const currentTool = drawTools.find(
-        (tool: ITool) => tool.mode === state.editMode
-    );
+
+    const { telestrationManager } = state;
+
+    // const currentTool = drawTools.find(
+    //     (tool: ITool) => tool.mode === state.editMode
+    // );
     const colorPickerOpened = Boolean(anchorEl);
 
     const openColorPicker = (event: React.MouseEvent<HTMLElement>) => {
@@ -150,207 +153,231 @@ const videoTool = ({ classes, telestrationStateMgr }: IProp) => {
                 id='perspective-slider-input'
                 value={toolPerspective}
             />
-            {currentTool ? (
-                <>
-                    <div
-                        className={classes.toolName}
-                        onClick={() => setOpened((prev) => !prev)}
-                    >
-                        {currentTool.name}
-                        {opened ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />}
-                    </div>
-                    <Collapse in={opened} timeout={300}>
-                        <div style={{ margin: '10px 0px' }}>
-                            {currentTool.mode !== 'lightshaft' && (
+            {telestrationManager.addedShapes.length > 0 ? (
+                telestrationManager.addedShapes.map(
+                    (object: any, index: number) => (
+                        <>
+                            <div
+                                className={classes.toolName}
+                                onClick={() => setOpened((prev) => !prev)}
+                            >
+                                {object.type}
+                                {opened ? (
+                                    <ArrowDropUpIcon />
+                                ) : (
+                                    <ArrowDropDownIcon />
+                                )}
+                            </div>
+                            <Collapse in={opened} timeout={300}>
+                                <div style={{ margin: '10px 0px' }}>
+                                    {object.type !== 'lightshaft' && (
+                                        <div
+                                            style={{
+                                                display: 'flex',
+                                                marginBottom: '10px',
+                                                justifyContent: 'space-between',
+                                            }}
+                                        >
+                                            <CirclePicker
+                                                colors={colorList}
+                                                color={pickerColor}
+                                                onChange={handleChangePicker}
+                                                onChangeComplete={onColorPick}
+                                                circleSize={16.5}
+                                                circleSpacing={7}
+                                            />
+                                            <div
+                                                onClick={openColorPicker as any}
+                                                style={{
+                                                    display: 'flex',
+                                                    cursor: 'pointer',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'center',
+                                                    width: '18px',
+                                                    height: '18px',
+                                                    borderRadius: '50%',
+                                                    background: 'none',
+                                                    border: '1px solid #fff',
+                                                }}
+                                            >
+                                                <AddIcon
+                                                    style={{
+                                                        display: 'block',
+                                                        padding: '4px',
+                                                    }}
+                                                />
+                                            </div>
+                                        </div>
+                                    )}
+                                    {object.type !== 'polygon' && (
+                                        <>
+                                            <div
+                                                style={{
+                                                    display: 'flex',
+                                                    justifyContent:
+                                                        'space-between',
+                                                }}
+                                            >
+                                                Size
+                                                <StyledSlider
+                                                    style={{ width: '40%' }}
+                                                    value={toolSize}
+                                                    onChange={
+                                                        onSizeSliderChange
+                                                    }
+                                                    max={200}
+                                                    min={10}
+                                                    step={4}
+                                                />
+                                            </div>
+                                            <div
+                                                style={{
+                                                    display: 'flex',
+                                                    justifyContent:
+                                                        'space-between',
+                                                }}
+                                            >
+                                                {' '}
+                                                Perspective
+                                                <StyledSlider
+                                                    style={{ width: '40%' }}
+                                                    max={1}
+                                                    min={0.2}
+                                                    step={0.0005}
+                                                    value={toolPerspective}
+                                                    aria-labelledby='slider'
+                                                    onChange={
+                                                        onPerspectiveChange
+                                                    }
+                                                />
+                                            </div>
+                                        </>
+                                    )}
+                                </div>
+                            </Collapse>
+                            <Divider />
+                            {false && (
                                 <div
                                     style={{
                                         display: 'flex',
-                                        marginBottom: '10px',
-                                        justifyContent: 'space-between',
+                                        justifyContent: 'center',
+                                        flexDirection: 'column',
+                                        padding: '0px 15px',
                                     }}
                                 >
-                                    <CirclePicker
-                                        colors={colorList}
-                                        color={pickerColor}
-                                        onChange={handleChangePicker}
-                                        onChangeComplete={onColorPick}
-                                        circleSize={16.5}
-                                        circleSpacing={7}
-                                    />
-                                    <div
-                                        onClick={openColorPicker as any}
-                                        style={{
-                                            display: 'flex',
-                                            cursor: 'pointer',
-                                            alignItems: 'center',
-                                            justifyContent: 'center',
-                                            width: '18px',
-                                            height: '18px',
-                                            borderRadius: '50%',
-                                            background: 'none',
-                                            border: '1px solid #fff',
+                                    <TextField
+                                        label='Text'
+                                        onFocus={(e) => {
+                                            //  tslint:disable-next-line
+                                            // window['STOP_KEY_LISTENERS'] = true;
                                         }}
-                                    >
-                                        <AddIcon
-                                            style={{
-                                                display: 'block',
-                                                padding: '4px',
-                                            }}
-                                        />
-                                    </div>
+                                        onBlur={(e) => {
+                                            //  tslint:disable-next-line
+                                            // window[
+                                            //     'STOP_KEY_LISTENERS'
+                                            // ] = false;
+                                        }}
+                                        onChange={(e) => {
+                                            dispatchAction(
+                                                changeText(e.target.value)
+                                            );
+                                            setTextBoxState({
+                                                ...textBoxState,
+                                                text: e.target.value,
+                                            });
+                                        }}
+                                        value={textBoxState.text}
+                                    />
+                                    <TextField
+                                        label='Font Size'
+                                        type='number'
+                                        style={{ margin: '5px 0px' }}
+                                        InputLabelProps={{
+                                            shrink: true,
+                                        }}
+                                        value={textBoxState.fontSize}
+                                        onChange={(e) => {
+                                            dispatchAction(
+                                                changeFontSize(+e.target.value)
+                                            );
+                                            setTextBoxState({
+                                                ...textBoxState,
+                                                fontSize: +e.target.value,
+                                            });
+                                        }}
+                                    />
                                 </div>
                             )}
-                            {currentTool.mode !== 'polygon_t' && (
-                                <>
-                                    <div
-                                        style={{
-                                            display: 'flex',
-                                            justifyContent: 'space-between',
-                                        }}
+                            {false && (
+                                <List>
+                                    <ListItem
+                                        onClick={() =>
+                                            setTextBoxState({
+                                                ...textBoxState,
+                                                backgroundColor: false,
+                                                textColor: true,
+                                            })
+                                        }
+                                        className={classes.actionButton}
                                     >
-                                        Size
-                                        <StyledSlider
-                                            style={{ width: '40%' }}
-                                            value={toolSize}
-                                            onChange={onSizeSliderChange}
-                                            max={200}
-                                            min={10}
-                                            step={4}
-                                        />
-                                    </div>
-                                    <div
-                                        style={{
-                                            display: 'flex',
-                                            justifyContent: 'space-between',
-                                        }}
+                                        <ListItemIcon
+                                            style={{ minWidth: '40px' }}
+                                        >
+                                            <FormatColorText />
+                                        </ListItemIcon>
+                                        <ListItemText disableTypography>
+                                            Change Text Color
+                                        </ListItemText>
+                                    </ListItem>
+                                    <ListItem
+                                        onClick={() =>
+                                            setTextBoxState({
+                                                ...textBoxState,
+                                                textColor: false,
+                                                backgroundColor: true,
+                                            })
+                                        }
+                                        className={classes.actionButton}
                                     >
-                                        {' '}
-                                        Perspective
-                                        <StyledSlider
-                                            style={{ width: '40%' }}
-                                            max={1}
-                                            min={0.2}
-                                            step={0.0005}
-                                            value={toolPerspective}
-                                            aria-labelledby='slider'
-                                            onChange={onPerspectiveChange}
-                                        />
-                                    </div>
-                                </>
+                                        <ListItemIcon
+                                            style={{ minWidth: '40px' }}
+                                        >
+                                            <Texture />
+                                        </ListItemIcon>
+                                        <ListItemText disableTypography>
+                                            Change Background Color
+                                        </ListItemText>
+                                    </ListItem>
+                                    <ListItem
+                                        onClick={() => {
+                                            dispatchAction(saveTextBox());
+                                            setTextBoxState(defaulTextBoxState);
+                                        }}
+                                        className={classes.actionButton}
+                                    >
+                                        <ListItemIcon
+                                            style={{ minWidth: '40px' }}
+                                        >
+                                            <Save />
+                                        </ListItemIcon>
+                                        <ListItemText disableTypography>
+                                            Save
+                                        </ListItemText>
+                                    </ListItem>
+                                </List>
                             )}
-                        </div>
-                    </Collapse>
 
-                    <Divider />
-                    {false && (
-                        <div
-                            style={{
-                                display: 'flex',
-                                justifyContent: 'center',
-                                flexDirection: 'column',
-                                padding: '0px 15px',
-                            }}
-                        >
-                            <TextField
-                                label='Text'
-                                onFocus={(e) => {
-                                    //  tslint:disable-next-line
-                                    window['STOP_KEY_LISTENERS'] = true;
-                                }}
-                                onBlur={(e) => {
-                                    //  tslint:disable-next-line
-                                    window['STOP_KEY_LISTENERS'] = false;
-                                }}
-                                onChange={(e) => {
-                                    dispatchAction(changeText(e.target.value));
-                                    setTextBoxState({
-                                        ...textBoxState,
-                                        text: e.target.value,
-                                    });
-                                }}
-                                value={textBoxState.text}
+                            <ColorPicker
+                                handleChange={handleChangePickerList}
+                                color={pickerColor}
+                                open={colorPickerOpened}
+                                onPick={onColorPick}
+                                onClose={closeColorPicker}
+                                anchorEl={anchorEl}
                             />
-                            <TextField
-                                label='Font Size'
-                                type='number'
-                                style={{ margin: '5px 0px' }}
-                                InputLabelProps={{
-                                    shrink: true,
-                                }}
-                                value={textBoxState.fontSize}
-                                onChange={(e) => {
-                                    dispatchAction(
-                                        changeFontSize(+e.target.value)
-                                    );
-                                    setTextBoxState({
-                                        ...textBoxState,
-                                        fontSize: +e.target.value,
-                                    });
-                                }}
-                            />
-                        </div>
-                    )}
-                    {false && (
-                        <List>
-                            <ListItem
-                                onClick={() =>
-                                    setTextBoxState({
-                                        ...textBoxState,
-                                        backgroundColor: false,
-                                        textColor: true,
-                                    })
-                                }
-                                className={classes.actionButton}
-                            >
-                                <ListItemIcon style={{ minWidth: '40px' }}>
-                                    <FormatColorText />
-                                </ListItemIcon>
-                                <ListItemText disableTypography>
-                                    Change Text Color
-                                </ListItemText>
-                            </ListItem>
-                            <ListItem
-                                onClick={() =>
-                                    setTextBoxState({
-                                        ...textBoxState,
-                                        textColor: false,
-                                        backgroundColor: true,
-                                    })
-                                }
-                                className={classes.actionButton}
-                            >
-                                <ListItemIcon style={{ minWidth: '40px' }}>
-                                    <Texture />
-                                </ListItemIcon>
-                                <ListItemText disableTypography>
-                                    Change Background Color
-                                </ListItemText>
-                            </ListItem>
-                            <ListItem
-                                onClick={() => {
-                                    dispatchAction(saveTextBox());
-                                    setTextBoxState(defaulTextBoxState);
-                                }}
-                                className={classes.actionButton}
-                            >
-                                <ListItemIcon style={{ minWidth: '40px' }}>
-                                    <Save />
-                                </ListItemIcon>
-                                <ListItemText disableTypography>
-                                    Save
-                                </ListItemText>
-                            </ListItem>
-                        </List>
-                    )}
-                    <ColorPicker
-                        handleChange={handleChangePickerList}
-                        color={pickerColor}
-                        open={colorPickerOpened}
-                        onPick={onColorPick}
-                        onClose={closeColorPicker}
-                        anchorEl={anchorEl}
-                    />
-                </>
+                        </>
+                    )
+                )
             ) : (
                 <></>
             )}
