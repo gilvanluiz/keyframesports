@@ -28,6 +28,7 @@ import {
 import { sendUserEvent } from 'src/App/UserEvents/UserEventManager';
 import { Rectangle } from './DrawnObjects/Rectangle';
 import { DrawnObjectDetail } from './DrawnObjectDetail';
+import { RestaurantRounded } from '@material-ui/icons';
 
 const videoId = window.location.pathname.split('/').pop();
 
@@ -1100,6 +1101,22 @@ export default class TelestrationManager {
         }
     };
 
+    getSize = function () {
+        switch (this.currentFunction) {
+            case this.FUNCTION_ENUM.SELECT_SHAPE:
+            case this.FUNCTION_ENUM.LIVE_MODE_PLACE_CURSOR:
+            case this.FUNCTION_ENUM.PLACE_LINKED_CURSOR:
+                return this.cursorRadius;
+            case this.FUNCTION_ENUM.PLACE_LIGHT_SHAFT:
+                return this.lightShaftRadius;
+            case this.FUNCTION_ENUM.PLACE_SMOOTH_ARROW:
+            case this.FUNCTION_ENUM.PLACE_STRAIGHT_ARROW:
+            case this.FUNCTION_ENUM.PLACE_ARROW_POINT:
+            case this.FUNCTION_ENUM.PLAYER_CUT_OUT:
+                return this.arrowWidth;
+        }
+    };
+
     setSelectedSize = function (radius) {
         this.selectedShapes.forEach((s) => s.setRadius(radius));
     };
@@ -1134,7 +1151,9 @@ export default class TelestrationManager {
                 break;
         }
     };
-
+    getZAngle = function () {
+        return this.zAngle;
+    };
     changeZAngleSlider = function (zAngleVariation) {
         this.zAngle = zAngleVariation;
         this.zAngle = Utils.clamp(

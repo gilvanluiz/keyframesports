@@ -80,8 +80,8 @@ const videoTool = ({ classes, telestrationStateMgr }: IProp) => {
     const [opened, setOpened] = useState(true);
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const [pickerColor, setPickerColor] = useState('#cc0000');
-    const [toolSize, setToolSize] = useState(40);
-    const [toolPerspective, setToolPerspective] = useState(0.36);
+    // const [toolSize, setToolSize] = useState(40);
+    // const [toolPerspective, setToolPerspective] = useState(0.36);
     const [colorList, setColorList] = useState(initialColors);
 
     const { state, dispatchAction } = telestrationStateMgr;
@@ -140,11 +140,11 @@ const videoTool = ({ classes, telestrationStateMgr }: IProp) => {
     };
     const onSizeSliderChange = (e: any, newValue: number, index: number) => {
         dispatchAction(ITelestrationSizeChangeAction(newValue, index));
-        setToolSize(newValue);
+        // setToolSize(newValue);
     };
     const onPerspectiveChange = (e: any, newValue: number, index: number) => {
         dispatchAction(ITelestrationPerspectiveChangeAction(newValue, index));
-        setToolPerspective(newValue);
+        // setToolPerspective(newValue);
     };
 
     const selectOpen = (e: any, index: number) => {
@@ -152,12 +152,12 @@ const videoTool = ({ classes, telestrationStateMgr }: IProp) => {
     };
     return (
         <>
-            <input type='hidden' id='size-slider-input' value={toolSize} />
+            {/* <input type='hidden' id='size-slider-input' value={toolSize} />
             <input
                 type='hidden'
                 id='perspective-slider-input'
                 value={toolPerspective}
-            />
+            /> */}
             {telestrationManager.addedShapes.length > 0 ? (
                 telestrationManager.addedShapes.map(
                     (object: any, index: number) => (
@@ -273,7 +273,7 @@ const videoTool = ({ classes, telestrationStateMgr }: IProp) => {
                                                     max={1}
                                                     min={0.2}
                                                     step={0.0005}
-                                                    value={toolPerspective}
+                                                    value={object.object.zAngle}
                                                     aria-labelledby='slider'
                                                     onChange={(
                                                         ev: any,
@@ -483,7 +483,7 @@ const videoTool = ({ classes, telestrationStateMgr }: IProp) => {
                                         Size
                                         <StyledSlider
                                             style={{ width: '40%' }}
-                                            value={toolSize}
+                                            value={telestrationManager.getSize()}
                                             onChange={(
                                                 ev: any,
                                                 value: number
@@ -512,7 +512,7 @@ const videoTool = ({ classes, telestrationStateMgr }: IProp) => {
                                             max={1}
                                             min={0.2}
                                             step={0.0005}
-                                            value={toolPerspective}
+                                            value={0.5}
                                             aria-labelledby='slider'
                                             onChange={(
                                                 ev: any,
