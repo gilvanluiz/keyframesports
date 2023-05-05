@@ -28,6 +28,12 @@ export class Cursor {
         this.radius = radius;
     };
 
+    setSize = function (size) {
+        this.setRadius(size);
+    };
+    getSize = function () {
+        return this.radius;
+    };
     setColor = function (color) {
         this.color = color;
     };

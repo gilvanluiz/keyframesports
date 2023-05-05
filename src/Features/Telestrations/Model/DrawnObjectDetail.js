@@ -1,9 +1,10 @@
 export class DrawnObjectDetail {
     constructor(object, currentVideoTime, type, index) {
-        // this.index = index;
+        this.index = index;
         this.type = type;
         this.title = `${type} ${index}`;
         this.object = object;
+        this.isSelected = false;
         this.videoPauseDuration = {
             startTime: currentVideoTime - 1 < 0 ? 0 : currentVideoTime - 1,
             endTime: currentVideoTime + 4,
@@ -21,5 +22,8 @@ export class DrawnObjectDetail {
     setVideoPauseDuration = function (startT, endT) {
         this.videoPauseDuration.startTime = startT;
         this.videoPauseDuration.endTime = endT;
+    };
+    switchSelected = function () {
+        this.isSelected = !this.isSelected;
     };
 }

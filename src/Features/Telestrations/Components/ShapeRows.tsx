@@ -26,9 +26,9 @@ interface IShapeRowsProps {
     telestrationStateMgr: ITelestrationStateMgr;
 }
 
-const SortableItem = SortableElement(({ value }: any) => (
+const SortableItem = SortableElement(({ value, index }: any) => (
     <div>
-        <ShapeRow shapeDetail={value} />
+        <ShapeRow shapeDetail={value} index={index} />
     </div>
 ));
 

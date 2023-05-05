@@ -41,7 +41,12 @@ export class LightShaft {
     setRadius = function (newRadius) {
         this.radius = newRadius;
     };
-
+    setSize = function (size) {
+        this.setRadius(size);
+    };
+    getSize = function () {
+        return this.radius;
+    };
     setZAngle = function (zAngle) {
         this.zAngle = zAngle;
     };

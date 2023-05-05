@@ -14,6 +14,7 @@ import { ITelestrationStateMgr } from '../Types';
 import {
     ChangeObjectDurationAction,
     IChangeObjectVideoStopDurationAction,
+    shapeRowSelectAction,
     withTelestrationState,
 } from '../State';
 import { Slider } from '@material-ui/core';
@@ -124,8 +125,7 @@ const Thumb = (props: any) => {
 };
 
 interface IShapeRowProps {
-    key: number;
-    title: string;
+    index: number;
     shapeDetail: any;
     telestrationStateMgr: ITelestrationStateMgr;
     classes: any;
@@ -136,8 +136,7 @@ const DragHandle = SortableHandle(() => (
 ));
 
 const shapeRow = ({
-    // key,
-    // title,
+    index,
     shapeDetail,
     telestrationStateMgr,
     classes,
@@ -182,6 +181,7 @@ const shapeRow = ({
 
     // const [pauseArray, setPauseArray] = useState([20, 50]);
     // const [shapeArray, setShapeArray] = useState([30, 40]);
+
     const [isdisabled, setIsDisabled]: [boolean, any] = React.useState(true);
 
     const handlePauseChange = (
@@ -230,7 +230,9 @@ const shapeRow = ({
             dispatchAction(ChangeObjectDurationAction(shapeDetail, timeArray));
         }
     };
-
+    const selectHandler = (e: any) => {
+        dispatchAction(shapeRowSelectAction(index));
+    };
     React.useEffect(() => {
         spaneRef.current.querySelector(
             '.MuiSlider-track'
@@ -240,7 +242,7 @@ const shapeRow = ({
     const rowTitleStyle = {
         width: '12%',
         height: '25px',
-        background: '#C4C4C4',
+        background: shapeDetail.isSelected ? '#333333' : '#C4C4C4',
         display: 'flex',
         color: 'black',
         alignItems: 'center',
@@ -249,7 +251,7 @@ const shapeRow = ({
 
     return (
         <div className={classes.container}>
-            <div style={rowTitleStyle}>
+            <div style={rowTitleStyle} onClick={selectHandler}>
                 <div
                     style={{
                         backgroundColor: `${color}`,

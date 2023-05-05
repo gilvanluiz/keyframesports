@@ -89,7 +89,12 @@ export class LinkedCursor {
             this.cursors[this.cursors.length - 1].setRadius(radius);
         }
     };
-
+    setSize = function (size) {
+        this.setRadius(size);
+    };
+    getSize = function () {
+        return this.radius;
+    };
     setZAngle = function (zAngle) {
         this.zAngle = zAngle;
 

@@ -1839,7 +1839,51 @@ export default class TelestrationManager {
                 break;
         }
     };
+    deleteSelectedShape = function () {
+        const newAddedShapes = [];
+        let deletedCount_Cursor = 0;
+        let deletedCount_LinkedCursor = 0;
+        let deletedCount_LightShaft = 0;
+        let deletedCount_Ploygon = 0;
 
+        this.addedShapes.forEach((shape, index) => {
+            if (!shape.isSelected) {
+                newAddedShapes.push(shape);
+            } else {
+                switch (shape.type) {
+                    case !'circle':
+                        this.cursors.splice(
+                            shape.index - 1 - deletedCount_Cursor,
+                            1
+                        );
+                        deletedCount_Cursor++;
+                        break;
+                    case 'linkedcursor':
+                        this.linkedCursors.splice(
+                            shape.index - 1 - deletedCount_LinkedCursor,
+                            1
+                        );
+                        deletedCount_LinkedCursor++;
+                        break;
+                    case 'polygon':
+                        this.polygons.splice(
+                            shape.index - 1 - deletedCount_LightShaft,
+                            1
+                        );
+                        deletedCount_LightShaft++;
+                        break;
+                    case 'lightshaft':
+                        this.lightShafts.splice(
+                            shape.index - 1 - deletedCount_Ploygon,
+                            1
+                        );
+                        deletedCount_Ploygon++;
+                        break;
+                }
+            }
+        });
+        this.addedShapes = newAddedShapes;
+    };
     placeSelectRect = function () {
         if (this.creationObject.points.length < 2) {
             this.creationObject.addPoint(this.getRelativeMousePosition());

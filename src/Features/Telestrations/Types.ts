@@ -139,6 +139,19 @@ export interface ICallChromakeyActionAction {
 export interface IChangeTelestrationColorAction {
     type: 'telestrations/CHANGE_TELESTRATION_COLOR';
     color: string;
+    index: number;
+}
+
+export interface ITelestrationSizeChangeAction {
+    type: 'telestrations/TELESTRATION_SIZE_CHANGE_ACTION';
+    value: number;
+    index: number;
+}
+
+export interface ITelestrationPerspectiveChangeAction {
+    type: 'telestrations/TELESTRATION_PERSPECTIVE_CHANGE_ACTION';
+    value: number;
+    index: number;
 }
 
 export interface IChangeTextAction {
@@ -291,20 +304,19 @@ export interface ITelestrationPercentateCommittedAction {
     percentage: number;
 }
 
-export interface ITelestrationSizeChangeAction {
-    type: 'telestrations/TELESTRATION_SIZE_CHANGE_ACTION';
-    value: number;
-}
-
-export interface ITelestrationPerspectiveChangeAction {
-    type: 'telestrations/TELESTRATION_PERSPECTIVE_CHANGE_ACTION';
-    value: number;
-}
-
 export interface IAddedShapeOrderChangeAction {
     type: 'telestrations/ADDEDSHAPE_ORDER_CHANGE_ACTION';
     oldIndex: number;
     newIndex: number;
+}
+
+export interface IShapeRowSelectAction {
+    type: 'telestrations/SHAPEROW_SELECT_ACTION';
+    index: number;
+}
+
+export interface IDeleteSelectedShapes {
+    type: 'telestrations/DELETE_SELECTED_SHAPE';
 }
 
 export type ISetDragStateAction =
@@ -345,7 +357,9 @@ export type IAction =
     | ITelestrationPercentateCommittedAction
     | ITelestrationSizeChangeAction
     | ITelestrationPerspectiveChangeAction
-    | IAddedShapeOrderChangeAction;
+    | IAddedShapeOrderChangeAction
+    | IShapeRowSelectAction
+    | IDeleteSelectedShapes;
 
 export type IShape = 'none' | 'circle' | 'arrow';
 

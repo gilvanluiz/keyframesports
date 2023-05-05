@@ -79,6 +79,9 @@ const TELESTRATION_PERSPECTIVE_CHANGE_ACTION =
     'telestrations/TELESTRATION_PERSPECTIVE_CHANGE_ACTION';
 const ADDEDSHAPE_ORDER_CHANGE_ACTION =
     'telestrations/ADDEDSHAPE_ORDER_CHANGE_ACTION';
+const SHAPEROW_SELECT_ACTION = 'telestrations/SHAPEROW_SELECT_ACTION';
+const DELETE_SELECTED_SHAPE = 'telestrations/DELETE_SELECTED_SHAPE';
+
 // ACTION CREATORS
 
 export const setModeAction = (
@@ -95,9 +98,28 @@ export const callChromakeyAction = (action: string) => ({
     action,
 });
 
-export const changeTelestrationColor = (color: string) => ({
+export const changeTelestrationColor = (color: string, index: number) => ({
     type: CHANGE_TELESTRATION_COLOR as 'telestrations/CHANGE_TELESTRATION_COLOR',
     color,
+    index,
+});
+
+export const ITelestrationSizeChangeAction = (
+    value: number,
+    index: number
+) => ({
+    type: TELESTRATION_SIZE_CHANGE_ACTION as 'telestrations/TELESTRATION_SIZE_CHANGE_ACTION',
+    value,
+    index,
+});
+
+export const ITelestrationPerspectiveChangeAction = (
+    value: number,
+    index: number
+) => ({
+    type: TELESTRATION_PERSPECTIVE_CHANGE_ACTION as 'telestrations/TELESTRATION_PERSPECTIVE_CHANGE_ACTION',
+    value,
+    index,
 });
 
 export const changeText = (text: string) => ({
@@ -231,16 +253,6 @@ export const ITelestrationPercentateCommittedAction = (percentage: number) => ({
     percentage,
 });
 
-export const ITelestrationSizeChangeAction = (value: number) => ({
-    type: TELESTRATION_SIZE_CHANGE_ACTION as 'telestrations/TELESTRATION_SIZE_CHANGE_ACTION',
-    value,
-});
-
-export const ITelestrationPerspectiveChangeAction = (value: number) => ({
-    type: TELESTRATION_PERSPECTIVE_CHANGE_ACTION as 'telestrations/TELESTRATION_PERSPECTIVE_CHANGE_ACTION',
-    value,
-});
-
 export const AddedShapeOrderChangeAction = (
     oldIndex: number,
     newIndex: number
@@ -249,6 +261,16 @@ export const AddedShapeOrderChangeAction = (
     oldIndex,
     newIndex,
 });
+
+export const shapeRowSelectAction = (index: number) => ({
+    type: SHAPEROW_SELECT_ACTION as 'telestrations/SHAPEROW_SELECT_ACTION',
+    index,
+});
+
+export const deleteSelectedShape = () => ({
+    type: DELETE_SELECTED_SHAPE as 'telestrations/DELETE_SELECTED_SHAPE',
+});
+
 // REDUCER
 
 type ITelestrationStateFn = (x: any) => ITelestrationState;
@@ -259,7 +281,7 @@ const telestrationReducer = (
     state: ITelestrationState,
     action: IAction
 ): ReducerResult => {
-    // console.log(action);
+    console.log(action);
     switch (action.type) {
         case SET_VIDEO_LOAD_ERROR: {
             const { message } = action;
@@ -391,8 +413,14 @@ const telestrationReducer = (
             return state;
         }
         case CHANGE_TELESTRATION_COLOR: {
-            const { color } = action;
-            state.telestrationManager.setTelestrationColor(color);
+            const { color, index } = action;
+            if (index === -1) {
+                state.telestrationManager.setTelestrationColor(color);
+            } else {
+                state.telestrationManager.addedShapes[index].object.setColor(
+                    color
+                );
+            }
 
             const newState = {
                 ...state,
@@ -502,7 +530,6 @@ const telestrationReducer = (
             };
             return newState;
         }
-
         case TELESTRATION_PLAY: {
             state.telestrationManager.setLiveModeFunction();
 
@@ -670,7 +697,13 @@ const telestrationReducer = (
         }
         case TELESTRATION_SIZE_CHANGE_ACTION: {
             const { telestrationManager } = state;
-            telestrationManager.onSliderChangeSize(action.value);
+            if (action.index === -1) {
+                telestrationManager.onSliderChangeSize(action.value);
+            } else {
+                telestrationManager.addedShapes[action.index].object.setSize(
+                    action.value
+                );
+            }
 
             const newState = {
                 ...state,
@@ -679,7 +712,14 @@ const telestrationReducer = (
         }
         case TELESTRATION_PERSPECTIVE_CHANGE_ACTION: {
             const { telestrationManager } = state;
-            telestrationManager.changeZAngleSlider(action.value);
+
+            if (action.index === -1) {
+                telestrationManager.changeZAngleSlider(action.value);
+            } else {
+                telestrationManager.addedShapes[action.index].object.setZAngle(
+                    action.value
+                );
+            }
 
             const newState = {
                 ...state,
@@ -693,6 +733,25 @@ const telestrationReducer = (
             // addedShapes.pop();
             const indexItem = addedShapes.splice(action.oldIndex, 1)[0];
             addedShapes.splice(action.newIndex, 0, indexItem);
+
+            const newState = {
+                ...state,
+            };
+            return newState;
+        }
+        case SHAPEROW_SELECT_ACTION: {
+            const { telestrationManager } = state;
+
+            telestrationManager.addedShapes[action.index].switchSelected();
+            const newState = {
+                ...state,
+            };
+            return newState;
+        }
+        case DELETE_SELECTED_SHAPE: {
+            const { telestrationManager } = state;
+
+            telestrationManager.deleteSelectedShape();
 
             const newState = {
                 ...state,

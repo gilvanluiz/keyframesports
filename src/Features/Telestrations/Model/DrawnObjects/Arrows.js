@@ -38,7 +38,12 @@ export class FreehandArrow {
     setColor = function (newColor) {
         this.color = newColor;
     };
-
+    setSize = function (size) {
+        this.setWidth(size);
+    };
+    getSize = function () {
+        return this.lineWidth;
+    };
     setWidth = function (width) {
         this.lineWidth = width;
     };

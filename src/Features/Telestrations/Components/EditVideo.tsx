@@ -22,6 +22,7 @@ import {
     clickVideoBox,
     VideoTickAction,
     doubleClickVideoBox,
+    deleteSelectedShape,
     // TelestrationPlayAction,
     // TelestrationStopAction,
 } from '../State';
@@ -247,6 +248,9 @@ const editVideo = ({
     const keyDownHandler = (event: any) => {
         if (event.key === 'Escape') {
             dispatchAction(setModeAction('save_effect'));
+        }
+        if (event.key === 'Backspace') {
+            dispatchAction(deleteSelectedShape());
         }
     };
 
