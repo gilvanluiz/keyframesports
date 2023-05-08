@@ -971,6 +971,7 @@ export default class TelestrationManager {
 
     setRecordingMode = function (isRecording) {
         this.isRecording = false;
+        n;
     };
 
     changeSize = function (radiusVariation) {
@@ -1870,7 +1871,7 @@ export default class TelestrationManager {
                 newAddedShapes.push(shape);
             } else {
                 switch (shape.type) {
-                    case !'circle':
+                    case 'circle':
                         this.cursors.splice(
                             shape.index - 1 - deletedCount_Cursor,
                             1

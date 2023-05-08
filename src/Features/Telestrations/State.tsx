@@ -766,6 +766,7 @@ const telestrationReducer = (
             const { telestrationManager } = state;
 
             telestrationManager.deleteSelectedShape();
+            calculateTotalTime(state);
 
             const newState = {
                 ...state,
