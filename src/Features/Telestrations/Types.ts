@@ -286,13 +286,13 @@ export interface IVideoTickAction {
 
 export interface IChangeObjectDurationAction {
     type: 'telestrations/CHANGE_OBJECT_DURATION_ACTION';
-    object: any;
+    index: number;
     timeArray: number[];
 }
 
 export interface IChangeObjectVideoStopDurationAction {
     type: 'telestrations/CHANGE_OBJECT_VIDEO_STOP_DURATION_ACTION';
-    object: any;
+    index: number;
     timeArray: number[];
 }
 export interface ITelestrationPercentateChangeAction {

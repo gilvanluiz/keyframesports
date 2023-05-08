@@ -141,7 +141,6 @@ const shapeRow = ({
     classes,
 }: IShapeRowProps) => {
     const { state, dispatchAction } = telestrationStateMgr;
-
     const { totalTelestrationDuration } = state;
     const { videoPauseDuration, objectDuration } = shapeDetail;
     const { color } = shapeDetail.object;
@@ -155,7 +154,6 @@ const shapeRow = ({
             totalTelestrationDuration
         ),
     ];
-
     const stopArray = [
         getPercentageFromTeleTime(
             objectDuration.startTime,
@@ -166,20 +164,9 @@ const shapeRow = ({
             totalTelestrationDuration
         ),
     ];
-
     const secondPercentage = 100 / totalTelestrationDuration;
-    // const { videoPauseDuration } = shapeDetail;
-
     const shapeBarRef: any = useRef(null);
     const spaneRef = useRef<any>(null);
-    // const [secondWidth, setSecondWidth]: [number, any] = useState(100);
-
-    // useEffect(() => {
-    //     setSecondWidt(shapeBarRef.current.offsetWidth / totalTelestrationDuration);
-    // }, [totalTelestrationDuration]);
-
-    // const [pauseArray, setPauseArray] = useState([20, 50]);
-    // const [shapeArray, setShapeArray] = useState([30, 40]);
 
     const [isdisabled, setIsDisabled]: [boolean, any] = React.useState(true);
 
@@ -187,10 +174,7 @@ const shapeRow = ({
         event: React.ChangeEvent<{}>,
         newArray: number[]
     ) => {
-        if (
-            newArray[0] < stopArray[0] - secondPercentage - 0.2 &&
-            newArray[1] > stopArray[1] + secondPercentage - 0.2
-        ) {
+        if (newArray[0] <= stopArray[0] && newArray[1] >= stopArray[1]) {
             const timeArray = [
                 getTeleTimeFromPercentage(
                     newArray[0],
@@ -202,7 +186,7 @@ const shapeRow = ({
                 ),
             ];
             dispatchAction(
-                IChangeObjectVideoStopDurationAction(shapeDetail, timeArray)
+                IChangeObjectVideoStopDurationAction(index, timeArray)
             );
         }
     };
@@ -212,8 +196,8 @@ const shapeRow = ({
         newArray: number[]
     ) => {
         if (
-            newArray[0] > pauseArray[0] + secondPercentage - 0.2 &&
-            newArray[1] < pauseArray[1] - secondPercentage - 0.2 &&
+            newArray[0] > pauseArray[0] &&
+            newArray[1] < pauseArray[1] &&
             newArray[1] - newArray[0] > secondPercentage
         ) {
             const timeArray = [
@@ -226,12 +210,14 @@ const shapeRow = ({
                     totalTelestrationDuration
                 ),
             ];
-            dispatchAction(ChangeObjectDurationAction(shapeDetail, timeArray));
+            dispatchAction(ChangeObjectDurationAction(index, timeArray));
         }
     };
+
     const selectHandler = (e: any) => {
         dispatchAction(shapeRowSelectAction(index));
     };
+
     React.useEffect(() => {
         spaneRef.current.querySelector(
             '.MuiSlider-track'
@@ -283,12 +269,14 @@ const shapeRow = ({
                 }}
             >
                 <PauseSlider
+                    step={0.0005}
                     value={pauseArray}
                     onChange={handlePauseChange}
                     ThumbComponent={Thumb}
                     aria-labelledby='range-slider'
                 ></PauseSlider>
                 <ShapeSlider
+                    step={0.0005}
                     ref={spaneRef}
                     value={stopArray}
                     onChange={handleShapeChange}

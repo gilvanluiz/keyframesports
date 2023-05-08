@@ -198,29 +198,24 @@ export const isPuaseTime = (
     return isPause;
 };
 
-export const snapTime = (
-    time: number,
-    objectArray: any[],
-    totalTelestrationDuration: number
-) => {
+export const snapTime = (time: number, objectArray: any[]) => {
     let newTime = time;
-    const range = totalTelestrationDuration / 30;
     objectArray.every((object: any) => {
-        if (isInRange(time, object.setObjectDuration.startTime, range)) {
-            newTime = object.setObjectDuration.startTime;
+        if (isInRange(time, object.videoPauseDuration.startTime)) {
+            newTime = object.videoPauseDuration.startTime;
+            console.log('snaped to', newTime);
             return false;
-        } else if (isInRange(time, object.setObjectDuration.endTime, range)) {
-            newTime = object.setObjectDuration.endTime;
+        } else if (isInRange(time, object.videoPauseDuration.endTime)) {
+            newTime = object.videoPauseDuration.endTime;
+            console.log('snaped to', newTime);
             return false;
-        } else if (
-            isInRange(time, object.setVideoPauseDuration.startTime, range)
-        ) {
-            newTime = object.setVideoPauseDuration.startTime;
+        } else if (isInRange(time, object.objectDuration.startTime)) {
+            newTime = object.objectDuration.startTime;
+            console.log('snaped to', newTime);
             return false;
-        } else if (
-            isInRange(time, object.setVideoPauseDuration.endTime, range)
-        ) {
-            newTime = object.setVideoPauseDuration.endTime;
+        } else if (isInRange(time, object.objectDuration.endTime)) {
+            newTime = object.objectDuration.endTime;
+            console.log('snaped to', newTime);
             return false;
         } else {
             return true;
@@ -229,6 +224,7 @@ export const snapTime = (
     return newTime;
 };
 
-const isInRange = (value: number, center: number, range: number) => {
-    return value >= center - range || value <= center + range;
+const isInRange = (value: number, center: number) => {
+    const range = 0.3; // snap time offset
+    return value >= center - range && value <= center + range;
 };

@@ -227,20 +227,20 @@ export const VideoTickAction = (time: number) => ({
 });
 
 export const ChangeObjectDurationAction = (
-    object: any,
+    index: number,
     timeArray: number[]
 ) => ({
     type: CHANGE_OBJECT_DURATION_ACTION as 'telestrations/CHANGE_OBJECT_DURATION_ACTION',
-    object,
+    index,
     timeArray,
 });
 
 export const IChangeObjectVideoStopDurationAction = (
-    object: any,
+    index: number,
     timeArray: number[]
 ) => ({
     type: CHANGE_OBJECT_VIDEO_STOP_DURATION_ACTION as 'telestrations/CHANGE_OBJECT_VIDEO_STOP_DURATION_ACTION',
-    object,
+    index,
     timeArray,
 });
 
@@ -282,7 +282,7 @@ const telestrationReducer = (
     state: ITelestrationState,
     action: IAction
 ): ReducerResult => {
-    console.log(action);
+    // console.log(action);
     switch (action.type) {
         case SET_VIDEO_LOAD_ERROR: {
             const { message } = action;
@@ -606,10 +606,15 @@ const telestrationReducer = (
             return newState;
         }
         case CHANGE_OBJECT_DURATION_ACTION: {
-            const { object, timeArray } = action;
+            const { index, timeArray } = action;
+            const { addedShapes } = state.telestrationManager;
+            const searchArray = [...addedShapes];
+            searchArray.splice(index, 1);
 
-            object.setObjectDuration(timeArray[0], timeArray[1]);
+            const start = snapTime(timeArray[0], searchArray);
+            const end = snapTime(timeArray[1], searchArray);
 
+            addedShapes[index].setObjectDuration(start, end);
             calculateTotalTime(state);
 
             const newState = {
@@ -619,21 +624,15 @@ const telestrationReducer = (
             return newState;
         }
         case CHANGE_OBJECT_VIDEO_STOP_DURATION_ACTION: {
-            const { object, timeArray } = action;
+            const { index, timeArray } = action;
+            const { addedShapes } = state.telestrationManager;
+            const searchArray = [...addedShapes];
+            searchArray.splice(index, 1);
 
-            const start = snapTime(
-                timeArray[0],
-                state.telestrationManager.addedShapes,
-                state.totalTelestrationDuration
-            );
+            const start = snapTime(timeArray[0], searchArray);
+            const end = snapTime(timeArray[1], searchArray);
 
-            const end = snapTime(
-                timeArray[1],
-                state.telestrationManager.addedShapes,
-                state.totalTelestrationDuration
-            );
-
-            object.setVideoPauseDuration(start, end);
+            addedShapes[index].setVideoPauseDuration(start, end);
             calculateTotalTime(state);
             const newState = {
                 ...state,
