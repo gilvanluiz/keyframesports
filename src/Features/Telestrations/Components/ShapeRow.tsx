@@ -7,7 +7,6 @@ import { SortableHandle } from 'react-sortable-hoc';
 
 // import getMuiTheme from 'material-ui/styles/getMuiTheme';
 // import { MuiThemeProvider } from 'material-ui';
-
 // import { MuiThemeProvider } from '@material-ui/core';
 
 import { ITelestrationStateMgr } from '../Types';
@@ -189,8 +188,8 @@ const shapeRow = ({
         newArray: number[]
     ) => {
         if (
-            newArray[0] < stopArray[0] - secondPercentage / 2 &&
-            newArray[1] > stopArray[1] + secondPercentage / 2
+            newArray[0] < stopArray[0] - secondPercentage - 0.2 &&
+            newArray[1] > stopArray[1] + secondPercentage - 0.2
         ) {
             const timeArray = [
                 getTeleTimeFromPercentage(
@@ -213,8 +212,8 @@ const shapeRow = ({
         newArray: number[]
     ) => {
         if (
-            newArray[0] > pauseArray[0] + secondPercentage / 2 &&
-            newArray[1] < pauseArray[1] - secondPercentage / 2 &&
+            newArray[0] > pauseArray[0] + secondPercentage - 0.2 &&
+            newArray[1] < pauseArray[1] - secondPercentage - 0.2 &&
             newArray[1] - newArray[0] > secondPercentage
         ) {
             const timeArray = [

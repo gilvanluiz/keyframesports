@@ -24,6 +24,7 @@ import {
     getTelestrationTimeFromPercentage,
     getVideoTimeFromTelestrationTime,
     isPuaseTime,
+    snapTime,
 } from './Utils/CalculateTime';
 import { updatePreview } from './Utils/VideoControl';
 
@@ -608,7 +609,9 @@ const telestrationReducer = (
             const { object, timeArray } = action;
 
             object.setObjectDuration(timeArray[0], timeArray[1]);
+
             calculateTotalTime(state);
+
             const newState = {
                 ...state,
             };
@@ -618,7 +621,19 @@ const telestrationReducer = (
         case CHANGE_OBJECT_VIDEO_STOP_DURATION_ACTION: {
             const { object, timeArray } = action;
 
-            object.setVideoPauseDuration(timeArray[0], timeArray[1]);
+            const start = snapTime(
+                timeArray[0],
+                state.telestrationManager.addedShapes,
+                state.totalTelestrationDuration
+            );
+
+            const end = snapTime(
+                timeArray[1],
+                state.telestrationManager.addedShapes,
+                state.totalTelestrationDuration
+            );
+
+            object.setVideoPauseDuration(start, end);
             calculateTotalTime(state);
             const newState = {
                 ...state,

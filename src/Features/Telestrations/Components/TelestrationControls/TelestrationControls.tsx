@@ -76,6 +76,7 @@ import {
 import { sendUserEvent } from 'src/App/UserEvents/UserEventManager';
 import { styles } from './TelestrationControlsStyles';
 import { StopRecording } from '../StopRecording';
+import { DefaultDialog } from '../DefaultDialog';
 
 console.log(SelectShapeIcon);
 
@@ -143,6 +144,9 @@ const telestrationControls = ({
     );
     const [textBoxState, setTextBoxState] = useState(defaulTextBoxState);
     const [hints, setHints]: any = useState({});
+    const [defaultModelOpenState, setDefaultModelOpenState]: any = useState(
+        false
+    );
 
     const toActionButton = (action: IActionButton, index: number) => {
         const onClick = () => {
@@ -233,19 +237,25 @@ const telestrationControls = ({
 
     const toIconButton = (x: IIconButton) => {
         const onClick = () => {
+            console.log(x.mode);
             if (x.mode) {
                 if (
                     x.mode === state.editMode &&
-                    x.mode !== 'record' &&
-                    x.mode !== 'default'
+                    x.mode !== 'default' &&
+                    x.mode !== 'record'
                 ) {
                     changeMode('save_effect', true)();
                 } else {
-                    changeMode(x.mode, true)();
-                }
-
-                if (x.mode === 'record' && state.recording.recordingActive) {
-                    openUploadModal();
+                    if (
+                        x.mode === 'record' &&
+                        state.recording.recordingActive
+                    ) {
+                        openUploadModal();
+                    } else if (x.mode === 'default') {
+                        setDefaultModelOpenState(true);
+                    } else {
+                        changeMode(x.mode, true)();
+                    }
                 }
             }
         };
@@ -468,6 +478,15 @@ const telestrationControls = ({
                     )}
                 </div>
             </div>
+            <DefaultDialog
+                openState={defaultModelOpenState}
+                confirm={() => {
+                    changeMode('default', true)();
+                    setDefaultModelOpenState(false);
+                }}
+                closeModal={() => setDefaultModelOpenState(false)}
+            />
+
             <div>
                 <StopRecording
                     open={state.recording.recordingActive}

@@ -197,3 +197,38 @@ export const isPuaseTime = (
     }
     return isPause;
 };
+
+export const snapTime = (
+    time: number,
+    objectArray: any[],
+    totalTelestrationDuration: number
+) => {
+    let newTime = time;
+    const range = totalTelestrationDuration / 30;
+    objectArray.every((object: any) => {
+        if (isInRange(time, object.setObjectDuration.startTime, range)) {
+            newTime = object.setObjectDuration.startTime;
+            return false;
+        } else if (isInRange(time, object.setObjectDuration.endTime, range)) {
+            newTime = object.setObjectDuration.endTime;
+            return false;
+        } else if (
+            isInRange(time, object.setVideoPauseDuration.startTime, range)
+        ) {
+            newTime = object.setVideoPauseDuration.startTime;
+            return false;
+        } else if (
+            isInRange(time, object.setVideoPauseDuration.endTime, range)
+        ) {
+            newTime = object.setVideoPauseDuration.endTime;
+            return false;
+        } else {
+            return true;
+        }
+    });
+    return newTime;
+};
+
+const isInRange = (value: number, center: number, range: number) => {
+    return value >= center - range || value <= center + range;
+};
