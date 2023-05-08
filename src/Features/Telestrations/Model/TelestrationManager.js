@@ -1873,31 +1873,27 @@ export default class TelestrationManager {
                 switch (shape.type) {
                     case 'circle':
                         this.cursors.splice(
-                            shape.index - 1 - deletedCount_Cursor,
+                            this.cursors.findIndex((e) => e === shape),
                             1
                         );
-                        deletedCount_Cursor++;
                         break;
                     case 'linkedcursor':
                         this.linkedCursors.splice(
-                            shape.index - 1 - deletedCount_LinkedCursor,
+                            this.cursors.findIndex((e) => e === shape),
                             1
                         );
-                        deletedCount_LinkedCursor++;
                         break;
                     case 'polygon':
                         this.polygons.splice(
-                            shape.index - 1 - deletedCount_LightShaft,
+                            this.cursors.findIndex((e) => e === shape),
                             1
                         );
-                        deletedCount_LightShaft++;
                         break;
                     case 'lightshaft':
                         this.lightShafts.splice(
-                            shape.index - 1 - deletedCount_Ploygon,
+                            this.cursors.findIndex((e) => e === shape),
                             1
                         );
-                        deletedCount_Ploygon++;
                         break;
                 }
             }
