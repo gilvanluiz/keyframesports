@@ -237,7 +237,6 @@ const telestrationControls = ({
 
     const toIconButton = (x: IIconButton) => {
         const onClick = () => {
-            console.log(x.mode);
             if (x.mode) {
                 if (
                     x.mode === state.editMode &&

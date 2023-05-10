@@ -562,36 +562,40 @@ const telestrationReducer = (
                 totalTelestrationDuration,
                 telestrationManager,
             } = state;
+            const { current: video } = videoRef;
+
+            const newTelestrationTime = telestrationTime + 0.2;
 
             telestrationManager.addedShapes.forEach((object: any) => {
                 if (
                     object.object.opacity === 0 &&
-                    object.objectDuration.startTime < telestrationTime &&
-                    object.objectDuration.endTime > telestrationTime
+                    object.objectDuration.startTime < newTelestrationTime &&
+                    object.objectDuration.endTime > newTelestrationTime
                 ) {
                     telestrationManager.fadeInTelestration(object.object);
                 }
                 if (
                     object.object.opacity === 1 &&
-                    object.objectDuration.endTime < telestrationTime
+                    object.objectDuration.endTime < newTelestrationTime
                 ) {
                     telestrationManager.fadeOutTelestration(object.object);
                 }
             });
 
-            const { current: video } = videoRef;
-            const newTelestrationTime = telestrationTime + 0.2;
             if (newTelestrationTime >= totalTelestrationDuration) {
                 if (video) {
-                    video.pause();
                     video.currentTime = 0;
-                    state.telestrationTimeTrackStoped = true;
                     state.telestrationTime = 0;
+                    video.pause();
+                    state.telestrationTimeTrackStoped = true;
                 }
             } else {
                 if (isPuaseTime(newTelestrationTime, videoPauseArray)) {
                     if (video && !video.paused) {
+                        console.log(video.currentTime, telestrationTime);
+                        // setTimeout(() => {
                         video.pause();
+                        // }, 0.2);
                     }
                 } else if (video && video.paused) {
                     video.play();
