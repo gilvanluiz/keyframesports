@@ -44,11 +44,9 @@ export const getVideoTimeFromTelestrationTime = (
         }
         i++;
     }
-
-    if (
-        videoPauseArray[i - 1] &&
-        videoPauseArray[i - 1].endTime < telestrationTime
-    ) {
+    if (i === 0) {
+        tT = telestrationTime;
+    } else if (videoPauseArray[i - 1].endTime < telestrationTime) {
         tT += telestrationTime - videoPauseArray[i - 1].endTime;
     }
 
@@ -182,7 +180,8 @@ export const isPuaseTime = (
     teleTime: number,
     videoPauseArray: IVideoPause[]
 ) => {
-    let isPause = false;
+    const result = { paused: false, index: 0 };
+
     let i = 0;
 
     while (i < videoPauseArray.length) {
@@ -190,12 +189,13 @@ export const isPuaseTime = (
             teleTime >= videoPauseArray[i].startTime &&
             teleTime <= videoPauseArray[i].endTime
         ) {
-            isPause = true;
+            result.paused = true;
+            result.index = i;
             break;
         }
         i++;
     }
-    return isPause;
+    return result;
 };
 
 export const snapTime = (time: number, objectArray: any[]) => {

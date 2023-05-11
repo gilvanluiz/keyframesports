@@ -8,3 +8,12 @@ export const updatePreview = async (time: number, video: any) => {
         video.volume = currentVolume;
     }
 };
+
+export const updateAndPause = async (time: number, video: any) => {
+    if (video && !video.paused) {
+        video.currentTime = time;
+        setTimeout(() => {
+            video.pause();
+        }, 5);
+    }
+};

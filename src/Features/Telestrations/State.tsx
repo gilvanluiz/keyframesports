@@ -26,7 +26,8 @@ import {
     isPuaseTime,
     snapTime,
 } from './Utils/CalculateTime';
-import { updatePreview } from './Utils/VideoControl';
+import { updateAndPause, updatePreview } from './Utils/VideoControl';
+import { getTelestrationTimeFromVideoTime } from './Utils/CalculateTime';
 
 const TelestrationContext = React.createContext({});
 
@@ -65,7 +66,7 @@ const TELESTRATION_PLAY = 'telestrations/TELESTRATION_PLAY';
 const TELESTRATION_STOP = 'telestrations/TELESTRATION_STOP';
 const RELATIVE_CURRENT_TIME_CHANGE =
     'telestrations/RELATIVE_CURRENT_TIME_CHANGE';
-const VIDEI_TIME_ACTION = 'telestrations/VIDEI_TIME_ACTION';
+const VIDEI_TICK_ACTION = 'telestrations/VIDEI_TICK_ACTION';
 const CHANGE_OBJECT_DURATION_ACTION =
     'telestrations/CHANGE_OBJECT_DURATION_ACTION';
 const CHANGE_OBJECT_VIDEO_STOP_DURATION_ACTION =
@@ -222,7 +223,7 @@ export const RelativeCurrentTimeChangeAction = (time: number) => ({
 });
 
 export const VideoTickAction = (time: number) => ({
-    type: VIDEI_TIME_ACTION as 'telestrations/VIDEI_TIME_ACTION',
+    type: VIDEI_TICK_ACTION as 'telestrations/VIDEI_TICK_ACTION',
     time,
 });
 
@@ -506,6 +507,10 @@ const telestrationReducer = (
             )(state);
         }
         case CLICK_VIDEO_BOX: {
+            console.log(state.telestrationTime, videoRef.current?.currentTime);
+            if (state.editMode !== 'default') {
+                state.telestrationTimeTrackStoped = true;
+            }
             state.telestrationManager.onclick(
                 action.event,
                 state.telestrationTime
@@ -555,52 +560,80 @@ const telestrationReducer = (
             };
             return newState;
         }
-        case VIDEI_TIME_ACTION: {
+        case VIDEI_TICK_ACTION: {
             const {
                 videoPauseArray,
                 telestrationTime,
-                totalTelestrationDuration,
                 telestrationManager,
+                totalTelestrationDuration,
+                telestrationTimeTrackStoped,
             } = state;
+
             const { current: video } = videoRef;
 
-            const newTelestrationTime = telestrationTime + 0.2;
-
-            telestrationManager.addedShapes.forEach((object: any) => {
+            if (video && !telestrationTimeTrackStoped) {
+                const newTelestrationTime = isPuaseTime(
+                    video.currentTime,
+                    videoPauseArray
+                ).paused
+                    ? telestrationTime + 0.04
+                    : getTelestrationTimeFromVideoTime(
+                          video.currentTime,
+                          videoPauseArray
+                      );
                 if (
-                    object.object.opacity === 0 &&
-                    object.objectDuration.startTime < newTelestrationTime &&
-                    object.objectDuration.endTime > newTelestrationTime
+                    newTelestrationTime >= totalTelestrationDuration ||
+                    (newTelestrationTime < 1 &&
+                        telestrationTime > totalTelestrationDuration - 1)
                 ) {
-                    telestrationManager.fadeInTelestration(object.object);
-                }
-                if (
-                    object.object.opacity === 1 &&
-                    object.objectDuration.endTime < newTelestrationTime
-                ) {
-                    telestrationManager.fadeOutTelestration(object.object);
-                }
-            });
-
-            if (newTelestrationTime >= totalTelestrationDuration) {
-                if (video) {
                     video.currentTime = 0;
                     state.telestrationTime = 0;
-                    video.pause();
                     state.telestrationTimeTrackStoped = true;
-                }
-            } else {
-                if (isPuaseTime(newTelestrationTime, videoPauseArray)) {
-                    if (video && !video.paused) {
-                        console.log(video.currentTime, telestrationTime);
-                        // setTimeout(() => {
-                        video.pause();
-                        // }, 0.2);
+                } else {
+                    // opacity control of added all shapes
+                    telestrationManager.addedShapes.forEach((object: any) => {
+                        if (
+                            object.object.opacity === 0 &&
+                            object.objectDuration.startTime <
+                                newTelestrationTime &&
+                            object.objectDuration.endTime > newTelestrationTime
+                        ) {
+                            telestrationManager.fadeInTelestration(
+                                object.object
+                            );
+                        }
+                        if (
+                            object.object.opacity === 1 &&
+                            object.objectDuration.endTime < newTelestrationTime
+                        ) {
+                            telestrationManager.fadeOutTelestration(
+                                object.object
+                            );
+                        }
+                    });
+                    // end of control
+                    const result = isPuaseTime(
+                        newTelestrationTime,
+                        videoPauseArray
+                    );
+
+                    if (result.paused) {
+                        if (!video.paused) {
+                            const newVideoTime = getVideoTimeFromTelestrationTime(
+                                videoPauseArray[result.index].startTime,
+                                videoPauseArray
+                            );
+                            console.log(
+                                videoPauseArray[result.index].startTime,
+                                newVideoTime
+                            );
+                            updateAndPause(newVideoTime, video);
+                        }
+                    } else if (video.paused) {
+                        video.play();
                     }
-                } else if (video && video.paused) {
-                    video.play();
+                    state.telestrationTime = newTelestrationTime;
                 }
-                state.telestrationTime = newTelestrationTime;
             }
 
             const newState = {
@@ -645,15 +678,15 @@ const telestrationReducer = (
             return newState;
         }
         case TELESTRATION_PERCENTAGE_CHANGE_ACTION: {
-            const { totalTelestrationDuration, telestrationManager } = state;
-            const { current: video } = videoRef;
-
-            if (video) {
-                if (!video.paused) {
-                    video.pause();
-                    // needPlay = true;
-                }
-                // setTimeout(() => setProgressState(value), 0);
+            const {
+                totalTelestrationDuration,
+                telestrationManager,
+                telestrationTimeTrackStoped,
+            } = state;
+            // const { current: video } = videoRef;
+            if (!telestrationTimeTrackStoped) {
+                state.telestrationTimeTrackStoped = true;
+                state.needPlay = true;
             }
 
             const telestrationTime = getTelestrationTimeFromPercentage(
@@ -697,14 +730,14 @@ const telestrationReducer = (
                 telestrationTime,
                 videoPauseArray
             );
-
             if (video) {
-                // if (needPlay) {
-                //     video.play();
-                //     needPlay = false;
-                // }
                 video.currentTime = videoTime;
                 updatePreview(videoTime, video);
+
+                if (state.needPlay) {
+                    state.telestrationTimeTrackStoped = false;
+                    state.needPlay = false;
+                }
             }
 
             const newState = {
@@ -821,6 +854,7 @@ const initialTelestrationState = {
     totalTelestrationDuration: 0,
     telestrationTime: 0,
     telestrationTimeTrackStoped: true,
+    needPlay: false,
 };
 
 export const TelestrationStateProvider = ({ children }: any) => {

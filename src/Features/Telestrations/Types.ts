@@ -121,6 +121,7 @@ export interface ITelestrationState {
     totalTelestrationDuration: number;
     telestrationTime: number;
     telestrationTimeTrackStoped: boolean;
+    needPlay: boolean;
 }
 
 // ACTIONS
@@ -280,7 +281,7 @@ export interface IRelativeCurrentTimeChangeAction {
     time: number;
 }
 export interface IVideoTickAction {
-    type: 'telestrations/VIDEI_TIME_ACTION';
+    type: 'telestrations/VIDEI_TICK_ACTION';
     time: number;
 }
 

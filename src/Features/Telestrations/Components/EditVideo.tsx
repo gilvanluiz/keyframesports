@@ -86,7 +86,6 @@ const editVideo = ({
     videoTitle,
     localStateMgr,
 }: IProps) => {
-    // const [previousMode, setPreviousMode] = useState<EditMode>('default');
     const { state, dispatchAction } = telestrationStateMgr;
     const [ticker, setTicker]: [0, any] = React.useState(0);
 
@@ -155,59 +154,8 @@ const editVideo = ({
         }
     };
 
-    const setVideoPlayListener = () => {
-        const { current } = videoRef;
-
-        if (current) {
-            const setDefaultMode = () => {
-                // setPreviousMode(state.editMode);
-                // dispatchAction(TelestrationPlayAction());
-            };
-            current.addEventListener('play', setDefaultMode);
-            return () => current.removeEventListener('play', setDefaultMode);
-        }
-
-        return undefined;
-    };
-
-    const setVideoPauseListener = () => {
-        const { current } = videoRef;
-
-        if (current) {
-            const previousModeListener = () => {
-                // dispatchAction(TelestrationStopAction());
-            };
-
-            current.addEventListener('pause', previousModeListener);
-            return () =>
-                current.removeEventListener('pause', previousModeListener);
-        }
-
-        return undefined;
-    };
-
-    // const clearTelestrationOnExit = () => {
-    //     dispatchAction(setModeAction('default'));
-    //     // necessary for playing video on iPad
-    //     if (videoRef.current) {
-    //         const playPromise = videoRef.current.play();
-    //         if (playPromise !== undefined) {
-    //             playPromise.then((_) => {
-    //                 if (videoRef.current) {
-    //                     videoRef.current.pause();
-    //                     videoRef.current.muted = false;
-    //                 }
-    //             });
-    //         }
-    //     }
-    //     sendUserEvent(telestrationMounted, window.location.href, videoID);
-    // };
-
     // Set canvas size
     useEffect(draw);
-    useEffect(setVideoPlayListener);
-    useEffect(setVideoPauseListener);
-    // useEffect(clearTelestrationOnExit, []);
 
     const modeToClasses = {
         circle: classes.mouseCircle,
@@ -257,6 +205,7 @@ const editVideo = ({
     const clickVideoBoxHandler = (e: any) => {
         dispatchAction(clickVideoBox(e));
     };
+
     const { videoSize } = state;
 
     const videoTickListener = (time: number) => {
@@ -265,22 +214,23 @@ const editVideo = ({
     const intervalRef = React.useRef<any>(null);
 
     useEffect(() => {
+        dispatchAction(VideoTickAction(ticker));
+    }, [ticker]);
+
+    useEffect(() => {
         if (intervalRef.current) {
             clearInterval(intervalRef.current);
         }
         if (!telestrationTimeTrackStoped) {
             intervalRef.current = setInterval(() => {
-                setTicker((t: number) => t + 200);
-            }, 200);
+                setTicker((t: number) => t + 40);
+            }, 40);
         }
     }, [telestrationTimeTrackStoped]);
 
     useEffect(() => {
-        dispatchAction(VideoTickAction(ticker));
-    }, [ticker]);
-
-    useEffect(() => {
         const { current: video } = videoRef;
+
         if (video) {
             if (telestrationTimeTrackStoped) {
                 video.pause();
