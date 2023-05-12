@@ -17,6 +17,7 @@ export class FreehandArrow {
         this.lineWidth = 28;
         this.arrowBorderWidth = 8;
         this.lineBorderWidth = 12;
+        this.opacity = 1;
     }
 
     readyToFinish = function () {
@@ -222,6 +223,8 @@ export class FreehandArrow {
             context.save();
             if (this.animation) {
                 this.animation.set(context);
+            } else {
+                context.globalAlpha = this.opacity;
             }
 
             Utils.drawArrowHead(
@@ -271,6 +274,7 @@ export class Arrow {
         this.arrowBorderWidth = 8;
         this.lineBorderWidth = 12;
         this.hasBorder = hasBorder;
+        this.opacity = 1;
     }
 
     close = function () {
@@ -382,6 +386,8 @@ export class Arrow {
 
             if (this.animation) {
                 this.animation.set(context);
+            } else {
+                context.globalAlpha = this.opacity;
             }
 
             // draw arrow
@@ -414,7 +420,6 @@ export class Arrow {
                 context.setLineDash(props.lineDash);
                 context.lineDashOffset = Math.round(props.lineDashOffset);
             }
-
             context.lineWidth = props.lineWidth + props.lineBorderWidth;
             context.strokeStyle = props.borderColor;
             context.stroke();
