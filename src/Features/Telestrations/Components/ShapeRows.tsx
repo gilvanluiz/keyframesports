@@ -44,26 +44,13 @@ const SortableList = SortableContainer(({ items }: any) => {
 
 const shapeRows = ({ classes, telestrationStateMgr }: IShapeRowsProps) => {
     const { state, dispatchAction } = telestrationStateMgr;
-    // const { telestrationManager } = state;
 
     const rowRef = useRef<HTMLDivElement>(null);
-    // const [shapeArray, setShapeArray]: [any, any] = React.useState([]);
 
     const onSortEnd = ({ oldIndex, newIndex }: any) => {
         dispatchAction(AddedShapeOrderChangeAction(oldIndex, newIndex));
-        // this.setState(({ items }) => ({
-        //   items: arrayMove(items, oldIndex, newIndex)
-        // }));
     };
 
-    // React.useEffect(() => {
-    //     console.log('change order');
-
-    //     // setShapeArray(state.telestrationManager.addedShapes);
-
-    //     setShapeArray(state.telestrationManager.addedShapes);
-    //     setTimeout(() => console.log(shapeArray), 1);
-    // }, [state]);
     return (
         <div
             className={classes.shapeRowsDiv}
@@ -79,31 +66,6 @@ const shapeRows = ({ classes, telestrationStateMgr }: IShapeRowsProps) => {
                 onSortEnd={onSortEnd}
                 useDragHandle
             />
-            {/* {telestrationManager.addedShapes.map(
-                (shape: any, index: number) => {
-                    switch (shape.type) {
-                        case 'circle':
-                            objectsCount.circle++;
-                            break;
-                        case 'lightshaft':
-                            objectsCount.lightshaft++;
-                            break;
-                        case 'linkedcursor':
-                            objectsCount.linkedcursor++;
-                            break;
-                    }
-                    return (
-                        <ShapeRow
-                            key={index}
-                            title={`${shape.type} ${objectsCount[shape.type]}`}
-                            shapeDetail={shape}
-                            totalTelestrationDuration={
-                                state.totalTelestrationDuration
-                            }
-                        />
-                    );
-                }
-            )} */}
         </div>
     );
 };

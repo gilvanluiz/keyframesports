@@ -62,6 +62,8 @@ const CHANGE_TEXT_BACKGROUND_COLOR =
 const SAVE_TEXT_BOX = 'telestrations/SAVE_TEXT_BOX';
 const CLICK_VIDEO_BOX = 'telestrations/CLICK_VIDEO_BOX';
 const DOUBLE_CLICK_VIDEO_BOX = 'telestrations/DOUBLE_CLICK_VIDEO_BOX';
+const MOUSE_UP_VIDEO_BOX = 'telestrations/MOUSE_UP_VIDEO_BOX';
+const MOUSE_DOWN_VIDEO_BOX = 'telestrations/MOUSE_DOWN_VIDEO_BOX';
 const TELESTRATION_PLAY = 'telestrations/TELESTRATION_PLAY';
 const TELESTRATION_STOP = 'telestrations/TELESTRATION_STOP';
 const RELATIVE_CURRENT_TIME_CHANGE =
@@ -201,6 +203,16 @@ export const setVideoLoaded = () => ({
 
 export const clickVideoBox = (e: any) => ({
     type: CLICK_VIDEO_BOX as 'telestrations/CLICK_VIDEO_BOX',
+    event: e,
+});
+
+export const mouseUpVideoBox = (e: any) => ({
+    type: MOUSE_UP_VIDEO_BOX as 'telestrations/MOUSE_UP_VIDEO_BOX',
+    event: e,
+});
+
+export const mouseDownVideoBox = (e: any) => ({
+    type: MOUSE_DOWN_VIDEO_BOX as 'telestrations/MOUSE_DOWN_VIDEO_BOX',
     event: e,
 });
 
@@ -466,6 +478,7 @@ const telestrationReducer = (
         }
         case SET_DRAG_STATE: {
             const { dragMode, editMode, coordinates, videoTime } = action;
+            console.log('drag');
             if (dragMode === 'start') {
                 const newState = compose(
                     assocPath(['dragState', 'mode'], editMode),
@@ -507,7 +520,6 @@ const telestrationReducer = (
             )(state);
         }
         case CLICK_VIDEO_BOX: {
-            console.log(state.telestrationTime, videoRef.current?.currentTime);
             if (state.editMode !== 'default') {
                 state.telestrationTimeTrackStoped = true;
             }
@@ -536,6 +548,33 @@ const telestrationReducer = (
             };
             return newState;
         }
+        case MOUSE_UP_VIDEO_BOX: {
+            state.telestrationManager.onmouseup(
+                action.event,
+                state.telestrationTime
+            );
+
+            calculateTotalTime(state);
+
+            const newState = {
+                ...state,
+            };
+            return newState;
+        }
+        case MOUSE_DOWN_VIDEO_BOX: {
+            state.telestrationManager.onmousedown(
+                action.event,
+                state.telestrationTime
+            );
+
+            calculateTotalTime(state);
+
+            const newState = {
+                ...state,
+            };
+            return newState;
+        }
+
         case TELESTRATION_PLAY: {
             state.telestrationManager.setLiveModeFunction();
 
@@ -748,6 +787,7 @@ const telestrationReducer = (
         }
         case TELESTRATION_SIZE_CHANGE_ACTION: {
             const { telestrationManager } = state;
+
             if (action.index === -1) {
                 telestrationManager.onSliderChangeSize(action.value);
             } else {
@@ -755,7 +795,6 @@ const telestrationReducer = (
                     action.value
                 );
             }
-
             const newState = {
                 ...state,
             };

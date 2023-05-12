@@ -1081,11 +1081,11 @@ export default class TelestrationManager {
             case this.FUNCTION_ENUM.PLACE_STRAIGHT_ARROW:
             case this.FUNCTION_ENUM.PLACE_ARROW_POINT:
                 this.arrowWidth = radiusVariation;
-                this.arrowWidth = Utils.clamp(
-                    this.arrowWidth,
-                    this.config.MIN_ARROW_WIDTH,
-                    this.config.MAX_ARROW_WIDTH
-                );
+                // this.arrowWidth = Utils.clamp(
+                //     this.arrowWidth,
+                //     this.config.MIN_ARROW_WIDTH,
+                //     this.config.MAX_ARROW_WIDTH
+                // );
 
                 this.creationObject.setWidth(this.arrowWidth);
                 break;
@@ -1157,11 +1157,11 @@ export default class TelestrationManager {
     };
     changeZAngleSlider = function (zAngleVariation) {
         this.zAngle = zAngleVariation;
-        this.zAngle = Utils.clamp(
-            this.zAngle,
-            this.config.MIN_Z_ANGLE,
-            this.config.MAX_Z_ANGLE
-        );
+        // this.zAngle = Utils.clamp(
+        //     this.zAngle,
+        //     this.config.MIN_Z_ANGLE,
+        //     this.config.MAX_Z_ANGLE
+        // );
 
         switch (this.currentFunction) {
             case this.FUNCTION_ENUM.SELECT_SHAPE:
@@ -1261,7 +1261,7 @@ export default class TelestrationManager {
         sendUserEvent(telestrationHaloAplied, window.location.href, videoId);
     };
 
-    placePlayerCutOutPoint = function (isMouseUp) {
+    placePlayerCutOutPoint = function (isMouseUp, currentTime) {
         if (this.creationObject) {
             if (this.creationObject.isPlacingPoints()) {
                 if (
@@ -1277,6 +1277,23 @@ export default class TelestrationManager {
                     );
                     if (this.creationObject.isFinished()) {
                         this.playerCutOuts.push(this.creationObject);
+
+                        let index = 0;
+                        this.addedShapes.forEach((shape) => {
+                            if (shape.type === 'playercutout') {
+                                index++;
+                            }
+                        });
+
+                        const objectDetail = new DrawnObjectDetail(
+                            this.creationObject,
+                            currentTime,
+                            'playercutout',
+                            ++index
+                        );
+
+                        this.addedShapes.push(objectDetail);
+
                         this.creationObject.markAsFinished();
                         this.actionManager.pushAction(
                             ActionTypeEnum.PLACE_PLAYER_CUT_OUT
@@ -1416,7 +1433,7 @@ export default class TelestrationManager {
         sendUserEvent(telestrationLinkAdded, window.location.href, videoId);
     };
 
-    placeArrowPoint = function () {
+    placeArrowPoint = function (currentTime) {
         let newPoint = this.getRelativeMousePosition();
         let lastPoint = this.creationObject.getSecondLastPoint();
         if (lastPoint) {
@@ -1437,12 +1454,30 @@ export default class TelestrationManager {
         this.creationObject.addCoord(this.getRelativeMousePosition());
     };
 
-    closeArrow = function () {
+    closeArrow = function (currentTime) {
         if (this.creationObject) {
             this.creationObject.close();
             if (this.creationObject.isComplete()) {
                 this.creationObject.finishArrow();
                 this.arrows.push(this.creationObject);
+                console.log('add shape', ' arrow');
+
+                let index = 0;
+                this.addedShapes.forEach((shape) => {
+                    if (shape.type === 'arrow') {
+                        index++;
+                    }
+                });
+
+                const objectDetail = new DrawnObjectDetail(
+                    this.creationObject,
+                    currentTime,
+                    'arrow',
+                    ++index
+                );
+
+                this.addedShapes.push(objectDetail);
+
                 this.actionManager.pushAction(ActionTypeEnum.PLACE_ARROW);
                 this.creationObject = null;
             }
@@ -1837,7 +1872,7 @@ export default class TelestrationManager {
                 this.captureKeyFrame();
                 break;
             case this.FUNCTION_ENUM.PLACE_ARROW_POINT:
-                this.placeArrowPoint();
+                this.placeArrowPoint(currentTime);
                 break;
             case this.FUNCTION_ENUM.PLACE_LIGHT_SHAFT:
                 this.placeLightShaft(currentTime);
@@ -1927,7 +1962,7 @@ export default class TelestrationManager {
         }
     };
 
-    onmousedown = function (event) {
+    onmousedown = function (event, currentTime) {
         this.captureCanvasMousePosition(event);
 
         this.mouseDown = true;
@@ -1941,7 +1976,7 @@ export default class TelestrationManager {
                     this.creationObject &&
                     !this.creationObject.hasPlacedPoints()
                 ) {
-                    this.placePlayerCutOutPoint();
+                    this.placePlayerCutOutPoint(undefined, currentTime);
                 }
                 break;
             case this.FUNCTION_ENUM.SELECT_SHAPE:
@@ -1951,7 +1986,7 @@ export default class TelestrationManager {
         }
     };
 
-    onmouseup = function (event) {
+    onmouseup = function (event, currentTime) {
         if (this.mouseDown) {
             this.captureCanvasMousePosition(event);
             this.mouseDown = false;
@@ -1964,6 +1999,22 @@ export default class TelestrationManager {
                                 ActionTypeEnum.PLACE_SMOOTH_ARROW
                             );
                             this.freehandArrows.push(this.creationObject);
+
+                            let index = 0;
+                            this.addedShapes.forEach((shape) => {
+                                if (shape.type === 'freehandarrow') {
+                                    index++;
+                                }
+                            });
+
+                            const objectDetail = new DrawnObjectDetail(
+                                this.creationObject,
+                                currentTime,
+                                'freehandarrow',
+                                ++index
+                            );
+
+                            this.addedShapes.push(objectDetail);
                         }
                         this.creationObject = null;
                         this.initializeCurrentFunction();
@@ -1974,6 +2025,22 @@ export default class TelestrationManager {
                         if (this.creationObject.readyToFinish()) {
                             this.creationObject.finishArrow();
                             this.arrows.push(this.creationObject);
+                            let index = 0;
+                            this.addedShapes.forEach((shape) => {
+                                if (shape.type === 'straightarrow') {
+                                    index++;
+                                }
+                            });
+
+                            const objectDetail = new DrawnObjectDetail(
+                                this.creationObject,
+                                currentTime,
+                                'straightarrow',
+                                ++index
+                            );
+
+                            this.addedShapes.push(objectDetail);
+
                             this.actionManager.pushAction(
                                 ActionTypeEnum.PLACE_ARROW
                             );
@@ -1983,7 +2050,7 @@ export default class TelestrationManager {
                     }
                     break;
                 case this.FUNCTION_ENUM.PLAYER_CUT_OUT:
-                    this.placePlayerCutOutPoint(true);
+                    this.placePlayerCutOutPoint(true, currentTime);
                     break;
                 case this.FUNCTION_ENUM.SELECT_SHAPE:
                     this.selectRectEnd();
@@ -1996,7 +2063,7 @@ export default class TelestrationManager {
         this.captureCanvasMousePosition(event);
         switch (this.currentFunction) {
             case this.FUNCTION_ENUM.PLACE_ARROW_POINT:
-                this.closeArrow();
+                this.closeArrow(currentTime);
                 this.initializeCurrentFunction();
                 break;
             case this.FUNCTION_ENUM.PLACE_LINKED_CURSOR:
@@ -2119,10 +2186,10 @@ export default class TelestrationManager {
         this.nonRecordableCanvas.addEventListener('mousemove', (event) =>
             this.onmousemove(event)
         );
-        document.addEventListener('mouseup', (event) => this.onmouseup(event));
-        this.nonRecordableCanvas.addEventListener('mousedown', (event) =>
-            this.onmousedown(event)
-        );
+        // document.addEventListener('mouseup', (event) => this.onmouseup(event));
+        // this.nonRecordableCanvas.addEventListener('mousedown', (event) =>
+        //     this.onmousedown(event)
+        // );
 
         document.addEventListener(
             'mousewheel',

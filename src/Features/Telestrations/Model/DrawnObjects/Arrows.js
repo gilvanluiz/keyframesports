@@ -38,12 +38,15 @@ export class FreehandArrow {
     setColor = function (newColor) {
         this.color = newColor;
     };
+
     setSize = function (size) {
         this.setWidth(size);
     };
+
     getSize = function () {
         return this.lineWidth;
     };
+
     setWidth = function (width) {
         this.lineWidth = width;
     };
@@ -286,6 +289,12 @@ export class Arrow {
         this.lineWidth = width;
     };
 
+    getSize = function () {
+        return this.lineWidth;
+    };
+    setSize = function (value) {
+        this.setWidth(value);
+    };
     isComplete = function () {
         return this.dots.length > 0;
     };
@@ -370,6 +379,7 @@ export class Arrow {
 
             // now draw the inner secondary color arcs ars
             context.save();
+
             if (this.animation) {
                 this.animation.set(context);
             }

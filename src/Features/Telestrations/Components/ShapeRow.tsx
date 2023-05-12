@@ -16,6 +16,7 @@ import {
     shapeRowSelectAction,
     withTelestrationState,
 } from '../State';
+
 import { Slider } from '@material-ui/core';
 import {
     getPercentageFromTeleTime,
@@ -78,6 +79,7 @@ const CustomTextField = withStyles({
         '& .MuiInputBase-input': {
             color: 'black',
             padding: '0px',
+            fontSize: '14px',
         },
     },
 })(TextField);
@@ -144,6 +146,7 @@ const shapeRow = ({
     const { totalTelestrationDuration } = state;
     const { videoPauseDuration, objectDuration } = shapeDetail;
     const { color } = shapeDetail.object;
+
     const pauseArray = [
         getPercentageFromTeleTime(
             videoPauseDuration.startTime,

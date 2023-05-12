@@ -140,11 +140,9 @@ const videoTool = ({ classes, telestrationStateMgr }: IProp) => {
     };
     const onSizeSliderChange = (e: any, newValue: number, index: number) => {
         dispatchAction(ITelestrationSizeChangeAction(newValue, index));
-        // setToolSize(newValue);
     };
     const onPerspectiveChange = (e: any, newValue: number, index: number) => {
         dispatchAction(ITelestrationPerspectiveChangeAction(newValue, index));
-        // setToolPerspective(newValue);
     };
 
     const selectOpen = (e: any, index: number) => {
@@ -164,21 +162,13 @@ const videoTool = ({ classes, telestrationStateMgr }: IProp) => {
                         <div key={index}>
                             <div
                                 className={classes.toolName}
-                                // onClick={selectOpen}
+                                onClick={(ev: any) => selectOpen(ev, index)}
                             >
                                 {object.type}
                                 {opened ? (
-                                    <ArrowDropUpIcon
-                                        onClick={(ev: any) =>
-                                            selectOpen(ev, index)
-                                        }
-                                    />
+                                    <ArrowDropUpIcon />
                                 ) : (
-                                    <ArrowDropDownIcon
-                                        onClick={(ev: any) =>
-                                            selectOpen(ev, index)
-                                        }
-                                    />
+                                    <ArrowDropDownIcon />
                                 )}
                             </div>
                             <Collapse in={object.isSelected} timeout={300}>
@@ -512,7 +502,7 @@ const videoTool = ({ classes, telestrationStateMgr }: IProp) => {
                                             max={1}
                                             min={0.2}
                                             step={0.0005}
-                                            value={0.5}
+                                            value={telestrationManager.zAngle}
                                             aria-labelledby='slider'
                                             onChange={(
                                                 ev: any,

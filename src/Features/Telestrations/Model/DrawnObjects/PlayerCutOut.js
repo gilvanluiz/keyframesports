@@ -23,6 +23,7 @@ export class PlayerCutOut {
         );
         this.cutout = null;
         this.zAngle = null;
+        this.opacity = 1;
     }
 
     setLastPointPosition = function (position) {
@@ -37,6 +38,9 @@ export class PlayerCutOut {
         }
     };
 
+    getSize = function () {
+        return this.arrow.getSize();
+    };
     markAsFinished = function () {
         this.animation = new FadeInOutAnimation(
             this.manager,
@@ -71,6 +75,7 @@ export class PlayerCutOut {
         this.cutout.width = this.firstRectangle.getAbsoluteWidth();
         this.cutout.height = this.firstRectangle.getAbsoluteHeight();
         let context = this.cutout.getContext('2d');
+        context.globalAlpha = this.opacity;
         context.drawImage(
             this.manager.videoForegroundCanvas,
             this.firstRectangle.points[0].x *
@@ -196,6 +201,7 @@ export class PlayerCutOut {
 
         if (this.secondRectangle) {
             let cutoutPosition = this.secondRectangle.getAbsolutePositionPoints()[0];
+            context.globalAlpha = this.opacity;
 
             if (this.state !== PlayerCutOutStateEnum.COMPLETED) {
                 this.arrow.draw(context);

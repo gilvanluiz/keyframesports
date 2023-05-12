@@ -23,6 +23,8 @@ import {
     VideoTickAction,
     doubleClickVideoBox,
     deleteSelectedShape,
+    mouseUpVideoBox,
+    mouseDownVideoBox,
     // TelestrationPlayAction,
     // TelestrationStopAction,
 } from '../State';
@@ -184,6 +186,7 @@ const editVideo = ({
     const onCanvasMouseDrag = (mouseMode: 'down' | 'up') => (
         e: React.MouseEvent<HTMLElement>
     ) => {
+        console.log('drag EditVideo');
         canvasMouseDownUpHandler({
             mouseMode,
             e,
@@ -205,7 +208,12 @@ const editVideo = ({
     const clickVideoBoxHandler = (e: any) => {
         dispatchAction(clickVideoBox(e));
     };
-
+    const mouseDownVideoHandler = (e: any) => {
+        dispatchAction(mouseDownVideoBox(e));
+    };
+    const mouseUpVideoHandler = (e: any) => {
+        dispatchAction(mouseUpVideoBox(e));
+    };
     const { videoSize } = state;
 
     const videoTickListener = (time: number) => {
@@ -251,7 +259,9 @@ const editVideo = ({
             <Box
                 className={clsx(classes.root, extraRootClasses)}
                 style={{ maxHeight: '80%' }}
-                onMouseDown={clickVideoBoxHandler}
+                onClick={clickVideoBoxHandler}
+                onMouseDown={mouseDownVideoHandler}
+                onMouseUp={mouseUpVideoHandler}
                 onDoubleClick={handleCanvasDblClick}
             >
                 <canvas
