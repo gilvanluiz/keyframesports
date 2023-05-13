@@ -595,9 +595,9 @@ export default class TelestrationManager {
 
     drawPlayerCutOuts = function () {
         let time = this.getVideoTime();
-        this.playerCutOuts.map((cu) =>
-            cu.draw(this.context, time, false, this.nonRecordableContext)
-        );
+        this.playerCutOuts.map((cu) => {
+            cu.draw(this.context, time, false, this.nonRecordableContext);
+        });
     };
 
     drawPolygons = function () {

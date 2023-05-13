@@ -202,6 +202,7 @@ export class PlayerCutOut {
         if (this.secondRectangle) {
             let cutoutPosition = this.secondRectangle.getAbsolutePositionPoints()[0];
             context.globalAlpha = this.opacity;
+            this.arrow.opacity = this.opacity;
 
             if (this.state !== PlayerCutOutStateEnum.COMPLETED) {
                 this.arrow.draw(context);
