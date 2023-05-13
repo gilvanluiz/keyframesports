@@ -30,6 +30,12 @@ import {
     ILocalStateMgr,
     IQueuedUpload,
 } from '../../App/LocalState';
+
+import {
+    changeVideoAction,
+    withTelestrationState,
+} from '../Telestrations/State';
+
 import { s3KeyToUrl, downloadFile } from '../../Utilities/Aws';
 import keyframeLogo from '../../Assets/Keyframe_Logo_White_Transparent_Cute.png';
 import { styles } from './GameFootageStyle';
@@ -41,6 +47,7 @@ import {
     gameFootageClickedTelestrate,
 } from 'src/App/UserEvents';
 import { sendUserEvent } from 'src/App/UserEvents/UserEventManager';
+import { ITelestrationStateMgr } from '../Telestrations/Types';
 
 const email = localStorage.getItem('username');
 const alephURI = process.env.REACT_APP_ALEPH_URI;
@@ -58,16 +65,23 @@ const GET_VIDEOS = gql`
 
 interface IProps extends IWithStyles, IRouter {
     localStateMgr: ILocalStateMgr;
+    telestrationStateMgr: ITelestrationStateMgr;
 }
 
-const gameFootage = ({ classes, history, location, localStateMgr }: IProps) => {
+const gameFootage = ({
+    classes,
+    history,
+    location,
+    localStateMgr,
+    telestrationStateMgr,
+}: IProps) => {
     const [state, dispatch] = useReducer(reducer, initialState);
     const { data, loading, refetch } = useQuery(GET_VIDEOS, {
         variables: {
             email,
         },
     });
-
+    const { dispatchAction } = telestrationStateMgr;
     useEffect(() => {
         if (!loading) {
             dispatch({ type: 'SET_VIDEOS', videos: data.video });
@@ -133,7 +147,11 @@ const gameFootage = ({ classes, history, location, localStateMgr }: IProps) => {
             window.location.href,
             videoID
         );
+
+        dispatchAction(changeVideoAction(videoID));
+
         history.push(`/mode/pro/telestrations/${videoID}`);
+
         dispatch({
             type: 'ON_SELECT_VIDEO',
             videoID,
@@ -370,5 +388,6 @@ const gameFootage = ({ classes, history, location, localStateMgr }: IProps) => {
 
 export const GameFootage = compose(
     withStyles(styles),
-    withLocalState
+    withLocalState,
+    withTelestrationState
 )(gameFootage);

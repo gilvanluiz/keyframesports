@@ -140,7 +140,9 @@ const timeBar = ({ classes, telestrationStateMgr }: ITimeBarProps) => {
     useEffect(() => {
         const resizeHandler = () => {
             setTimebarWidth(timeRef.current?.offsetWidth);
-            console.log(timebarWidth);
+            if (false) {
+                console.log(timebarWidth);
+            }
         };
         window.addEventListener('resize', resizeHandler);
         return () => window.removeEventListener('resize', resizeHandler);
@@ -177,7 +179,6 @@ const timeBar = ({ classes, telestrationStateMgr }: ITimeBarProps) => {
     }, [telestrationTime]);
 
     useEffect(() => {
-        console.log('changed the totalTelestrationDuration');
         if (timeRef.current) {
             const totalwidth = timeRef.current.offsetWidth;
 

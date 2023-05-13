@@ -12,6 +12,7 @@ import {
     ISetDragStateAction,
     IAddImageAction,
     IOverlayImg,
+    IVideoTelestrationManager,
 } from './Types';
 import { startRecorder, stopRecorder } from './Utils/Recording';
 import TelestrationManager from './Model/TelestrationManager';
@@ -85,6 +86,7 @@ const ADDEDSHAPE_ORDER_CHANGE_ACTION =
     'telestrations/ADDEDSHAPE_ORDER_CHANGE_ACTION';
 const SHAPEROW_SELECT_ACTION = 'telestrations/SHAPEROW_SELECT_ACTION';
 const DELETE_SELECTED_SHAPE = 'telestrations/DELETE_SELECTED_SHAPE';
+const CHANVE_VIDEO_ACTION = 'telestrations/CHANVE_VIDEO_ACTION';
 
 // ACTION CREATORS
 
@@ -285,6 +287,11 @@ export const deleteSelectedShape = () => ({
     type: DELETE_SELECTED_SHAPE as 'telestrations/DELETE_SELECTED_SHAPE',
 });
 
+export const changeVideoAction = (videoId: string) => ({
+    type: CHANVE_VIDEO_ACTION as 'telestrations/CHANVE_VIDEO_ACTION',
+    videoId,
+});
+
 // REDUCER
 
 type ITelestrationStateFn = (x: any) => ITelestrationState;
@@ -478,7 +485,6 @@ const telestrationReducer = (
         }
         case SET_DRAG_STATE: {
             const { dragMode, editMode, coordinates, videoTime } = action;
-            console.log('drag');
             if (dragMode === 'start') {
                 const newState = compose(
                     assocPath(['dragState', 'mode'], editMode),
@@ -574,7 +580,6 @@ const telestrationReducer = (
             };
             return newState;
         }
-
         case TELESTRATION_PLAY: {
             state.telestrationManager.setLiveModeFunction();
 
@@ -661,10 +666,6 @@ const telestrationReducer = (
                             const newVideoTime = getVideoTimeFromTelestrationTime(
                                 videoPauseArray[result.index].startTime,
                                 videoPauseArray
-                            );
-                            console.log(
-                                videoPauseArray[result.index].startTime,
-                                newVideoTime
                             );
                             updateAndPause(newVideoTime, video);
                         }
@@ -849,6 +850,39 @@ const telestrationReducer = (
             };
             return newState;
         }
+        case CHANVE_VIDEO_ACTION: {
+            let historyIndex = -1;
+
+            state.TelestrationManagerHistory.forEach(
+                (history: IVideoTelestrationManager, index: number) => {
+                    if (history.videoId === action.videoId) {
+                        historyIndex = index;
+                    }
+                }
+            );
+
+            if (historyIndex === -1) {
+                state.TelestrationManagerHistory.push({
+                    videoId: `${window.location.href.split('/').pop()}`,
+                    telestrationManager: state.telestrationManager,
+                });
+
+                state.telestrationManager = new TelestrationManager();
+            } else {
+                state.telestrationManager =
+                    state.TelestrationManagerHistory[
+                        historyIndex
+                    ].telestrationManager;
+            }
+            state.editMode = 'default';
+            state.telestrationTime = 0;
+            calculateTotalTime(state);
+
+            const newState = {
+                ...state,
+            };
+            return newState;
+        }
         default: {
             throw Error(`Action not found`);
         }
@@ -887,6 +921,7 @@ const initialTelestrationState = {
         recordingActive: false,
     },
     telestrationManager: new TelestrationManager(),
+    TelestrationManagerHistory: [],
     videoLoadError: 'no-errors',
     videoLoading: true,
     videoPauseArray: [],

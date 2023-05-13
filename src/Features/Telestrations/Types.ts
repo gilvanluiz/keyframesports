@@ -91,7 +91,10 @@ export interface IQueuedUpload {
 export interface IQueuedUploadRecord {
     [id: string]: IQueuedUpload;
 }
-
+export interface IVideoTelestrationManager {
+    videoId: string;
+    telestrationManager: TelestrationManager;
+}
 export interface ITelestrationState {
     telestrationMode?: ITelestrationMode;
     editMode: EditMode;
@@ -115,6 +118,7 @@ export interface ITelestrationState {
         endCoordinates: ICoordinates;
     };
     telestrationManager: TelestrationManager;
+    TelestrationManagerHistory: IVideoTelestrationManager[];
     videoLoadError: string;
     videoLoading: boolean;
     videoPauseArray: IVideoPause[];
@@ -329,6 +333,10 @@ export interface IShapeRowSelectAction {
 export interface IDeleteSelectedShapes {
     type: 'telestrations/DELETE_SELECTED_SHAPE';
 }
+export interface IChangeVideoAction {
+    type: 'telestrations/CHANVE_VIDEO_ACTION';
+    videoId: string;
+}
 
 export type ISetDragStateAction =
     | ISetDragStateStartAction
@@ -372,8 +380,8 @@ export type IAction =
     | ITelestrationPerspectiveChangeAction
     | IAddedShapeOrderChangeAction
     | IShapeRowSelectAction
-    | IDeleteSelectedShapes;
-
+    | IDeleteSelectedShapes
+    | IChangeVideoAction;
 export type IShape = 'none' | 'circle' | 'arrow';
 
 export interface ITelestrationStateMgr {

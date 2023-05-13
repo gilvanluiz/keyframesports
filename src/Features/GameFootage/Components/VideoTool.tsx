@@ -91,6 +91,7 @@ const videoTool = ({ classes, telestrationStateMgr }: IProp) => {
     const currentTool = drawTools.find(
         (tool: ITool) => tool.mode === state.editMode
     );
+
     const colorPickerOpened = Boolean(anchorEl);
 
     const openColorPicker = (event: React.MouseEvent<HTMLElement>) => {
