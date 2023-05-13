@@ -132,8 +132,6 @@ export default class TelestrationManager {
 
         this.textBoxes = [];
 
-        this.selectedShapes = [];
-
         this.addedShapes = [];
 
         this.lastFrame = 0;
@@ -1033,18 +1031,6 @@ export default class TelestrationManager {
 
     changeSizeSlider = function (radiusVariation) {
         switch (this.currentFunction) {
-            case this.FUNCTION_ENUM.SELECT_SHAPE:
-                // this.setSelectedSize(radiusVariation);
-                this.cursorRadius = radiusVariation;
-                this.cursorRadius = Utils.clamp(
-                    this.cursorRadius,
-                    this.config.MIN_CURSOR_RADIUS,
-                    this.config.MAX_CURSOR_RADIUS
-                );
-                this.selectedShapes.forEach((s) =>
-                    s.setRadius(this.cursorRadius)
-                );
-                break;
             case this.FUNCTION_ENUM.LIVE_MODE_PLACE_CURSOR:
                 this.cursorRadius = radiusVariation;
                 this.cursorRadius = Utils.clamp(
@@ -1118,15 +1104,6 @@ export default class TelestrationManager {
         }
     };
 
-    setSelectedSize = function (radius) {
-        this.selectedShapes.forEach((s) => s.setRadius(radius));
-    };
-
-    setSelectedZAngle = function (zAngle) {
-        if (this.selectedShapes.length === 0) return;
-        this.selectedShapes.forEach((s) => s.setZAngle(zAngle));
-    };
-
     changeZAngle = function (zAngleVariation) {
         this.zAngle += zAngleVariation;
         this.zAngle = Utils.clamp(
@@ -1155,6 +1132,7 @@ export default class TelestrationManager {
     getZAngle = function () {
         return this.zAngle;
     };
+
     changeZAngleSlider = function (zAngleVariation) {
         this.zAngle = zAngleVariation;
         // this.zAngle = Utils.clamp(
@@ -1164,9 +1142,6 @@ export default class TelestrationManager {
         // );
 
         switch (this.currentFunction) {
-            case this.FUNCTION_ENUM.SELECT_SHAPE:
-                this.setSelectedZAngle(this.zAngle);
-                break;
             case this.FUNCTION_ENUM.LIVE_MODE_PLACE_CURSOR:
                 this.creationCursor.setZAngle(this.zAngle);
                 break;
@@ -1678,12 +1653,6 @@ export default class TelestrationManager {
         }
     };
 
-    chageSelectedShapeColor = function (newColor) {
-        this.selectedShapes.forEach((s) => {
-            s.setColor(newColor);
-        });
-    };
-
     setTelestrationBackgroundColor = function (backgroundColor) {
         this.creationObject.setBackgroundColor(backgroundColor);
     };
@@ -1823,41 +1792,49 @@ export default class TelestrationManager {
 
     selectShapeCheck = function () {
         const rMousePos = this.getRelativeMousePosition();
-        this.cursors.forEach((s) => {
-            if (s.isMouseOver(rMousePos)) this.switchSelectedShapes(s);
+        this.addedShapes.forEach((as) => {
+            if (as.type === 'circle' && as.object.isMouseOver(rMousePos)) {
+                this.switchSelectedShapes(as);
+            }
         });
     };
 
     clearSelected = function () {
-        if (this.selectedShapes.length === 0) return;
-        this.selectedShapes.forEach((s) => {
-            s.isSelected = false;
-            s.lowLight();
+        this.addedShapes.forEach((as) => {
+            if (as.isSelected === true) {
+                as.isSelected = false;
+                as.object.lowLight();
+            }
         });
-        this.selectedShapes = [];
+        // if (this.selectedShapes.length === 0) return;
+        // this.selectedShapes.forEach((s) => {
+        //     s.isSelected = false;
+        //     s.lowLight();
+        // });
+        // this.selectedShapes = [];
     };
 
     selectRectEnd = function () {
-        this.cursors.forEach((s) => {
-            if (this.creationObject.isContain(s.position))
-                this.switchSelectedShapes(s);
+        this.addedShapes.forEach((as) => {
+            if (
+                as.type === 'circle' &&
+                this.creationObject.isContain(as.object.position)
+            ) {
+                this.switchSelectedShapes(as);
+            }
         });
         this.creationObject.clear();
     };
 
-    switchSelectedShapes = function (s) {
-        if (s.isSelected) {
+    switchSelectedShapes = function (as) {
+        if (as.isSelected) {
             if (this.controlDown) {
-                s.lowLight();
-                s.isSelected = false;
-                this.selectedShapes.forEach((s1, i) => {
-                    if (s1 === s) this.selectedShapes.splice(i, 1);
-                });
+                as.object.lowLight();
+                as.isSelected = false;
             }
         } else {
-            s.highLight();
-            s.isSelected = true;
-            this.selectedShapes.push(s);
+            as.object.highLight();
+            as.isSelected = true;
         }
     };
 
@@ -1935,6 +1912,7 @@ export default class TelestrationManager {
         });
         this.addedShapes = newAddedShapes;
     };
+
     placeSelectRect = function () {
         if (this.creationObject.points.length < 2) {
             this.creationObject.addPoint(this.getRelativeMousePosition());

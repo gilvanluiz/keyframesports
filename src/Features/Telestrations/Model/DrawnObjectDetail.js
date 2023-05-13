@@ -32,6 +32,9 @@ export class DrawnObjectDetail {
         this.videoPauseDuration.endTime = endT;
     };
     switchSelected = function () {
+        if (this.type === 'circle') {
+            this.isSelected ? this.object.lowLight() : this.object.highLight();
+        }
         this.isSelected = !this.isSelected;
     };
 }

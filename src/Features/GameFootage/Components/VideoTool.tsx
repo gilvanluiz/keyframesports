@@ -409,7 +409,7 @@ const videoTool = ({ classes, telestrationStateMgr }: IProp) => {
             ) : (
                 <></>
             )}
-            {currentTool ? (
+            {currentTool && currentTool.mode !== 'selectshape' && (
                 <>
                     <div
                         className={classes.toolName}
@@ -633,8 +633,6 @@ const videoTool = ({ classes, telestrationStateMgr }: IProp) => {
                         anchorEl={anchorEl}
                     />
                 </>
-            ) : (
-                <></>
             )}
         </>
     );
