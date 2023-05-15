@@ -302,7 +302,7 @@ const telestrationReducer = (
     state: ITelestrationState,
     action: IAction
 ): ReducerResult => {
-    // console.log(action);
+    console.log(action);
     switch (action.type) {
         case SET_VIDEO_LOAD_ERROR: {
             const { message } = action;
@@ -518,9 +518,7 @@ const telestrationReducer = (
             }
         }
         case SET_VIDEO_LOADED: {
-            if (videoRef.current) {
-                state.totalTelestrationDuration = videoRef.current.duration;
-            }
+            calculateTotalTime(state);
             return Lens.fromProp<ITelestrationState>()('videoLoading').set(
                 false
             )(state);
@@ -874,9 +872,10 @@ const telestrationReducer = (
                         historyIndex
                     ].telestrationManager;
             }
+
             state.editMode = 'default';
             state.telestrationTime = 0;
-            calculateTotalTime(state);
+            // calculateTotalTime(state);
 
             const newState = {
                 ...state,

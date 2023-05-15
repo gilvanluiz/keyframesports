@@ -171,6 +171,7 @@ export const calculateTotalTime = (state: ITelestrationState) => {
             }
         });
         state.totalTelestrationDuration += pauseD;
+        console.log(state.totalTelestrationDuration);
     }
 
     // end -> cacullate total video duration and all video pausedtime

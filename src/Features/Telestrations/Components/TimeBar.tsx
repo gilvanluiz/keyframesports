@@ -179,6 +179,7 @@ const timeBar = ({ classes, telestrationStateMgr }: ITimeBarProps) => {
     }, [telestrationTime]);
 
     useEffect(() => {
+        console.log(totalTelestrationDuration);
         if (timeRef.current) {
             const totalwidth = timeRef.current.offsetWidth;
 
@@ -187,7 +188,7 @@ const timeBar = ({ classes, telestrationStateMgr }: ITimeBarProps) => {
 
             for (
                 let i = 0;
-                i < Math.floor(totalTelestrationDuration) + 1;
+                i < Math.floor(totalTelestrationDuration) + 2;
                 i++
             ) {
                 secondArray.push({
@@ -232,6 +233,7 @@ const timeBar = ({ classes, telestrationStateMgr }: ITimeBarProps) => {
                 ref={timeRef}
                 step={100 / totalTelestrationDuration / 5}
             ></TimeSlider>
+
             <div
                 style={{
                     display: 'flex',
@@ -243,7 +245,7 @@ const timeBar = ({ classes, telestrationStateMgr }: ITimeBarProps) => {
                     pointerEvents: 'none',
                     top: '30px',
                 }}
-                // ref={timeRef}
+                ref={timeRef}
             >
                 {timeArray && timeArray.map(secondDiv)}
             </div>
