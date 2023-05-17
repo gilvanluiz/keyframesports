@@ -56,11 +56,8 @@ const SET_DRAG_STATE = 'telestrations/SET_DRAG_STATE';
 const SET_VIDEO_LOAD_ERROR = 'telestrations/SET_VIDEO_LOAD_ERROR';
 const SET_VIDEO_LOADED = 'telestrations/SET_VIDEO_LOADED';
 const CHANGE_TEXT = 'telestrations/CHANGE_TEXT';
-const CHANGE_FONT_SIZE = 'telestrations/CHANGE_FONT_SIZE';
-const CHANGE_TEXT_COLOR = 'telestrations/CHANGE_TEXT_COLOR';
-const CHANGE_TEXT_BACKGROUND_COLOR =
-    'telestrations/CHANGE_TEXT_BACKGROUND_COLOR';
-const SAVE_TEXT_BOX = 'telestrations/SAVE_TEXT_BOX';
+const TEXT_BACKGROUND_ENABLE = 'telestrations/TEXT_BACKGROUND_ENABLE';
+
 const CLICK_VIDEO_BOX = 'telestrations/CLICK_VIDEO_BOX';
 const DOUBLE_CLICK_VIDEO_BOX = 'telestrations/DOUBLE_CLICK_VIDEO_BOX';
 const MOUSE_UP_VIDEO_BOX = 'telestrations/MOUSE_UP_VIDEO_BOX';
@@ -128,28 +125,15 @@ export const ITelestrationPerspectiveChangeAction = (
     index,
 });
 
-export const changeText = (text: string) => ({
+export const changeText = (text: string, index: number) => ({
     type: CHANGE_TEXT as 'telestrations/CHANGE_TEXT',
     text,
+    index,
 });
 
-export const changeFontSize = (fontSize: number) => ({
-    type: CHANGE_FONT_SIZE as 'telestrations/CHANGE_FONT_SIZE',
-    fontSize,
-});
-
-export const changeTextColor = (textColor: string) => ({
-    type: CHANGE_TEXT_COLOR as 'telestrations/CHANGE_TEXT_COLOR',
-    textColor,
-});
-
-export const changeTextBackgroundColor = (backgroundColor: string) => ({
-    type: CHANGE_TEXT_BACKGROUND_COLOR as 'telestrations/CHANGE_TEXT_BACKGROUND_COLOR',
-    backgroundColor,
-});
-
-export const saveTextBox = () => ({
-    type: SAVE_TEXT_BOX as 'telestrations/SAVE_TEXT_BOX',
+export const switchTextBackgroundEnable = (index: number) => ({
+    type: TEXT_BACKGROUND_ENABLE as 'telestrations/TEXT_BACKGROUND_ENABLE',
+    index,
 });
 
 export const addImageAction = (
@@ -302,7 +286,7 @@ const telestrationReducer = (
     state: ITelestrationState,
     action: IAction
 ): ReducerResult => {
-    console.log(action);
+    // console.log(action);
     switch (action.type) {
         case SET_VIDEO_LOAD_ERROR: {
             const { message } = action;
@@ -451,29 +435,32 @@ const telestrationReducer = (
         }
         case CHANGE_TEXT: {
             const { text } = action;
-            state.telestrationManager.setTelestrationText(text);
-            return state;
+            const { telestrationManager } = state;
+            if (action.index === -1) {
+                state.telestrationManager.setTelestrationText(text);
+            } else {
+                telestrationManager.addedShapes[action.index].object.setText(
+                    action.text
+                );
+            }
+            const newState = {
+                ...state
+            }
+            return newState;
         }
-        case CHANGE_FONT_SIZE: {
-            const { fontSize } = action;
-            state.telestrationManager.setTelestrationFontSize(fontSize);
-            return state;
-        }
-        case CHANGE_TEXT_COLOR: {
-            const { textColor } = action;
-            state.telestrationManager.setTelestrationTextColor(textColor);
-            return state;
-        }
-        case CHANGE_TEXT_BACKGROUND_COLOR: {
-            const { backgroundColor } = action;
-            state.telestrationManager.setTelestrationBackgroundColor(
-                backgroundColor
-            );
-            return state;
-        }
-        case SAVE_TEXT_BOX: {
-            state.telestrationManager.saveTextBox();
-            return state;
+        case TEXT_BACKGROUND_ENABLE: {
+            const { telestrationManager } = state;
+            if (action.index === -1) {
+                state.telestrationManager.switchBackgroundEnable();
+            } else {
+                telestrationManager.addedShapes[
+                    action.index
+                ].object.switchBackgroundEnable();
+            }
+            const newState = {
+                ...state
+            }
+            return newState;
         }
         case ADD_OVERLAY_IMG: {
             const { overlayImg } = action;

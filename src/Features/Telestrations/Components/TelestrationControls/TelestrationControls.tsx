@@ -12,15 +12,15 @@ import {
     IconButton,
     Snackbar,
     Checkbox,
-    TextField,
+    // TextField,
 } from '@material-ui/core';
 import {
     Add,
     Clear,
     Save,
     Undo,
-    FormatColorText,
-    Texture,
+    // FormatColorText,
+    // Texture,
 } from '@material-ui/icons';
 import { useState, useEffect, useReducer, useCallback } from 'react';
 import { withStyles } from '@material-ui/core/styles';
@@ -29,9 +29,9 @@ import { compose } from 'fp-ts/lib/function';
 import { IIconButton, IProps, IActionButton } from './types';
 import {
     setModeAction,
-    changeText,
-    changeFontSize,
-    saveTextBox,
+    // changeText,
+    // changeFontSize,
+    // saveTextBox,
     callChromakeyAction,
     withTelestrationState,
 } from '../../State';
@@ -42,7 +42,7 @@ import { withLocalState } from '../../../../App/LocalState';
 import { SaveTelestrationModal } from '../SaveTelestrationModal';
 import { Prompt } from '../Prompt';
 import KeyframeLogo from '../../../../Assets/Keyframe_Logo_White_Transparent.png';
-import keyFrameLogo from '../../../../Assets/Keyframe_Logo_White_Transparent_Cute.png';
+// import keyFrameLogo from '../../../../Assets/Keyframe_Logo_White_Transparent_Cute.png';
 import ChromaKeyIcon from '../../Assets/Chromakey.png';
 import SelectShapeIcon from '../../Assets/SelectShape.png';
 import PlayerCutOutIcon from '../../Assets/PlayerCutOut.png';
@@ -57,6 +57,7 @@ import PolygonIcon from '../../Assets/Polygon.png';
 import LightShaftIcon from '../../Assets/LightShaft.png';
 import LinkedCursorIcon from '../../Assets/LinkedCursor.png';
 import StraightArrowIcon from '../../Assets/StraightArrow.png';
+import TextBoxIcon from '../../Assets/TextBox.png';
 
 import {
     telestrationCircleClicked,
@@ -86,6 +87,7 @@ const iconsByMode = {
     playercutout: PlayerCutOutIcon,
     lightshaft: LightShaftIcon,
     polygon_t: PolygonIcon,
+    textbox: TextBoxIcon,
     arrow: ArrowIcon,
     straightarrow: StraightArrowIcon,
     freearrow: FreehandArrowIcon,
@@ -120,12 +122,12 @@ const hintMessages = {
     micro: 'Need microphone permissions for recording your voice',
 };
 
-const defaulTextBoxState = {
-    text: '',
-    fontSize: 18,
-    textColor: false,
-    backgroundColor: false,
-};
+// const defaulTextBoxState = {
+//     text: '',
+//     fontSize: 18,
+//     textColor: false,
+//     backgroundColor: false,
+// };
 
 let chromakeyUsed = false;
 
@@ -142,7 +144,8 @@ const telestrationControls = ({
         reducer,
         initialState
     );
-    const [textBoxState, setTextBoxState] = useState(defaulTextBoxState);
+
+    // const [textBoxState, setTextBoxState] = useState(defaulTextBoxState);
     const [hints, setHints]: any = useState({});
     const [defaultModelOpenState, setDefaultModelOpenState]: any = useState(
         false
@@ -529,7 +532,7 @@ const telestrationControls = ({
                         </List>
                     </div>
                 </Drawer>
-                <Drawer
+                {/* <Drawer
                     className={classes.drawer}
                     variant='persistent'
                     classes={{
@@ -637,7 +640,7 @@ const telestrationControls = ({
                             <ListItemText disableTypography>Save</ListItemText>
                         </ListItem>
                     </List>
-                </Drawer>
+                </Drawer> */}
                 <Prompt editMode={state.editMode} />
             </div>
         </>

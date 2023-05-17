@@ -74,7 +74,7 @@ export default class TelestrationManager {
             POLYGON_BORDER_COLOR: 'black',
             POLYGON_COLOR: '#EF3E46',
             POLYGON_OPACITY: 0.5,
-            TEXT_BOX_BACKGROUND_COLOR: '#FFFFFF',
+            // TEXT_BOX_BACKGROUND_COLOR: '#FFFFFF',
             TEXT_BOX_COLOR: '#000000',
             TEXT_BOX_FONT_FAMILY: 'Arial',
             TEXT_BOX_FONT_SIZE: 18,
@@ -133,6 +133,11 @@ export default class TelestrationManager {
         this.textBoxes = [];
 
         this.addedShapes = [];
+        
+        this.creationTextBox = null;
+        // this.textSize = 18;
+        // this.textColor = 'black';
+        // this.textbackgroundEnable = true;
 
         this.lastFrame = 0;
         this.initializeHelperImages();
@@ -160,6 +165,7 @@ export default class TelestrationManager {
         this.drawClosingObjects(false);
         this.drawCreationTelestrations(this.nonRecordableContext);
         this.drawLightShafts(this.context, true);
+        this.drawTextBoxes();
     };
 
     renderPostChromaKeyTelestrations = function () {
@@ -532,6 +538,9 @@ export default class TelestrationManager {
             case this.FUNCTION_ENUM.PLACE_LIGHT_SHAFT:
                 this.drawCreationLightShaft(context, true);
                 break;
+            case this.FUNCTION_ENUM.PLACE_TEXT_BOX:
+                this.drawCreationTextBox(context)
+                break;
         }
     };
 
@@ -592,6 +601,11 @@ export default class TelestrationManager {
             lightshaft.draw(context, time, background)
         );
     };
+    drawTextBoxes = function(){
+        this.textBoxes.map(t=>{
+            t.draw(this.telestrationContext);
+        })
+    }
 
     drawPlayerCutOuts = function () {
         let time = this.getVideoTime();
@@ -641,6 +655,14 @@ export default class TelestrationManager {
             );
         }
     };
+
+    drawCreationTextBox = function (context){
+        if(this.creationTextBox){
+            this.creationTextBox.draw(
+                context
+            )
+        }
+    }
 
     drawClosingCursors = function () {
         for (let i = 0; i < this.closingCursors.length; i++) {
@@ -941,6 +963,10 @@ export default class TelestrationManager {
             //     this.getRelativeMousePosition()
             // );
             // break;
+            case this.FUNCTION_ENUM.PLACE_TEXT_BOX:
+                this.creationTextBox.setPosition(this.getRelativeMousePosition());
+                break;
+            
         }
     };
 
@@ -1084,6 +1110,9 @@ export default class TelestrationManager {
                 );
 
                 this.creationObject.setArrowWidth(this.arrowWidth);
+                break;
+            case this.FUNCTION_ENUM.PLACE_TEXT_BOX:
+                this.creationTextBox.setFontSize(radiusVariation);
                 break;
         }
     };
@@ -1389,10 +1418,35 @@ export default class TelestrationManager {
         };
     };
 
-    placeTextBoxPoint = function () {
-        if (this.creationObject) {
-            this.creationObject.setPosition(this.getRelativeMousePosition());
-            this.textBoxes.push(this.creationObject);
+    placeTextBoxPoint = function (currentTime) {
+        if (this.creationTextBox) {
+            
+            let tb =  new TextBox(
+                this,
+                this.creationTextBox.color,
+                this.creationTextBox.fontFamily,
+                this.creationTextBox.fontSize
+            );
+            tb.setText(this.creationTextBox.text);
+            tb.setPosition(this.creationTextBox.position);
+            tb.backgroundEnable = this.creationTextBox.backgroundEnable;
+
+            this.textBoxes.push(tb);
+
+            let index = 0;
+            this.addedShapes.forEach((shape) => {
+                if (shape.type === 'textbox') {
+                    index++;
+                }
+            });
+
+            const objectDetail = new DrawnObjectDetail(
+                tb,
+                currentTime,
+                'textbox',
+                ++index
+            );
+            this.addedShapes.push(objectDetail);
         }
     };
 
@@ -1600,7 +1654,6 @@ export default class TelestrationManager {
                 break;
             case this.FUNCTION_ENUM.CHROMA_KEY_PICKER:
                 this.chromaKeyPrepared = false;
-
                 // modify 'undo' temporarily to only undo chroma key picking
                 this.actionManager.setBackupActions();
                 break;
@@ -1650,23 +1703,31 @@ export default class TelestrationManager {
             case this.FUNCTION_ENUM.PLAYER_CUT_OUT:
                 this.setPlayerCutOutArrowColor(newColor);
                 break;
+            case this.FUNCTION_ENUM.PLACE_TEXT_BOX:
+                this.creationTextBox.setTextColor(newColor);
+                break;
         }
     };
 
-    setTelestrationBackgroundColor = function (backgroundColor) {
-        this.creationObject.setBackgroundColor(backgroundColor);
-    };
-
+    switchBackgroundEnable = function(){
+        this.setTextBackground();
+    }
+    setTextBackground = function(){
+        console.log('switch from',this.creationTextBox.backgroundEnable);
+        this.creationTextBox.switchBackgroundEnable();
+    }
     setTelestrationTextColor = function (textColor) {
-        this.creationObject.setTextColor(textColor);
+        this.creationTextBox.setTextColor(textColor);
     };
+    
+    
 
     setTelestrationText = function (text) {
-        this.creationObject.setText(text, this.context);
+        this.creationTextBox.setText(text);
     };
 
     setTelestrationFontSize = function (fontSize) {
-        this.creationObject.setFontSize(fontSize, this.context);
+        this.creationTextBox.setFontSize(fontSize, this.context);
     };
 
     setCursorColor = function (newColor) {
@@ -1686,6 +1747,23 @@ export default class TelestrationManager {
         }
     };
 
+    getTextFontSize = function () {
+        return this.creationTextBox.fontSize;
+    };
+
+    getText = function (){
+        return this.creationTextBox.getText();
+    }
+
+    getTextColor = function (){
+        return this.creationTextBox.color;
+    }
+
+    getTextBackgroundEnable = function() {
+        return this.creationTextBox.getTextBackgroundEnable();
+    }
+
+    
     setPolygonColor = function (newColor) {
         this.config.POLYGON_COLOR = newColor;
 
@@ -1728,13 +1806,13 @@ export default class TelestrationManager {
     };
 
     initializeTextBoxFunction = function (argument) {
-        this.creationObject = new TextBox(
+        this.creationTextBox = new TextBox(
             this,
-            this.config.TEXT_BOX_BACKGROUND_COLOR,
             this.config.TEXT_BOX_COLOR,
             this.config.TEXT_BOX_FONT_FAMILY,
             this.config.TEXT_BOX_FONT_SIZE
         );
+        this.creationTextBox.opacity = 0.5;
     };
 
     initializeCreationLinkedCursor = function () {
@@ -1864,7 +1942,7 @@ export default class TelestrationManager {
                 this.placeLinkedCursorPoint();
                 break;
             case this.FUNCTION_ENUM.PLACE_TEXT_BOX:
-                this.placeTextBoxPoint();
+                this.placeTextBoxPoint(currentTime);
                 break;
             case this.FUNCTION_ENUM.SELECT_SHAPE:
                 this.selectShapeCheck();

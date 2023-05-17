@@ -1,28 +1,27 @@
 export class TextBox {
-    constructor(manager, backgroundColor, color, fontFamily, fontSize) {
+    constructor(manager, color, fontFamily, fontSize) {
         this.padding = 10;
 
-        this.backgroundColor = backgroundColor;
         this.color = color;
         this.fontFamily = fontFamily;
         this.fontSize = fontSize;
-
-        this.width = 30;
+        this.opacity = 1;
+        this.width = 170;
         this.height = this.fontSize + this.padding * 2;
+        this.backgroundEnable = true;
+        this.backgroundImage = document.querySelector('#textboxback');
 
         this.manager = manager;
         this.position = null;
-        this.text = '';
-
-        this.borderWidth = 6;
+        this.text = 'This is some text';
     }
 
     applyFont = function (context) {
         context.font = 'bold ' + this.fontSize + 'px ' + this.fontFamily;
     };
 
-    calculateBoxSize = function (context) {
-        this.width = 2 * this.padding + this.getTextWidth(context);
+    calculateBoxSize = function () {
+        this.width = 2 * this.padding + this.getTextWidth(this.manager.context);
         this.height = 2 * this.padding + this.getTextHeight();
     };
 
@@ -37,19 +36,32 @@ export class TextBox {
     setTextColor = function (color) {
         this.color = color;
     };
+    
+    setColor = function(color){
+        this.setTextColor(color);
+    }
+    // setBackgroundColor = function (color) {
+    //     this.backgroundColor = color;
+    // };
+    
+    getText = function(){
+        return this.text;
+    }
 
-    setBackgroundColor = function (color) {
-        this.backgroundColor = color;
-    };
-
-    setText = function (text, context) {
+    setText = function (text ) {
         this.text = text;
-        this.calculateBoxSize(context);
+        this.calculateBoxSize();
+    };
+    setSize = function (size) {
+        this.setFontSize(size);
+    }
+    setFontSize = function (fontSize) {
+        this.fontSize = fontSize;
+        this.calculateBoxSize();
     };
 
-    setFontSize = function (fontSize, context) {
-        this.fontSize = fontSize;
-        this.calculateBoxSize(context);
+    getFontSize = function () {
+        return this.fontSize;
     };
 
     getLineHeight = function () {
@@ -85,47 +97,28 @@ export class TextBox {
 
             if (this.animation) {
                 this.animation.set(context);
+            } else {
+                context.globalAlpha = this.opacity;
             }
 
-            context.fillStyle = 'white';
-            context.fillRect(
-                position.x - this.borderWidth,
-                position.y - this.borderWidth,
-                this.width + 2 * this.borderWidth,
-                this.height + 2 * this.borderWidth
-            );
-            context.fillStyle = '#B4B4AE';
-            var innerBorderWidth = 1;
-            context.fillRect(
-                position.x - innerBorderWidth,
-                position.y - innerBorderWidth,
-                this.width + 2 * innerBorderWidth,
-                this.height + 2 * innerBorderWidth
-            );
-
-            var gradient = context.createLinearGradient(
-                position.x,
-                position.y,
-                position.x,
-                position.y + this.height
-            );
-            gradient.addColorStop(0, '#C8C8C4');
-            gradient.addColorStop(0.3, '#979690');
-            gradient.addColorStop(0.7, '#979690');
-            gradient.addColorStop(1, '#C7C7C3');
-            context.fillStyle = gradient;
-            context.fillRect(position.x, position.y, this.width, this.height);
-
-            context.save();
-            context.globalAlpha = context.globalAlpha * 0.2;
-            context.fillStyle = this.backgroundColor;
-            context.fillRect(position.x, position.y, this.width, this.height);
-            context.restore();
+            if (this.backgroundEnable) {
+                context.drawImage(
+                    this.backgroundImage,
+                    position.x,
+                    position.y,
+                    this.width,
+                    this.height
+                );
+                context.restore();
+            }
 
             this.drawText(context, position);
-
             context.restore();
         }
+    };
+
+    switchBackgroundEnable = function () {
+        this.backgroundEnable = !this.backgroundEnable;
     };
 
     drawText = function (context, position) {
@@ -134,6 +127,7 @@ export class TextBox {
         context.textBaseline = 'middle';
         context.textAlign = 'left';
         context.fillStyle = this.color;
+
         this.applyFont(context);
 
         var textY = position.y + this.padding + this.getLineHeight() / 2;
@@ -142,8 +136,11 @@ export class TextBox {
             textY += this.getLineHeight();
         }
     };
-
+    getTextBackgroundEnable() {
+        return this.backgroundEnable;
+    }
     getSplitText = function () {
         return this.text.split('\n');
     };
+
 }

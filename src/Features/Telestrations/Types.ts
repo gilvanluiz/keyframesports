@@ -162,25 +162,14 @@ export interface ITelestrationPerspectiveChangeAction {
 export interface IChangeTextAction {
     type: 'telestrations/CHANGE_TEXT';
     text: string;
+    index: number;
 }
 
-export interface IChangeFontSizeAction {
-    type: 'telestrations/CHANGE_FONT_SIZE';
-    fontSize: number;
-}
 
-export interface IChangeTextColorAction {
-    type: 'telestrations/CHANGE_TEXT_COLOR';
-    textColor: string;
-}
 
-export interface IChangeTextBackgroundColorAction {
-    type: 'telestrations/CHANGE_TEXT_BACKGROUND_COLOR';
-    backgroundColor: string;
-}
-
-export interface ISaveTextBox {
-    type: 'telestrations/SAVE_TEXT_BOX';
+export interface ITextBackgroundEnableAction {
+    type: 'telestrations/TEXT_BACKGROUND_ENABLE';
+    index: number;
 }
 
 export interface IRewindVideoAction {
@@ -358,10 +347,7 @@ export type IAction =
     | ICallChromakeyActionAction
     | IChangeTelestrationColorAction
     | IChangeTextAction
-    | IChangeFontSizeAction
-    | IChangeTextColorAction
-    | IChangeTextBackgroundColorAction
-    | ISaveTextBox
+    | ITextBackgroundEnableAction
     | ISetVideoLoadErrorAction
     | ISetVideoLoadedAction
     | IClickVideoBoxAction

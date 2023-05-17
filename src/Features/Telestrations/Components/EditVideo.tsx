@@ -36,6 +36,8 @@ import { PureVideo } from './PureVideo';
 import { PlayControls } from './PlayControls';
 import { TelestrationControls } from './TelestrationControls';
 import { isPuaseTime } from '../Utils/CalculateTime';
+import TextBoxBack from '../Assets/TextBoxBack.png';
+
 // import { telestrationMounted } from 'src/App/UserEvents';
 // import { sendUserEvent } from 'src/App/UserEvents/UserEventManager';
 
@@ -301,6 +303,13 @@ const editVideo = ({
                 videoTitle={videoTitle}
                 state={state}
             />
+            <img
+                style={{ position: 'absolute', zIndex: 10, display: 'none' }}
+                id='textboxback'
+                src={TextBoxBack}
+                width={100}
+                height={100}
+            ></img>
         </Box>
     );
 };

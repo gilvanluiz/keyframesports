@@ -45,6 +45,11 @@ export const drawTools = [
         mode: 'polygon_t' as 'polygon_t',
     },
     {
+        name: 'Text Box',
+        label: 'Draw a Text Box',
+        mode: 'textbox' as 'textbox',
+    },
+    {
         name: 'Arrow',
         label: 'Draw an Arrow',
         mode: 'arrow' as 'arrow',
