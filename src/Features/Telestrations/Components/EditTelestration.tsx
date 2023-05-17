@@ -2,11 +2,11 @@ import * as React from 'react';
 import { compose } from 'fp-ts/lib/function';
 import { withStyles, WithStyles as IWithStyles } from '@material-ui/core';
 import { EditVideo } from './EditVideo';
-// import { s3KeyToUrl } from '../../../Utilities/Aws';
+import { s3KeyToUrl } from '../../../Utilities/Aws';
 import { withTelestrationState } from '../State';
 import { ITelestrationStateMgr } from '../Types';
 
-import coach_paint_example from '../../../Assets/Videos/coach_paint_example.mp4';
+// import coach_paint_example from '../../../Assets/Videos/coach_paint_example.mp4';
 
 const styles = () => ({
     root: {
@@ -34,10 +34,10 @@ const editTelestration = ({
     classes,
 }: IEditTelestrationProps) => {
     const { state } = telestrationStateMgr;
-    // let videoURL = null;
+    let videoURL = null;
     let title = null;
 
-    // videoURL = s3KeyToUrl(data.video[0].s3_key).video_url;
+    videoURL = s3KeyToUrl(data.video[0].s3_key).video_url;
     title = data.video[0].title;
 
     return state.videoLoadError !== 'no-errors' ? (
@@ -51,8 +51,8 @@ const editTelestration = ({
             }}
         >
             <EditVideo
-                // videoUrl={videoURL}
-                videoUrl={coach_paint_example}
+                videoUrl={videoURL} 
+                // videoUrl={coach_paint_example}
                 videoTitle={title}
                 videoID={videoID}
             />

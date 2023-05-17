@@ -1164,11 +1164,6 @@ export default class TelestrationManager {
 
     changeZAngleSlider = function (zAngleVariation) {
         this.zAngle = zAngleVariation;
-        // this.zAngle = Utils.clamp(
-        //     this.zAngle,
-        //     this.config.MIN_Z_ANGLE,
-        //     this.config.MAX_Z_ANGLE
-        // );
 
         switch (this.currentFunction) {
             case this.FUNCTION_ENUM.LIVE_MODE_PLACE_CURSOR:
@@ -1489,7 +1484,6 @@ export default class TelestrationManager {
             if (this.creationObject.isComplete()) {
                 this.creationObject.finishArrow();
                 this.arrows.push(this.creationObject);
-                console.log('add shape', ' arrow');
 
                 let index = 0;
                 this.addedShapes.forEach((shape) => {
@@ -1595,7 +1589,6 @@ export default class TelestrationManager {
     currentFunctionExitUpdate = function () {
         switch (this.currentFunction) {
             case this.FUNCTION_ENUM.CHROMA_KEY_PICKER:
-                console.log('restore');
                 this.chromaKeyPrepared = false;
                 // restore undo functionality
                 this.actionManager.restoreActions();
@@ -1713,7 +1706,6 @@ export default class TelestrationManager {
         this.setTextBackground();
     }
     setTextBackground = function(){
-        console.log('switch from',this.creationTextBox.backgroundEnable);
         this.creationTextBox.switchBackgroundEnable();
     }
     setTelestrationTextColor = function (textColor) {
@@ -2191,61 +2183,10 @@ export default class TelestrationManager {
                 break;
         }
     };
-
-    // ListenSliderInputs = () => {
-    //     //access input and adding observer to access related tool slider change
-    //     const sliderSizeInput = document.getElementById('size-slider-input');
-    //     const sliderPerspectiveInput = document.getElementById(
-    //         'perspective-slider-input'
-    //     );
-    //     const config = { attributes: true, value: true };
-
-    //     // Callback function to execute when mutations are observed
-    //     const toolSizeCallback = (mutationsList, observer) => {
-    //         // Use traditional 'for loops' for IE 11
-    //         for (const mutation of mutationsList) {
-    //             if (mutation.type === 'value') {
-    //             } else if (mutation.type === 'attributes') {
-    //                 this.onSliderChangeSize(sliderSizeInput.value);
-    //             }
-    //         }
-    //     };
-
-    //     // Create an observer instance linked to the callback function
-    //     const sizeObserver = new MutationObserver(toolSizeCallback);
-    //     // sometimes it's not true and throwing error
-    //     if (sliderSizeInput) {
-    //         sizeObserver.observe(sliderSizeInput, config);
-    //     }
-
-    //     const perspectiveInputCallback = (mutationsList, observer) => {
-    //         // Use traditional 'for loops' for IE 11
-    //         for (const mutation of mutationsList) {
-    //             if (mutation.type === 'value') {
-    //             } else if (mutation.type === 'attributes') {
-    //                 this.changeZAngleSlider(sliderPerspectiveInput.value);
-    //             }
-    //         }
-    //     };
-
-    //     const perspectiveInputObserver = new MutationObserver(
-    //         perspectiveInputCallback
-    //     );
-    //     // sometimes it's not true and throwing error
-    //     if (sliderPerspectiveInput) {
-    //         perspectiveInputObserver.observe(sliderPerspectiveInput, config);
-    //     }
-    // };
-
     setEvents = function () {
-        // this.ListenSliderInputs();
         this.nonRecordableCanvas.addEventListener('mousemove', (event) =>
             this.onmousemove(event)
         );
-        // document.addEventListener('mouseup', (event) => this.onmouseup(event));
-        // this.nonRecordableCanvas.addEventListener('mousedown', (event) =>
-        //     this.onmousedown(event)
-        // );
 
         document.addEventListener(
             'mousewheel',
@@ -2253,12 +2194,6 @@ export default class TelestrationManager {
             { passive: false }
         );
 
-        // this.nonRecordableCanvas.addEventListener('click', (event) =>
-        //     this.onclick(event)
-        // );
-        // this.nonRecordableCanvas.addEventListener('dblclick', (event) =>
-        //     this.ondblclick(event)
-        // );
         this.nonRecordableCanvas.addEventListener('contextmenu', (event) =>
             this.oncontextmenu(event)
         );

@@ -94,7 +94,6 @@ const videoTool = ({ classes, telestrationStateMgr }: IProp) => {
     const colorPickerOpened = Boolean(anchorEl);
 
     const openColorPicker = (event: React.MouseEvent<HTMLElement>) => {
-        console.log(event.currentTarget);
         setAnchorEl(event.currentTarget);
     };
 
@@ -103,16 +102,6 @@ const videoTool = ({ classes, telestrationStateMgr }: IProp) => {
     };
 
     const onColorPick = (color: any, e: any, index: number) => {
-        // const { r, g, b, a } = rgb;
-        // let action = null;
-        // if (state.editMode === 'textbox') {
-        //     action = textBoxState.textColor
-        //         ? changeTextColor
-        //         : changeTextBackgroundColor;
-        // } else {
-        //     action = changeTelestrationColor;
-        // }
-        // dispatchAction(action(`rgba(${r}, ${g}, ${b}, ${a})`));
 
         dispatchAction(changeTelestrationColor(color.hex, index));
     };
@@ -427,7 +416,6 @@ const videoTool = ({ classes, telestrationStateMgr }: IProp) => {
                                 color={pickerColor}
                                 open={colorPickerOpened}
                                 onPick={({ color }: any) => {
-                                    console.log(color);
                                 }}
                                 onClose={closeColorPicker}
                                 anchorEl={anchorEl}
@@ -679,7 +667,6 @@ const videoTool = ({ classes, telestrationStateMgr }: IProp) => {
                         color={pickerColor}
                         open={colorPickerOpened}
                         onPick={({ color }: any) => {
-                            console.log(color);
                         }}
                         onClose={closeColorPicker}
                         anchorEl={anchorEl}

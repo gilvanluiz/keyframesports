@@ -708,7 +708,6 @@ const telestrationReducer = (
                 telestrationManager,
                 telestrationTimeTrackStoped,
             } = state;
-            // const { current: video } = videoRef;
             if (!telestrationTimeTrackStoped) {
                 state.telestrationTimeTrackStoped = true;
                 state.needPlay = true;
@@ -806,7 +805,6 @@ const telestrationReducer = (
             const { telestrationManager } = state;
 
             const { addedShapes } = telestrationManager;
-            // addedShapes.pop();
             const indexItem = addedShapes.splice(action.oldIndex, 1)[0];
             addedShapes.splice(action.newIndex, 0, indexItem);
 
@@ -862,7 +860,6 @@ const telestrationReducer = (
 
             state.editMode = 'default';
             state.telestrationTime = 0;
-            // calculateTotalTime(state);
 
             const newState = {
                 ...state,

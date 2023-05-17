@@ -40,9 +40,6 @@ export class TextBox {
     setColor = function(color){
         this.setTextColor(color);
     }
-    // setBackgroundColor = function (color) {
-    //     this.backgroundColor = color;
-    // };
     
     getText = function(){
         return this.text;
