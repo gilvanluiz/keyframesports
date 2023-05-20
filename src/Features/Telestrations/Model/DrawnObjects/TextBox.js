@@ -120,7 +120,7 @@ export class TextBox {
 
     drawText = function (context, position) {
         var text = this.getSplitText();
-
+        context.globalAlpha = this.opacity;
         context.textBaseline = 'middle';
         context.textAlign = 'left';
         context.fillStyle = this.color;
