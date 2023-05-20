@@ -133,7 +133,7 @@ export default class TelestrationManager {
         this.textBoxes = [];
 
         this.addedShapes = [];
-        
+
         this.creationTextBox = null;
         // this.textSize = 18;
         // this.textColor = 'black';
@@ -516,7 +516,11 @@ export default class TelestrationManager {
     };
 
     drawTextBoxes = function () {
-        this.textBoxes.map((textbox) => textbox.draw(this.context));
+        this.textBoxes.map((textbox) =>
+            textbox.draw(
+                textbox.maskEnable ? this.context : this.videoForegroundContext
+            )
+        );
     };
 
     drawCreationTelestrations = function (context) {
@@ -539,7 +543,7 @@ export default class TelestrationManager {
                 this.drawCreationLightShaft(context, true);
                 break;
             case this.FUNCTION_ENUM.PLACE_TEXT_BOX:
-                this.drawCreationTextBox(context)
+                this.drawCreationTextBox(context);
                 break;
         }
     };
@@ -601,11 +605,13 @@ export default class TelestrationManager {
             lightshaft.draw(context, time, background)
         );
     };
-    drawTextBoxes = function(){
-        this.textBoxes.map(t=>{
-            t.draw(this.telestrationContext);
-        })
-    }
+    drawTextBoxes = function () {
+        this.textBoxes.map((t) => {
+            t.draw(t.maskEnable?
+                this.telestrationContext:
+                this.videoForegroundContext);
+        });
+    };
 
     drawPlayerCutOuts = function () {
         let time = this.getVideoTime();
@@ -659,7 +665,7 @@ export default class TelestrationManager {
     drawCreationTextBox = function (context){
         if(this.creationTextBox){
             this.creationTextBox.draw(
-                context
+                 context
             )
         }
     }
@@ -964,9 +970,10 @@ export default class TelestrationManager {
             // );
             // break;
             case this.FUNCTION_ENUM.PLACE_TEXT_BOX:
-                this.creationTextBox.setPosition(this.getRelativeMousePosition());
+                this.creationTextBox.setPosition(
+                    this.getRelativeMousePosition()
+                );
                 break;
-            
         }
     };
 
@@ -1415,8 +1422,7 @@ export default class TelestrationManager {
 
     placeTextBoxPoint = function (currentTime) {
         if (this.creationTextBox) {
-            
-            let tb =  new TextBox(
+            let tb = new TextBox(
                 this,
                 this.creationTextBox.color,
                 this.creationTextBox.fontFamily,
@@ -1702,17 +1708,15 @@ export default class TelestrationManager {
         }
     };
 
-    switchBackgroundEnable = function(){
+    switchBackgroundEnable = function () {
         this.setTextBackground();
-    }
-    setTextBackground = function(){
+    };
+    setTextBackground = function () {
         this.creationTextBox.switchBackgroundEnable();
-    }
+    };
     setTelestrationTextColor = function (textColor) {
         this.creationTextBox.setTextColor(textColor);
     };
-    
-    
 
     setTelestrationText = function (text) {
         this.creationTextBox.setText(text);
@@ -1743,19 +1747,18 @@ export default class TelestrationManager {
         return this.creationTextBox.fontSize;
     };
 
-    getText = function (){
+    getText = function () {
         return this.creationTextBox.getText();
-    }
+    };
 
-    getTextColor = function (){
+    getTextColor = function () {
         return this.creationTextBox.color;
-    }
+    };
 
-    getTextBackgroundEnable = function() {
+    getTextBackgroundEnable = function () {
         return this.creationTextBox.getTextBackgroundEnable();
-    }
+    };
 
-    
     setPolygonColor = function (newColor) {
         this.config.POLYGON_COLOR = newColor;
 

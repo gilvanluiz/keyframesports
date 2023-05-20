@@ -326,6 +326,10 @@ export interface IChangeVideoAction {
     type: 'telestrations/CHANVE_VIDEO_ACTION';
     videoId: string;
 }
+export interface ITextBoxMaskSwitchAction {
+    type: 'telestrations/TEXTBOX_MASK_SWITCH_ACTION';
+    index: number
+}
 
 export type ISetDragStateAction =
     | ISetDragStateStartAction
@@ -348,6 +352,7 @@ export type IAction =
     | IChangeTelestrationColorAction
     | IChangeTextAction
     | ITextBackgroundEnableAction
+    | ITextBoxMaskSwitchAction
     | ISetVideoLoadErrorAction
     | ISetVideoLoadedAction
     | IClickVideoBoxAction

@@ -30,6 +30,7 @@ import {
     withTelestrationState,
     shapeRowSelectAction,
     switchTextBackgroundEnable,
+    switchTextBoxMask,
     // changeTextColor,
 } from '../../Telestrations/State';
 import { ITelestrationStateMgr } from 'src/Features/Telestrations/Types';
@@ -102,7 +103,6 @@ const videoTool = ({ classes, telestrationStateMgr }: IProp) => {
     };
 
     const onColorPick = (color: any, e: any, index: number) => {
-
         dispatchAction(changeTelestrationColor(color.hex, index));
     };
 
@@ -293,7 +293,8 @@ const videoTool = ({ classes, telestrationStateMgr }: IProp) => {
                                                 value={object.object.getText()}
                                                 onFocus={(e) => {
                                                     //  tslint:disable-next-line
-                                                    window['STOP_KEY_LISTENERS'] = true;
+                                                    window['STOP_KEY_LISTENERS'
+                                                    ] = true;
                                                 }}
                                                 onBlur={(e) => {
                                                     //  tslint:disable-next-line
@@ -330,6 +331,29 @@ const videoTool = ({ classes, telestrationStateMgr }: IProp) => {
                                                             switchTextBackgroundEnable(
                                                                 index
                                                             )
+                                                        );
+                                                    }}
+                                                />
+                                            </Box>
+                                            <br/>
+                                            <Box
+                                                display='flex'
+                                                flexDirection='horizontal'
+                                                alignItems='center'
+                                                justifyContent='space-between'
+                                            >
+                                                <Typography>
+                                                    MaskEnable
+                                                </Typography>
+
+                                                <StyledSwitch
+                                                    style={{ left: '0px' }}
+                                                    checked={
+                                                        object.object.maskEnable
+                                                    }
+                                                    onChange={(e) => {
+                                                        dispatchAction(
+                                                            switchTextBoxMask(index)
                                                         )
                                                     }}
                                                 />
@@ -350,7 +374,13 @@ const videoTool = ({ classes, telestrationStateMgr }: IProp) => {
                                                 onChangeComplete={(
                                                     color: any,
                                                     ev: any
-                                                ) => onColorPick(color, ev, index)}
+                                                ) =>
+                                                    onColorPick(
+                                                        color,
+                                                        ev,
+                                                        index
+                                                    )
+                                                }
                                                 circleSize={16.5}
                                                 circleSpacing={7}
                                             />
@@ -391,7 +421,10 @@ const videoTool = ({ classes, telestrationStateMgr }: IProp) => {
                                                     value: number
                                                 ) => {
                                                     dispatchAction(
-                                                        ITelestrationSizeChangeAction(value, index)
+                                                        ITelestrationSizeChangeAction(
+                                                            value,
+                                                            index
+                                                        )
                                                     );
                                                 }}
                                                 max={30}
@@ -418,7 +451,7 @@ const videoTool = ({ classes, telestrationStateMgr }: IProp) => {
                         </div>
                     )
                 )}
-            
+
             {currentTool && currentTool.mode !== 'selectshape' && (
                 <>
                     <div
@@ -554,16 +587,14 @@ const videoTool = ({ classes, telestrationStateMgr }: IProp) => {
                                             //  tslint:disable-next-line
                                             window['STOP_KEY_LISTENERS'] = true;
                                         }}
-                                        
                                         onBlur={(e) => {
-                                            //  tslint:disable-next-line 
+                                            //  tslint:disable-next-line
                                             window['STOP_KEY_LISTENERS'] = false;
                                         }}
                                         onChange={(e) => {
                                             dispatchAction(
                                                 changeText(e.target.value, -1)
                                             );
-                                            
                                         }}
                                     />
                                     <br />
@@ -577,16 +608,17 @@ const videoTool = ({ classes, telestrationStateMgr }: IProp) => {
 
                                         <StyledSwitch
                                             style={{ left: '0px' }}
-                                            checked={
-                                                telestrationManager.getTextBackgroundEnable()
-                                            }
+                                            checked={telestrationManager.getTextBackgroundEnable()}
                                             onChange={(e) => {
                                                 dispatchAction(
-                                                    switchTextBackgroundEnable(-1)
-                                                )
+                                                    switchTextBackgroundEnable(
+                                                        -1
+                                                    )
+                                                );
                                             }}
                                         />
                                     </Box>
+
                                     <br />
                                 </div>
                                 <div
@@ -598,14 +630,12 @@ const videoTool = ({ classes, telestrationStateMgr }: IProp) => {
                                 >
                                     <CirclePicker
                                         colors={colorList}
-                                        color={
-                                            telestrationManager.getTextColor()
-                                        }
+                                        color={telestrationManager.getTextColor()}
                                         onChange={handleChangePicker}
                                         onChangeComplete={(
                                             color: any,
                                             ev: any
-                                        ) =>  onColorPick(color, ev, -1) }
+                                        ) => onColorPick(color, ev, -1)}
                                         circleSize={16.5}
                                         circleSpacing={7}
                                     />
@@ -643,7 +673,10 @@ const videoTool = ({ classes, telestrationStateMgr }: IProp) => {
                                         value={telestrationManager.getTextFontSize()}
                                         onChange={(ev: any, value: number) => {
                                             dispatchAction(
-                                                ITelestrationSizeChangeAction(value, -1)
+                                                ITelestrationSizeChangeAction(
+                                                    value,
+                                                    -1
+                                                )
                                             );
                                         }}
                                         max={30}

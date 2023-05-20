@@ -14,8 +14,13 @@ export class TextBox {
         this.manager = manager;
         this.position = null;
         this.text = 'This is some text';
+
+        this.maskEnable = true;
     }
 
+    switchMaskEnable = function () {
+        this.maskEnable = !this.maskEnable;
+    };
     applyFont = function (context) {
         context.font = 'bold ' + this.fontSize + 'px ' + this.fontFamily;
     };
@@ -36,22 +41,22 @@ export class TextBox {
     setTextColor = function (color) {
         this.color = color;
     };
-    
-    setColor = function(color){
-        this.setTextColor(color);
-    }
-    
-    getText = function(){
-        return this.text;
-    }
 
-    setText = function (text ) {
+    setColor = function (color) {
+        this.setTextColor(color);
+    };
+
+    getText = function () {
+        return this.text;
+    };
+
+    setText = function (text) {
         this.text = text;
         this.calculateBoxSize();
     };
     setSize = function (size) {
         this.setFontSize(size);
-    }
+    };
     setFontSize = function (fontSize) {
         this.fontSize = fontSize;
         this.calculateBoxSize();
@@ -139,5 +144,4 @@ export class TextBox {
     getSplitText = function () {
         return this.text.split('\n');
     };
-
 }

@@ -84,6 +84,7 @@ const ADDEDSHAPE_ORDER_CHANGE_ACTION =
 const SHAPEROW_SELECT_ACTION = 'telestrations/SHAPEROW_SELECT_ACTION';
 const DELETE_SELECTED_SHAPE = 'telestrations/DELETE_SELECTED_SHAPE';
 const CHANVE_VIDEO_ACTION = 'telestrations/CHANVE_VIDEO_ACTION';
+const TEXTBOX_MASK_SWITCH_ACTION = 'telestrations/TEXTBOX_MASK_SWITCH_ACTION';
 
 // ACTION CREATORS
 
@@ -276,6 +277,12 @@ export const changeVideoAction = (videoId: string) => ({
     videoId,
 });
 
+export const switchTextBoxMask = (index:number) => ({
+    type: TEXTBOX_MASK_SWITCH_ACTION as 'telestrations/TEXTBOX_MASK_SWITCH_ACTION',
+    index
+});
+
+
 // REDUCER
 
 type ITelestrationStateFn = (x: any) => ITelestrationState;
@@ -457,6 +464,18 @@ const telestrationReducer = (
                     action.index
                 ].object.switchBackgroundEnable();
             }
+            const newState = {
+                ...state
+            }
+            return newState;
+        }
+        case TEXTBOX_MASK_SWITCH_ACTION:{
+            const { telestrationManager } = state;
+            
+            telestrationManager.addedShapes[
+                    action.index
+                ].object.switchMaskEnable();
+            
             const newState = {
                 ...state
             }
