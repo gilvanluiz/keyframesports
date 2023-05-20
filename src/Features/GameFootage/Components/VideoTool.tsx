@@ -140,12 +140,6 @@ const videoTool = ({ classes, telestrationStateMgr }: IProp) => {
 
     return (
         <>
-            {/* <input type='hidden' id='size-slider-input' value={toolSize} />
-            <input
-                type='hidden'
-                id='perspective-slider-input'
-                value={toolPerspective}
-            /> */}
             {telestrationManager.addedShapes.length > 0 &&
                 telestrationManager.addedShapes.map(
                     (object: any, index: number) => (
@@ -416,6 +410,7 @@ const videoTool = ({ classes, telestrationStateMgr }: IProp) => {
                                 color={pickerColor}
                                 open={colorPickerOpened}
                                 onPick={({ color }: any) => {
+                                    console.log(color);
                                 }}
                                 onClose={closeColorPicker}
                                 anchorEl={anchorEl}
@@ -667,6 +662,7 @@ const videoTool = ({ classes, telestrationStateMgr }: IProp) => {
                         color={pickerColor}
                         open={colorPickerOpened}
                         onPick={({ color }: any) => {
+                            console.log(color);
                         }}
                         onClose={closeColorPicker}
                         anchorEl={anchorEl}
