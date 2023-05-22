@@ -25,6 +25,7 @@ import {
     deleteSelectedShape,
     mouseUpVideoBox,
     mouseDownVideoBox,
+    contextMenuAction,
     // TelestrationPlayAction,
     // TelestrationStopAction,
 } from '../State';
@@ -210,6 +211,12 @@ const editVideo = ({
     const clickVideoBoxHandler = (e: any) => {
         dispatchAction(clickVideoBox(e));
     };
+
+    const contextMenuHandler = (e: any) => {
+        e.preventDefault();
+        dispatchAction(contextMenuAction());
+    };
+
     const mouseDownVideoHandler = (e: any) => {
         dispatchAction(mouseDownVideoBox(e));
     };
@@ -265,6 +272,7 @@ const editVideo = ({
                 onMouseDown={mouseDownVideoHandler}
                 onMouseUp={mouseUpVideoHandler}
                 onDoubleClick={handleCanvasDblClick}
+                onContextMenu={contextMenuHandler}
             >
                 <canvas
                     className={clsx(classes.easyChangeSize, canvasClasses)}

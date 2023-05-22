@@ -85,6 +85,7 @@ const SHAPEROW_SELECT_ACTION = 'telestrations/SHAPEROW_SELECT_ACTION';
 const DELETE_SELECTED_SHAPE = 'telestrations/DELETE_SELECTED_SHAPE';
 const CHANVE_VIDEO_ACTION = 'telestrations/CHANVE_VIDEO_ACTION';
 const TEXTBOX_MASK_SWITCH_ACTION = 'telestrations/TEXTBOX_MASK_SWITCH_ACTION';
+const CONTEXT_MENU_ACTION = 'telestrations/CONTEXT_MENU_ACTION';
 
 // ACTION CREATORS
 
@@ -282,6 +283,9 @@ export const switchTextBoxMask = (index:number) => ({
     index
 });
 
+export const contextMenuAction = () => ({
+    type: CONTEXT_MENU_ACTION as 'telestrations/CONTEXT_MENU_ACTION',
+});
 
 // REDUCER
 
@@ -293,7 +297,7 @@ const telestrationReducer = (
     state: ITelestrationState,
     action: IAction
 ): ReducerResult => {
-    // console.log(action);
+    console.log(action);
     switch (action.type) {
         case SET_VIDEO_LOAD_ERROR: {
             const { message } = action;
@@ -579,6 +583,14 @@ const telestrationReducer = (
 
             calculateTotalTime(state);
 
+            const newState = {
+                ...state,
+            };
+            return newState;
+        }
+        case CONTEXT_MENU_ACTION:{
+            state.telestrationManager.oncontextmenu()
+            
             const newState = {
                 ...state,
             };

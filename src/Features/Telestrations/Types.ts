@@ -326,6 +326,9 @@ export interface IChangeVideoAction {
     type: 'telestrations/CHANVE_VIDEO_ACTION';
     videoId: string;
 }
+export interface IContextMenuAction{
+    type: 'telestrations/CONTEXT_MENU_ACTION';
+}
 export interface ITextBoxMaskSwitchAction {
     type: 'telestrations/TEXTBOX_MASK_SWITCH_ACTION';
     index: number
@@ -372,7 +375,9 @@ export type IAction =
     | IAddedShapeOrderChangeAction
     | IShapeRowSelectAction
     | IDeleteSelectedShapes
-    | IChangeVideoAction;
+    | IChangeVideoAction
+    | IContextMenuAction;
+    
 export type IShape = 'none' | 'circle' | 'arrow';
 
 export interface ITelestrationStateMgr {

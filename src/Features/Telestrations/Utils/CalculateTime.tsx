@@ -171,7 +171,6 @@ export const calculateTotalTime = (state: ITelestrationState) => {
             }
         });
         state.totalTelestrationDuration += pauseD;
-        console.log(state.totalTelestrationDuration);
     }
 
     // end -> cacullate total video duration and all video pausedtime
@@ -204,19 +203,15 @@ export const snapTime = (time: number, objectArray: any[]) => {
     objectArray.every((object: any) => {
         if (isInRange(time, object.videoPauseDuration.startTime)) {
             newTime = object.videoPauseDuration.startTime;
-            console.log('snaped to', newTime);
             return false;
         } else if (isInRange(time, object.videoPauseDuration.endTime)) {
             newTime = object.videoPauseDuration.endTime;
-            console.log('snaped to', newTime);
             return false;
         } else if (isInRange(time, object.objectDuration.startTime)) {
             newTime = object.objectDuration.startTime;
-            console.log('snaped to', newTime);
             return false;
         } else if (isInRange(time, object.objectDuration.endTime)) {
             newTime = object.objectDuration.endTime;
-            console.log('snaped to', newTime);
             return false;
         } else {
             return true;

@@ -2015,7 +2015,6 @@ export default class TelestrationManager {
 
     onmousedown = function (event, currentTime) {
         this.captureCanvasMousePosition(event);
-
         this.mouseDown = true;
         switch (this.currentFunction) {
             case this.FUNCTION_ENUM.PLACE_STRAIGHT_ARROW:
@@ -2038,6 +2037,7 @@ export default class TelestrationManager {
     };
 
     onmouseup = function (event, currentTime) {
+
         if (this.mouseDown) {
             this.captureCanvasMousePosition(event);
             this.mouseDown = false;
@@ -2101,7 +2101,11 @@ export default class TelestrationManager {
                     }
                     break;
                 case this.FUNCTION_ENUM.PLAYER_CUT_OUT:
-                    this.placePlayerCutOutPoint(true, currentTime);
+                    if(event.button === 2 && this.creationObject.state === 1 ){
+                        this.creationObject.arrow.switchType();
+                    } else{
+                        this.placePlayerCutOutPoint(true, currentTime);
+                    }
                     break;
                 case this.FUNCTION_ENUM.SELECT_SHAPE:
                     this.selectRectEnd();
@@ -2123,12 +2127,11 @@ export default class TelestrationManager {
         }
     };
 
-    oncontextmenu = function (event) {
+    oncontextmenu = function () {
         switch (this.currentFunction) {
             case this.FUNCTION_ENUM.PLACE_SMOOTH_ARROW:
             case this.FUNCTION_ENUM.PLACE_STRAIGHT_ARROW:
             case this.FUNCTION_ENUM.PLACE_ARROW_POINT:
-                event.preventDefault();
                 this.creationObject.switchType();
                 break;
         }
@@ -2186,6 +2189,7 @@ export default class TelestrationManager {
                 break;
         }
     };
+
     setEvents = function () {
         this.nonRecordableCanvas.addEventListener('mousemove', (event) =>
             this.onmousemove(event)
@@ -2197,9 +2201,6 @@ export default class TelestrationManager {
             { passive: false }
         );
 
-        this.nonRecordableCanvas.addEventListener('contextmenu', (event) =>
-            this.oncontextmenu(event)
-        );
 
         document.addEventListener('keydown', (event) => this.onkeydown(event));
         document.addEventListener('keyup', (event) => this.onkeyup(event));
