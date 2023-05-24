@@ -102,7 +102,7 @@ const videoTool = ({ classes, telestrationStateMgr }: IProp) => {
         setAnchorEl(null);
     };
 
-    const onColorPick = (color: any, e: any, index: number) => {
+    const onColorPick = (color: any, index: number) => {
         dispatchAction(changeTelestrationColor(color.hex, index));
     };
 
@@ -180,7 +180,6 @@ const videoTool = ({ classes, telestrationStateMgr }: IProp) => {
                                                     ) =>
                                                         onColorPick(
                                                             color,
-                                                            ev,
                                                             index
                                                         )
                                                     }
@@ -377,7 +376,6 @@ const videoTool = ({ classes, telestrationStateMgr }: IProp) => {
                                                 ) =>
                                                     onColorPick(
                                                         color,
-                                                        ev,
                                                         index
                                                     )
                                                 }
@@ -443,15 +441,15 @@ const videoTool = ({ classes, telestrationStateMgr }: IProp) => {
                                 color={pickerColor}
                                 open={colorPickerOpened}
                                 onPick={({ color }: any) => {
-                                    console.log(color);
+                                    onColorPick(color,  index)
                                 }}
+                                
                                 onClose={closeColorPicker}
                                 anchorEl={anchorEl}
                             />
                         </div>
                     )
                 )}
-
             {currentTool && currentTool.mode !== 'selectshape' && (
                 <>
                     <div
@@ -480,7 +478,7 @@ const videoTool = ({ classes, telestrationStateMgr }: IProp) => {
                                             onChangeComplete={(
                                                 color: any,
                                                 ev: any
-                                            ) => onColorPick(color, ev, -1)}
+                                            ) => onColorPick(color,  -1)}
                                             circleSize={16.5}
                                             circleSpacing={7}
                                         />
@@ -635,7 +633,7 @@ const videoTool = ({ classes, telestrationStateMgr }: IProp) => {
                                         onChangeComplete={(
                                             color: any,
                                             ev: any
-                                        ) => onColorPick(color, ev, -1)}
+                                        ) => onColorPick(color, -1)}
                                         circleSize={16.5}
                                         circleSpacing={7}
                                     />
@@ -695,7 +693,7 @@ const videoTool = ({ classes, telestrationStateMgr }: IProp) => {
                         color={pickerColor}
                         open={colorPickerOpened}
                         onPick={({ color }: any) => {
-                            console.log(color);
+                            onColorPick(color, -1)
                         }}
                         onClose={closeColorPicker}
                         anchorEl={anchorEl}

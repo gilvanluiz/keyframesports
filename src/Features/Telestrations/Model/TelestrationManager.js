@@ -1214,7 +1214,7 @@ export default class TelestrationManager {
 
             let index = 0;
             this.addedShapes.forEach((shape) => {
-                if (shape.type === 'circle') {
+                if (shape.type === 'Circle') {
                     index++;
                 }
             });
@@ -1222,7 +1222,7 @@ export default class TelestrationManager {
             const objectDetail = new DrawnObjectDetail(
                 kf,
                 currentTime,
-                'circle',
+                'Circle',
                 ++index
             );
             this.addedShapes.push(objectDetail);
@@ -1250,7 +1250,7 @@ export default class TelestrationManager {
 
         let index = 0;
         this.addedShapes.forEach((shape) => {
-            if (shape.type === 'lightshaft') {
+            if (shape.type === 'Light Shaft') {
                 index++;
             }
         });
@@ -1258,7 +1258,7 @@ export default class TelestrationManager {
         const objectDetail = new DrawnObjectDetail(
             ls,
             currentTime,
-            'lightshaft',
+            'Light Shaft',
             ++index
         );
         this.addedShapes.push(objectDetail);
@@ -1286,7 +1286,7 @@ export default class TelestrationManager {
 
                         let index = 0;
                         this.addedShapes.forEach((shape) => {
-                            if (shape.type === 'playercutout') {
+                            if (shape.type === 'Player Cut Out') {
                                 index++;
                             }
                         });
@@ -1294,7 +1294,7 @@ export default class TelestrationManager {
                         const objectDetail = new DrawnObjectDetail(
                             this.creationObject,
                             currentTime,
-                            'playercutout',
+                            'Player Cut Out',
                             ++index
                         );
 
@@ -1319,7 +1319,7 @@ export default class TelestrationManager {
 
         let index = 0;
         this.addedShapes.forEach((shape) => {
-            if (shape.type === 'linkedcursor') {
+            if (shape.type === 'Linked Cursor') {
                 index++;
             }
         });
@@ -1327,7 +1327,7 @@ export default class TelestrationManager {
         const objectDetail = new DrawnObjectDetail(
             this.creationObject,
             currentTime,
-            'linkedcursor',
+            'Linked Cursor',
             ++index
         );
 
@@ -1357,14 +1357,14 @@ export default class TelestrationManager {
 
             let index = 0;
             this.addedShapes.forEach((shape) => {
-                if (shape.type === 'polygon') {
+                if (shape.type === 'Polygon') {
                     index++;
                 }
             });
             const objectDetail = new DrawnObjectDetail(
                 this.creationObject,
                 currentTime,
-                'polygon',
+                'Polygon',
                 ++index
             );
             this.addedShapes.push(objectDetail);
@@ -1436,7 +1436,7 @@ export default class TelestrationManager {
 
             let index = 0;
             this.addedShapes.forEach((shape) => {
-                if (shape.type === 'textbox') {
+                if (shape.type === 'Text Box') {
                     index++;
                 }
             });
@@ -1444,7 +1444,7 @@ export default class TelestrationManager {
             const objectDetail = new DrawnObjectDetail(
                 tb,
                 currentTime,
-                'textbox',
+                'Text Box',
                 ++index
             );
             this.addedShapes.push(objectDetail);
@@ -1493,7 +1493,7 @@ export default class TelestrationManager {
 
                 let index = 0;
                 this.addedShapes.forEach((shape) => {
-                    if (shape.type === 'arrow') {
+                    if (shape.type === 'Arrow') {
                         index++;
                     }
                 });
@@ -1501,7 +1501,7 @@ export default class TelestrationManager {
                 const objectDetail = new DrawnObjectDetail(
                     this.creationObject,
                     currentTime,
-                    'arrow',
+                    'Arrow',
                     ++index
                 );
 
@@ -2053,7 +2053,7 @@ export default class TelestrationManager {
 
                             let index = 0;
                             this.addedShapes.forEach((shape) => {
-                                if (shape.type === 'freehandarrow') {
+                                if (shape.type === 'Frre Hand Arrow') {
                                     index++;
                                 }
                             });
@@ -2061,7 +2061,7 @@ export default class TelestrationManager {
                             const objectDetail = new DrawnObjectDetail(
                                 this.creationObject,
                                 currentTime,
-                                'freehandarrow',
+                                'Frre Hand Arrow',
                                 ++index
                             );
 
@@ -2078,7 +2078,7 @@ export default class TelestrationManager {
                             this.arrows.push(this.creationObject);
                             let index = 0;
                             this.addedShapes.forEach((shape) => {
-                                if (shape.type === 'straightarrow') {
+                                if (shape.type === 'Straight Arrow') {
                                     index++;
                                 }
                             });
@@ -2086,7 +2086,7 @@ export default class TelestrationManager {
                             const objectDetail = new DrawnObjectDetail(
                                 this.creationObject,
                                 currentTime,
-                                'straightarrow',
+                                'Straight Arrow',
                                 ++index
                             );
 

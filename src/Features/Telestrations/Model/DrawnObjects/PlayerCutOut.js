@@ -146,7 +146,10 @@ export class PlayerCutOut {
     setArrowColor = function (newColor) {
         this.arrow.setColor(newColor);
     };
-
+    
+    setColor = function (newColor) {
+        this.arrow.setColor(newColor);
+    }
     setArrowZAngle = function (zAngle) {
         this.arrow.setZAngle(zAngle);
     };

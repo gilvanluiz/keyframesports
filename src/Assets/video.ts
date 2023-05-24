@@ -30,7 +30,7 @@ export const drawTools = [
         mode: 'selectshape' as 'selectshape',
     },
     {
-        name: 'Cut Out',
+        name: 'Player Cut Out',
         label: 'Player Cut Out',
         mode: 'playercutout' as 'playercutout',
     },
