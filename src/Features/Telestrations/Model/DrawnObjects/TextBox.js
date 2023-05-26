@@ -10,14 +10,16 @@ export class TextBox {
         this.height = this.fontSize + this.padding * 2;
         this.backgroundEnable = true;
         this.backgroundImage = document.querySelector('#textboxback');
-
+        
         this.manager = manager;
         this.position = null;
         this.text = 'This is some text';
 
         this.maskEnable = true;
     }
-
+    getSize = function () {
+        return this.fontSize;
+    };
     switchMaskEnable = function () {
         this.maskEnable = !this.maskEnable;
     };
