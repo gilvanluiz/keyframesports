@@ -79,11 +79,14 @@ const initialColors = [
 
 const videoTool = ({ classes, telestrationStateMgr }: IProp) => {
     const [opened, setOpened] = useState(true);
-    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+    const [anchorEl1, setAnchorEl1] = useState<null | HTMLElement>(null);
+    const [anchorEl2, setAnchorEl2] = useState<null | HTMLElement>(null);
+
+    const [colorList1, setColorList1] = useState(initialColors);
+    const [colorList2, setColorList2] = useState(initialColors);
+
     const [pickerColor, setPickerColor] = useState('#cc0000');
-
-    const [colorList, setColorList] = useState(initialColors);
-
+    
     const { state, dispatchAction } = telestrationStateMgr;
 
     const { telestrationManager } = state;
@@ -92,24 +95,31 @@ const videoTool = ({ classes, telestrationStateMgr }: IProp) => {
         (tool: ITool) => tool.mode === state.editMode
     );
 
-    const colorPickerOpened = Boolean(anchorEl);
+    const colorPickerOpened1 = Boolean(anchorEl1);
+    const colorPickerOpened2 = Boolean(anchorEl2);
 
-    const openColorPicker = (event: React.MouseEvent<HTMLElement>) => {
-        setAnchorEl(event.currentTarget);
+    const openColorPicker1 = (event: React.MouseEvent<HTMLElement>) => {
+        setAnchorEl1(event.currentTarget);
+    };
+    const openColorPicker2 = (event: React.MouseEvent<HTMLElement>) => {
+        setAnchorEl2(event.currentTarget);
     };
 
-    const closeColorPicker = () => {
-        setAnchorEl(null);
+    const closeColorPicker1 = () => {
+        setAnchorEl1(null);
     };
-
+    
+    const closeColorPicker2 = () => {
+        setAnchorEl2(null);
+    };
     const onColorPick = (color: any, index: number) => {
-        dispatchAction(changeTelestrationColor(color.hex, index));
+        dispatchAction(changeTelestrationColor(color.hex, index));  
     };
 
-    const handleChangePickerList = (pickedColor: any) => {
-        const { r, g, b, a } = pickedColor.rgb;
-        setPickerColor(`rgba(${r}, ${g}, ${b}, ${a})`);
-        const updatedColorList = [...colorList];
+    const handleChangePickerList1 = (pickedColor: any) => {
+        // const { r, g, b, a } = pickedColor.rgb;
+        // setPickerColor(`rgba(${r}, ${g}, ${b}, ${a})`);
+        const updatedColorList = [...colorList1];
         let isRepeatedColor = false;
         updatedColorList.map((color) => {
             if (color === pickedColor.hex) {
@@ -119,13 +129,29 @@ const videoTool = ({ classes, telestrationStateMgr }: IProp) => {
         if (!isRepeatedColor) {
             updatedColorList.pop();
             updatedColorList.unshift(pickedColor.hex);
-            setColorList(updatedColorList);
+            setColorList1(updatedColorList);
         }
     };
 
+    const handleChangePickerList2 = (pickedColor: any) => {
+        // const { r, g, b, a } = pickedColor.rgb;
+        // setPickerColor(`rgba(${r}, ${g}, ${b}, ${a})`);
+        const updatedColorList = [...colorList2];
+        let isRepeatedColor = false;
+        updatedColorList.map((color) => {
+            if (color === pickedColor.hex) {
+                isRepeatedColor = true;
+            }
+        });
+        if (!isRepeatedColor) {
+            updatedColorList.pop();
+            updatedColorList.unshift(pickedColor.hex);
+            setColorList2(updatedColorList);
+        }
+    };
     const handleChangePicker = ({ rgb }: any, e: any) => {
-        const { r, g, b, a } = rgb;
-        setPickerColor(`rgba(${r}, ${g}, ${b}, ${a})`);
+        // const { r, g, b, a } = rgb;
+        // setPickerColor(`rgba(${r}, ${g}, ${b}, ${a})`);
     };
     const onSizeSliderChange = (e: any, newValue: number, index: number) => {
         dispatchAction(ITelestrationSizeChangeAction(newValue, index));
@@ -169,7 +195,7 @@ const videoTool = ({ classes, telestrationStateMgr }: IProp) => {
                                                 }}
                                             >
                                                 <CirclePicker
-                                                    colors={colorList}
+                                                    colors={colorList1}
                                                     color={object.object.color}
                                                     onChange={
                                                         handleChangePicker
@@ -188,7 +214,7 @@ const videoTool = ({ classes, telestrationStateMgr }: IProp) => {
                                                 />
                                                 <div
                                                     onClick={
-                                                        openColorPicker as any
+                                                        openColorPicker1 as any
                                                     }
                                                     style={{
                                                         display: 'flex',
@@ -367,7 +393,7 @@ const videoTool = ({ classes, telestrationStateMgr }: IProp) => {
                                             }}
                                         >
                                             <CirclePicker
-                                                colors={colorList}
+                                                colors={colorList1}
                                                 color={object.object.color}
                                                 onChange={handleChangePicker}
                                                 onChangeComplete={(
@@ -383,7 +409,7 @@ const videoTool = ({ classes, telestrationStateMgr }: IProp) => {
                                                 circleSpacing={7}
                                             />
                                             <div
-                                                onClick={openColorPicker as any}
+                                                onClick={openColorPicker1 as any}
                                                 style={{
                                                     display: 'flex',
                                                     cursor: 'pointer',
@@ -437,15 +463,16 @@ const videoTool = ({ classes, telestrationStateMgr }: IProp) => {
                             <Divider />
 
                             <ColorPicker
-                                handleChange={handleChangePickerList}
-                                color={pickerColor}
-                                open={colorPickerOpened}
-                                onPick={({ color }: any) => {
-                                    onColorPick(color,  index)
+                                handleChange={handleChangePickerList1}
+                                color={object.object.color}
+                                open={colorPickerOpened1}
+                                onPick={(color : any) => {
+                                    onColorPick(color, index);
+                                    closeColorPicker1();
                                 }}
                                 
-                                onClose={closeColorPicker}
-                                anchorEl={anchorEl}
+                                onClose={closeColorPicker1}
+                                anchorEl={anchorEl1}
                             />
                         </div>
                     )
@@ -472,7 +499,7 @@ const videoTool = ({ classes, telestrationStateMgr }: IProp) => {
                                         }}
                                     >
                                         <CirclePicker
-                                            colors={colorList}
+                                            colors={colorList2}
                                             color={pickerColor}
                                             onChange={handleChangePicker}
                                             onChangeComplete={(
@@ -483,7 +510,7 @@ const videoTool = ({ classes, telestrationStateMgr }: IProp) => {
                                             circleSpacing={7}
                                         />
                                         <div
-                                            onClick={openColorPicker as any}
+                                            onClick={openColorPicker2 as any}
                                             style={{
                                                 display: 'flex',
                                                 cursor: 'pointer',
@@ -627,7 +654,7 @@ const videoTool = ({ classes, telestrationStateMgr }: IProp) => {
                                     }}
                                 >
                                     <CirclePicker
-                                        colors={colorList}
+                                        colors={colorList2}
                                         color={telestrationManager.getTextColor()}
                                         onChange={handleChangePicker}
                                         onChangeComplete={(
@@ -638,7 +665,7 @@ const videoTool = ({ classes, telestrationStateMgr }: IProp) => {
                                         circleSpacing={7}
                                     />
                                     <div
-                                        onClick={openColorPicker as any}
+                                        onClick={openColorPicker2 as any}
                                         style={{
                                             display: 'flex',
                                             cursor: 'pointer',
@@ -689,14 +716,16 @@ const videoTool = ({ classes, telestrationStateMgr }: IProp) => {
                     <Divider />
 
                     <ColorPicker
-                        handleChange={handleChangePickerList}
+                        handleChange={handleChangePickerList2}
                         color={pickerColor}
-                        open={colorPickerOpened}
-                        onPick={({ color }: any) => {
-                            onColorPick(color, -1)
+                        open={colorPickerOpened2}
+                        onPick={( color : any) => {
+                            onColorPick(color, -1);
+                            closeColorPicker2();
+                            setPickerColor(color);
                         }}
-                        onClose={closeColorPicker}
-                        anchorEl={anchorEl}
+                        onClose={closeColorPicker2}
+                        anchorEl={anchorEl2}
                     />
                 </>
             )}
