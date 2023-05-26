@@ -1758,7 +1758,9 @@ export default class TelestrationManager {
     getTextBackgroundEnable = function () {
         return this.creationTextBox.getTextBackgroundEnable();
     };
-
+    getTextMaskEnable = function(){
+        return this.creationTextBox.maskEnable;
+    }
     setPolygonColor = function (newColor) {
         this.config.POLYGON_COLOR = newColor;
 

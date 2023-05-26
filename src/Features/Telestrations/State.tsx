@@ -297,7 +297,7 @@ const telestrationReducer = (
     state: ITelestrationState,
     action: IAction
 ): ReducerResult => {
-    console.log(action);
+    // console.log(action);
     switch (action.type) {
         case SET_VIDEO_LOAD_ERROR: {
             const { message } = action;
@@ -476,7 +476,7 @@ const telestrationReducer = (
         case TEXTBOX_MASK_SWITCH_ACTION:{
             const { telestrationManager } = state;
             
-            telestrationManager.addedShapes[
+                telestrationManager.addedShapes[
                     action.index
                 ].object.switchMaskEnable();
             

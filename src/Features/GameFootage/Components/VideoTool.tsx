@@ -183,7 +183,7 @@ const videoTool = ({ classes, telestrationStateMgr }: IProp) => {
                             </div>
 
                             <Collapse in={object.isSelected} timeout={300}>
-                                {object.type !== 'textbox' && (
+                                {object.type !== 'Text Box' && (
                                     <div style={{ margin: '10px 0px' }}>
                                         {object.type !== 'lightshaft' && (
                                             <div
@@ -301,7 +301,7 @@ const videoTool = ({ classes, telestrationStateMgr }: IProp) => {
                                         )}
                                     </div>
                                 )}
-                                {object.type === 'textbox' && (
+                                {object.type === 'Text Box' && (
                                     <>
                                         <div
                                             style={{
@@ -643,8 +643,8 @@ const videoTool = ({ classes, telestrationStateMgr }: IProp) => {
                                             }}
                                         />
                                     </Box>
-
                                     <br />
+
                                 </div>
                                 <div
                                     style={{
