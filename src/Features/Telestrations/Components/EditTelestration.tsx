@@ -6,7 +6,7 @@ import { s3KeyToUrl } from '../../../Utilities/Aws';
 import { withTelestrationState } from '../State';
 import { ITelestrationStateMgr } from '../Types';
 
-// import coach_paint_example from '../../../Assets/Videos/coach_paint_example.mp4';
+//  import coach_paint_example from '../../../Assets/Videos/coach_paint_example.mp4';
 
 const styles = () => ({
     root: {
@@ -51,7 +51,7 @@ const editTelestration = ({
             }}
         >
             <EditVideo
-                videoUrl={videoURL} 
+                videoUrl={videoURL}
                 // videoUrl={coach_paint_example}
                 videoTitle={title}
                 videoID={videoID}
