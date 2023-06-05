@@ -284,7 +284,6 @@ export class Arrow {
     setColor = function (newColor) {
         this.color = newColor;
     };
-
     setZAngle = function (zAngle) {
         this.zAngle = zAngle;
     };

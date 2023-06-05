@@ -9,20 +9,22 @@ let PlayerCutOutStateEnum = {
 };
 
 export class PlayerCutOut {
-    constructor(manager, arrowColor) {
+    constructor(manager, color) {
         this.manager = manager;
         this.state = PlayerCutOutStateEnum.PLACING_RECTANGLE_FIRST;
         this.firstRectangle = new Rectangle(this.manager, 'red', 2, 0.5);
         this.secondRectangle = null;
+        this.color = color;
         this.arrow = new Arrow(
             this.manager,
-            arrowColor,
+            color,
             'white',
             true,
             this.manager.zAngle
         );
         this.cutout = null;
-        this.zAngle = null;
+        this.zAngle = 0.36;
+        this.size = 40;
         this.opacity = 1;
     }
 
@@ -39,8 +41,18 @@ export class PlayerCutOut {
     };
 
     getSize = function () {
-        return this.arrow.getSize();
+        return this.size;
     };
+    
+    setSize = function (size) {
+        this.size = size;
+        this.arrow.setSize(size)
+    }
+
+    setZAngle = function (angle) {
+        this.zAngle = angle;
+        this.arrow.setZAngle(angle)
+    }
     markAsFinished = function () {
         this.animation = new FadeInOutAnimation(
             this.manager,
@@ -51,9 +63,6 @@ export class PlayerCutOut {
         );
     };
 
-    setZAngle = function (zAngle) {
-        this.zAngle = zAngle;
-    };
 
     hasPlacedPoints = function () {
         return !(
@@ -144,13 +153,21 @@ export class PlayerCutOut {
     };
 
     setArrowColor = function (newColor) {
+        this.color = newColor;
         this.arrow.setColor(newColor);
     };
     
     setColor = function (newColor) {
+        this.color = newColor;
         this.arrow.setColor(newColor);
     }
     setArrowZAngle = function (zAngle) {
+        this.zAngle = zAngle;
+        this.arrow.setZAngle(zAngle);
+    };
+
+    setZAngle = function (zAngle) {
+        this.zAngle = zAngle;
         this.arrow.setZAngle(zAngle);
     };
 

@@ -86,7 +86,7 @@ const videoTool = ({ classes, telestrationStateMgr }: IProp) => {
     const [colorList2, setColorList2] = useState(initialColors);
 
     const [pickerColor, setPickerColor] = useState('#cc0000');
-    
+
     const { state, dispatchAction } = telestrationStateMgr;
 
     const { telestrationManager } = state;
@@ -108,12 +108,12 @@ const videoTool = ({ classes, telestrationStateMgr }: IProp) => {
     const closeColorPicker1 = () => {
         setAnchorEl1(null);
     };
-    
+
     const closeColorPicker2 = () => {
         setAnchorEl2(null);
     };
     const onColorPick = (color: any, index: number) => {
-        dispatchAction(changeTelestrationColor(color.hex, index));  
+        dispatchAction(changeTelestrationColor(color.hex, index));
     };
 
     const handleChangePickerList1 = (pickedColor: any) => {
@@ -185,7 +185,7 @@ const videoTool = ({ classes, telestrationStateMgr }: IProp) => {
                             <Collapse in={object.isSelected} timeout={300}>
                                 {object.type !== 'Text Box' && (
                                     <div style={{ margin: '10px 0px' }}>
-                                        {object.type !== 'lightshaft' && (
+                                        {object.type !== 'Light Shaft' && (
                                             <div
                                                 style={{
                                                     display: 'flex',
@@ -239,7 +239,7 @@ const videoTool = ({ classes, telestrationStateMgr }: IProp) => {
                                                 </div>
                                             </div>
                                         )}
-                                        {object.type !== 'polygon' && (
+                                        {object.type !== 'Polygon' && (
                                             <>
                                                 <div
                                                     style={{
@@ -318,8 +318,7 @@ const videoTool = ({ classes, telestrationStateMgr }: IProp) => {
                                                 value={object.object.getText()}
                                                 onFocus={(e) => {
                                                     //  tslint:disable-next-line
-                                                    window['STOP_KEY_LISTENERS'
-                                                    ] = true;
+                                                    window['STOP_KEY_LISTENERS'] = true;
                                                 }}
                                                 onBlur={(e) => {
                                                     //  tslint:disable-next-line
@@ -360,7 +359,7 @@ const videoTool = ({ classes, telestrationStateMgr }: IProp) => {
                                                     }}
                                                 />
                                             </Box>
-                                            <br/>
+                                            <br />
                                             <Box
                                                 display='flex'
                                                 flexDirection='horizontal'
@@ -378,8 +377,10 @@ const videoTool = ({ classes, telestrationStateMgr }: IProp) => {
                                                     }
                                                     onChange={(e) => {
                                                         dispatchAction(
-                                                            switchTextBoxMask(index)
-                                                        )
+                                                            switchTextBoxMask(
+                                                                index
+                                                            )
+                                                        );
                                                     }}
                                                 />
                                             </Box>
@@ -399,17 +400,14 @@ const videoTool = ({ classes, telestrationStateMgr }: IProp) => {
                                                 onChangeComplete={(
                                                     color: any,
                                                     ev: any
-                                                ) =>
-                                                    onColorPick(
-                                                        color,
-                                                        index
-                                                    )
-                                                }
+                                                ) => onColorPick(color, index)}
                                                 circleSize={16.5}
                                                 circleSpacing={7}
                                             />
                                             <div
-                                                onClick={openColorPicker1 as any}
+                                                onClick={
+                                                    openColorPicker1 as any
+                                                }
                                                 style={{
                                                     display: 'flex',
                                                     cursor: 'pointer',
@@ -466,11 +464,10 @@ const videoTool = ({ classes, telestrationStateMgr }: IProp) => {
                                 handleChange={handleChangePickerList1}
                                 color={object.object.color}
                                 open={colorPickerOpened1}
-                                onPick={(color : any) => {
+                                onPick={(color: any) => {
                                     onColorPick(color, index);
                                     closeColorPicker1();
                                 }}
-                                
                                 onClose={closeColorPicker1}
                                 anchorEl={anchorEl1}
                             />
@@ -505,7 +502,7 @@ const videoTool = ({ classes, telestrationStateMgr }: IProp) => {
                                             onChangeComplete={(
                                                 color: any,
                                                 ev: any
-                                            ) => onColorPick(color,  -1)}
+                                            ) => onColorPick(color, -1)}
                                             circleSize={16.5}
                                             circleSpacing={7}
                                         />
@@ -644,7 +641,6 @@ const videoTool = ({ classes, telestrationStateMgr }: IProp) => {
                                         />
                                     </Box>
                                     <br />
-
                                 </div>
                                 <div
                                     style={{
@@ -719,7 +715,7 @@ const videoTool = ({ classes, telestrationStateMgr }: IProp) => {
                         handleChange={handleChangePickerList2}
                         color={pickerColor}
                         open={colorPickerOpened2}
-                        onPick={( color : any) => {
+                        onPick={(color: any) => {
                             onColorPick(color, -1);
                             closeColorPicker2();
                             setPickerColor(color);

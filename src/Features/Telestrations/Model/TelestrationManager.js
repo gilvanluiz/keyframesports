@@ -146,6 +146,7 @@ export default class TelestrationManager {
 
         this.chromaKey = new ChromaKeySettings(this);
         this.chromaKeyPrepared = false;
+        this.pcoSize = 40;
     }
 
     initializeHelperImages = function () {
@@ -607,9 +608,11 @@ export default class TelestrationManager {
     };
     drawTextBoxes = function () {
         this.textBoxes.map((t) => {
-            t.draw(t.maskEnable?
-                this.telestrationContext:
-                this.videoForegroundContext);
+            t.draw(
+                t.maskEnable
+                    ? this.telestrationContext
+                    : this.videoForegroundContext
+            );
         });
     };
 
@@ -662,13 +665,11 @@ export default class TelestrationManager {
         }
     };
 
-    drawCreationTextBox = function (context){
-        if(this.creationTextBox){
-            this.creationTextBox.draw(
-                 context
-            )
+    drawCreationTextBox = function (context) {
+        if (this.creationTextBox) {
+            this.creationTextBox.draw(context);
         }
-    }
+    };
 
     drawClosingCursors = function () {
         for (let i = 0; i < this.closingCursors.length; i++) {
@@ -1109,14 +1110,8 @@ export default class TelestrationManager {
                 this.creationObject.setWidth(this.arrowWidth);
                 break;
             case this.FUNCTION_ENUM.PLAYER_CUT_OUT:
-                this.arrowWidth = radiusVariation;
-                this.arrowWidth = Utils.clamp(
-                    this.arrowWidth,
-                    this.config.MIN_ARROW_WIDTH,
-                    this.config.MAX_ARROW_WIDTH
-                );
-
-                this.creationObject.setArrowWidth(this.arrowWidth);
+                this.pcoSize = radiusVariation;
+                this.creationObject.setSize(radiusVariation);
                 break;
             case this.FUNCTION_ENUM.PLACE_TEXT_BOX:
                 this.creationTextBox.setFontSize(radiusVariation);
@@ -1136,7 +1131,7 @@ export default class TelestrationManager {
             case this.FUNCTION_ENUM.PLACE_STRAIGHT_ARROW:
             case this.FUNCTION_ENUM.PLACE_ARROW_POINT:
             case this.FUNCTION_ENUM.PLAYER_CUT_OUT:
-                return this.arrowWidth;
+                return this.pcoSize;
         }
     };
 
@@ -1758,9 +1753,9 @@ export default class TelestrationManager {
     getTextBackgroundEnable = function () {
         return this.creationTextBox.getTextBackgroundEnable();
     };
-    getTextMaskEnable = function(){
+    getTextMaskEnable = function () {
         return this.creationTextBox.maskEnable;
-    }
+    };
     setPolygonColor = function (newColor) {
         this.config.POLYGON_COLOR = newColor;
 
@@ -1948,37 +1943,68 @@ export default class TelestrationManager {
     };
     deleteSelectedShape = function () {
         const newAddedShapes = [];
-        let deletedCount_Cursor = 0;
-        let deletedCount_LinkedCursor = 0;
-        let deletedCount_LightShaft = 0;
-        let deletedCount_Ploygon = 0;
-
         this.addedShapes.forEach((shape, index) => {
             if (!shape.isSelected) {
                 newAddedShapes.push(shape);
             } else {
                 switch (shape.type) {
-                    case 'circle':
+                    case 'Circle':
                         this.cursors.splice(
                             this.cursors.findIndex((e) => e === shape),
                             1
                         );
                         break;
-                    case 'linkedcursor':
-                        this.linkedCursors.splice(
-                            this.cursors.findIndex((e) => e === shape),
-                            1
-                        );
-                        break;
-                    case 'polygon':
-                        this.polygons.splice(
-                            this.cursors.findIndex((e) => e === shape),
-                            1
-                        );
-                        break;
-                    case 'lightshaft':
+                    case 'Light Shaft':
                         this.lightShafts.splice(
-                            this.cursors.findIndex((e) => e === shape),
+                            this.lightShafts.findIndex((e) => e === shape),
+                            1
+                        );
+                        break;
+
+                    case 'Player Cut Out':
+                        
+                        this.playerCutOuts.splice(
+                            this.playerCutOuts.findIndex((e) => e === shape),
+                            1
+                        );
+                        this.arrows.splice(
+                            this.arrows.findIndex((e) => e === shape.arrow),
+                            1
+                        );
+                        break;
+                    case 'Linked Cursor':
+                        this.linkedCursors.splice(
+                            this.linkedCursors.findIndex((e) => e === shape),
+                            1
+                        );
+                        break;
+                    case 'Polygon':
+                        this.polygons.splice(
+                            this.polygons.findIndex((e) => e === shape),
+                            1
+                        );
+                        break;
+                    case 'Text Box':
+                        this.textBoxes.splice(
+                            this.textBoxes.findIndex((e) => e === shape),
+                            1
+                        );
+                        break;
+                    case 'Arrow':
+                        this.arrows.splice(
+                            this.arrows.findIndex((e) => e === shape),
+                            1
+                        );
+                        break;
+                    case 'Free Hand Arrow':
+                        this.freehandArrows.splice(
+                            this.freehandArrows.findIndex((e) => e === shape),
+                            1
+                        );
+                        break;
+                    case 'Straight Arrow':
+                        this.arrows.splice(
+                            this.arrows.findIndex((e) => e === shape),
                             1
                         );
                         break;
@@ -2039,7 +2065,6 @@ export default class TelestrationManager {
     };
 
     onmouseup = function (event, currentTime) {
-
         if (this.mouseDown) {
             this.captureCanvasMousePosition(event);
             this.mouseDown = false;
@@ -2055,7 +2080,7 @@ export default class TelestrationManager {
 
                             let index = 0;
                             this.addedShapes.forEach((shape) => {
-                                if (shape.type === 'Frre Hand Arrow') {
+                                if (shape.type === 'Free Hand Arrow') {
                                     index++;
                                 }
                             });
@@ -2063,7 +2088,7 @@ export default class TelestrationManager {
                             const objectDetail = new DrawnObjectDetail(
                                 this.creationObject,
                                 currentTime,
-                                'Frre Hand Arrow',
+                                'Free Hand Arrow',
                                 ++index
                             );
 
@@ -2103,9 +2128,9 @@ export default class TelestrationManager {
                     }
                     break;
                 case this.FUNCTION_ENUM.PLAYER_CUT_OUT:
-                    if(event.button === 2 && this.creationObject.state === 1 ){
+                    if (event.button === 2 && this.creationObject.state === 1) {
                         this.creationObject.arrow.switchType();
-                    } else{
+                    } else {
                         this.placePlayerCutOutPoint(true, currentTime);
                     }
                     break;
@@ -2202,7 +2227,6 @@ export default class TelestrationManager {
             (event) => this.onmousewheel(event),
             { passive: false }
         );
-
 
         document.addEventListener('keydown', (event) => this.onkeydown(event));
         document.addEventListener('keyup', (event) => this.onkeyup(event));
