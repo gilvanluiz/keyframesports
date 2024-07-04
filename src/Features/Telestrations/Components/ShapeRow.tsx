@@ -79,7 +79,7 @@ const CustomTextField = withStyles({
         '& .MuiInputBase-input': {
             color: 'black',
             padding: '0px',
-            fontSize: '14px',
+            fontSize: '10px',
         },
     },
 })(TextField);
